@@ -81,7 +81,7 @@ with tab2:
         node_ids = set()
         nodes = []
         edges = []
-
+        font_color = white
         # 노드를 중복 없이 만들기
         for link in report["cooccurrence"]:
             source = link['source']
