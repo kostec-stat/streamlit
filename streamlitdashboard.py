@@ -128,30 +128,29 @@ with col_main:
             st.write(f"🔹 {assoc['term']} ({assoc['count']}회)")
             
 # Top 20 키워드 (오른쪽 패널)
-with col_side:
-    st.header("🏆 Top 20 키워드")
+st.divider()
 
-
-
+# 4. 푸터 패널 (하단 영역)
+st.subheader("🏆 Top 20 키워드 및 관련 사이트")
 # CSV 파일 읽기
-    df = pd.read_csv(f"assets/data/{selected_snapshot}_search_results.csv", encoding="utf-8-sig")
+df = pd.read_csv(f"assets/data/{selected_snapshot}_search_results.csv", encoding="utf-8-sig")
     
-    # title + snippet 합치기 (full_text 컬럼 만들기)
-    df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
-    # 1. 키워드 빈도수 집계
-    keyword_counter = {}
-    for kw in keywords:
-        keyword_counter[kw] = df["full_text"].str.contains(kw, na=False, regex=False).sum()
+# title + snippet 합치기 (full_text 컬럼 만들기)
+df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
+# 1. 키워드 빈도수 집계
+keyword_counter = {}
+for kw in keywords:
+    keyword_counter[kw] = df["full_text"].str.contains(kw, na=False, regex=False).sum()
 
     # 2. 빈도수 기준 상위 20개 키워드 추출
-    top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
+top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
 
-    for idx, (kw, count) in enumerate(top_keywords, 1):
-        st.markdown(f"**{idx}. {kw}** ({count}회 등장)")
+for idx, (kw, count) in enumerate(top_keywords, 1):
+    st.markdown(f"**{idx}. {kw}** ({count}회 등장)")
 
-        # 3. 관련 사이트(title, link, snippet) 리스트
-        matched_rows = df[df["full_text"].str.contains(kw, na=False)]
-        for _, row in matched_rows.iterrows():
-            st.markdown(f"- [{row['title']}]({row['link']})")
-            st.caption(f"{row['snippet'][:80]}...")  # snippet을 짧게 요약
-        st.divider()
+    # 3. 관련 사이트(title, link, snippet) 리스트
+    matched_rows = df[df["full_text"].str.contains(kw, na=False)]
+    for _, row in matched_rows.iterrows():
+        st.markdown(f"- [{row['title']}]({row['link']})")
+        st.caption(f"{row['snippet'][:80]}...")  # snippet을 짧게 요약
+    st.divider()
