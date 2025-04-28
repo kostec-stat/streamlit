@@ -131,10 +131,17 @@ with col_main:
 with col_side:
     st.header("🏆 Top 20 키워드")
 
+
+
+# CSV 파일 읽기
+    df = pd.read_csv(f"assets/{selected_snapshot}_search_results.csv", encoding="utf-8-sig")
+    
+    # title + snippet 합치기 (full_text 컬럼 만들기)
+    df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
     # 1. 키워드 빈도수 집계
     keyword_counter = {}
     for kw in keywords:
-        kkeyword_counter[kw] = df["full_text"].str.contains(kw, na=False, regex=False).sum()
+        keyword_counter[kw] = df["full_text"].str.contains(kw, na=False, regex=False).sum()
 
     # 2. 빈도수 기준 상위 20개 키워드 추출
     top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
