@@ -79,7 +79,7 @@ with tab2:
     try:
         G = nx.Graph()
         for link in report["cooccurrence"]:
-            G.add_edge(link['source'], link['target'], weight=link['weight'])
+            G.add_edge(link['source'], link['target'], weight=link['count'])
         
         net = Network(height="500px", width="100%", bgcolor="#ffffff", font_color="black")
         net.from_nx(G)
