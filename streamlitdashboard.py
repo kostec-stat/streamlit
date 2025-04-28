@@ -64,13 +64,15 @@ with tab1:
     
     st.subheader("📈 키워드 트렌드 차트")
     try:
-        # JSON 파일 직접 열기
         with open(trend_path, encoding='utf-8-sig') as f:
             trend_json = json.load(f)
-        
-        # trend_data 부분만 DataFrame으로 변환
+    
         trend_data = pd.DataFrame(trend_json["trend_data"])
-        chart = alt.Chart(trend_data).mark_line(point=True).encode(
+    
+        # long format으로 변환 (date, keyword, count 형태)
+        trend_data_long = trend_data.melt(id_vars=["date"], var_name="keyword", value_name="count")
+    
+        chart = alt.Chart(trend_data_long).mark_line(point=True).encode(
             x='date:T',
             y=alt.Y('count:Q', title='빈도수'),
             color='keyword:N'
@@ -78,6 +80,7 @@ with tab1:
         st.altair_chart(chart, use_container_width=True)
     except Exception as e:
         st.error(f"트렌드 차트 로딩 실패: {e}")
+
 
 # 2. 키워드 네트워크
 with tab2:
