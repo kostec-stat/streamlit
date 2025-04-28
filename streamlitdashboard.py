@@ -12,8 +12,15 @@ import os
 
 # --- 1. 설정 (가장 먼저)
 st.set_page_config(page_title="📈 키워드 대시보드", layout="wide")
+# --- 2. CSS 적용
+def local_css(file_name):
+    with open(file_name, "r", encoding="utf-8") as f:
+        css_content = f.read()
+    st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
 
-# --- 2. 데이터 불러오기
+# assets/css 폴더의 custom.css를 읽어오기
+local_css("assets/css/custom.css")
+# --- 3. 데이터 불러오기
 def load_keywords(filepath):
     with open(filepath, "r", encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip()]
@@ -26,7 +33,7 @@ def load_json(path):
 keywords = load_keywords("assets/input/keywords.txt")
 snapshot_dates = ['20250429']
 
-# --- 3. 사이드바
+# --- 4. 사이드바
 selected_keyword = st.sidebar.selectbox("관심 키워드 선택", keywords)
 selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
 
