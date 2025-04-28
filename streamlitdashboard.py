@@ -134,7 +134,7 @@ with col_side:
     # 1. 키워드 빈도수 집계
     keyword_counter = {}
     for kw in keywords:
-        keyword_counter[kw] = df["full_text"].str.contains(kw, na=False).sum()
+        kkeyword_counter[kw] = df["full_text"].str.contains(kw, na=False, regex=False).sum()
 
     # 2. 빈도수 기준 상위 20개 키워드 추출
     top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
