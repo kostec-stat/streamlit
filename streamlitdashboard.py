@@ -24,7 +24,7 @@ def load_keywords(filepath):
         keywords = [line.strip() for line in f if line.strip()]
     return keywords
 
-keywords = load_keywords("../input/keywords.txt")  # 키워드 파일 경로 수정
+keywords = load_keywords("assets/input/keywords.txt")  # 키워드 파일 경로 수정
 snapshot_dates = ['20250429']
 
 # Streamlit App 시작
