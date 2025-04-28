@@ -1,0 +1,168 @@
+@charset "utf-8";
+
+/*
+# Font List
+- Pretendard(Korean) / Noto Sans SC(Chinese, Hanja) MyLotte / Monserrat
+# Font-Weight Default Value
+- Regular :500 / Medium :700 / SemiBold :800 / Bold :900
+*/
+
+/*
+# Pretendard - Korean Default
+- Regular / Medium / SemiBold / Bold
+*/
+/*
+@font-face {
+    font-family:'Pretendard';
+    font-style:normal;
+    font-weight:500;
+    src:url(/html/fonts/Pretendard/Pretendard-Regular.woff) format('woff'),
+        url(/html/fonts/Pretendard/Pretendard-Regular.woff2) format('woff2');
+    font-display: swap;
+}
+@font-face {
+    font-family:'Pretendard';
+    font-style:normal;
+    font-weight:700;
+    src:url(/html/fonts/Pretendard/Pretendard-Medium.woff) format('woff'),
+        url(/html/fonts/Pretendard/Pretendard-Medium.woff2) format('woff2');
+    font-display: swap;
+}
+@font-face {
+    font-family:'Pretendard';
+    font-style:normal;
+    font-weight:800;
+    src:url(/html/fonts/Pretendard/Pretendard-SemiBold.woff) format('woff'),
+        url(/html/fonts/Pretendard/Pretendard-SemiBold.woff2) format('woff2');
+    font-display: swap;
+}
+@font-face {
+    font-family:'Pretendard';
+    font-style:normal;
+    font-weight:900;
+    src:url(/html/fonts/Pretendard/Pretendard-Bold.woff) format('woff'),
+        url(/html/fonts/Pretendard/Pretendard-Bold.woff2) format('woff2');
+    font-display: swap;
+}
+*/
+
+/*
+# NotoSansKR - Korean Default(2)
+- Regular / Medium / Bold
+*/
+@font-face {
+    font-family:'NotoSansKR';
+    font-style:normal;
+    font-weight:500;
+    src:/*url(/html/fonts/NotoSansKR/otf/NotoSansKR-Regular.otf) format('opentype'),
+        url(/html/fonts/NotoSansKR/eot/NotoSansKR-Regular.eot) format('embedded-opentype'),*/
+        url(/html/fonts/NotoSansKR/woff/NotoSansKR-Regular.woff) format('woff');
+}
+@font-face {
+    font-family:'NotoSansKR';
+    font-style:normal;
+    font-weight:700;
+    src:/*url(/html/fonts/NotoSansKR/otf/NotoSansKR-Medium.otf) format('opentype'),
+        url(/html/fonts/NotoSansKR/eot/NotoSansKR-Medium.woff) format('embedded-opentype'),*/
+        url(/html/fonts/NotoSansKR/woff/NotoSansKR-Medium.woff) format('woff');
+}
+@font-face {
+    font-family:'NotoSansKR';
+    font-style:normal;
+    font-weight:900;
+    src:/*url(/html/fonts/NotoSansKR/otf/NotoSansKR-Bold.otf) format('opentype'),
+        url(/html/fonts/NotoSansKR/eot/NotoSansKR-Bold.woff) format('embedded-opentype'),*/
+        url(/html/fonts/NotoSansKR/woff/NotoSansKR-Bold.woff) format('woff');
+}
+
+
+/*
+Noto Sans SC - Chiense Default, Hanja
+- Regular / Medium / Bold
+*/
+@font-face {
+    font-family:'Noto Sans SC';
+    font-style:normal;
+    font-weight:500;
+    src:/*url(/html/fonts/NotoSansSC/NotoSansSC-Regular.otf) format('opentype'),
+        url(/html/fonts/NotoSansSC/NotoSansSC-Regular.eot) format('embedded-opentype'),*/
+        url(/html/fonts/NotoSansSC/NotoSansSC-Regular.woff) format('woff');
+    font-display: swap;
+}
+@font-face {
+    font-family:'Noto Sans SC';
+    font-style:normal;
+    font-weight:700;
+    src:/*url(/html/fonts/NotoSansSC/NotoSansSC-Medium.otf) format('opentype'),
+        url(/html/fonts/NotoSansSC/NotoSansSC-Medium.eot) format('embedded-opentype'),*/
+        url(/html/fonts/NotoSansSC/NotoSansSC-Medium.woff) format('woff');
+    font-display: swap;
+}
+@font-face {
+    font-family:'Noto Sans SC';
+    font-style:normal;
+    font-weight:900;
+    src:/*url(/html/fonts/NotoSansSC/NotoSansSC-Bold.otf) format('opentype'),
+        url(/html/fonts/NotoSansSC/NotoSansSC-Bold.eot) format('embedded-opentype'),*/
+        url(/html/fonts/NotoSansSC/NotoSansSC-Bold.woff) format('woff');
+    font-display: swap;
+}
+
+/*
+# MyLotte - Title / Highlight
+- Regular / Medium / Bold
+*/
+@font-face {
+    font-family:'MyLotte';
+    font-style:normal;
+    font-weight:500;
+    src:url(/html/fonts/MyLotte/MyLotte-Regular.woff) format('woff')
+}
+@font-face {
+    font-family:'MyLotte';
+    font-style:normal;
+    font-weight:600;
+    src:url(/html/fonts/MyLotte/MyLotte-Medium.woff) format('woff')
+}
+@font-face {
+    font-family:'MyLotte';
+    font-style:normal;
+    font-weight:900;
+    src:url(/html/fonts/MyLotte/MyLotte-Bold.woff) format('woff')
+}
+
+/* 
+# Montserrat - Language button
+- Regular Only
+*/
+@font-face {
+    font-family:'Montserrat';
+    font-style:normal;
+    font-weight:500;
+    src:url(/html/fonts/Montserrat/Montserrat-Regular.woff) format('woff')
+  
+}
+@font-face {
+    font-family:'Montserrat';
+    font-style:normal;
+    font-weight:700;
+    src:url(/html/fonts/Montserrat/Montserrat-Medium.woff) format('woff')
+  
+}
+@font-face {
+    font-family:'Montserrat';
+    font-style:normal;
+    font-weight:900;
+    src:url(/html/fonts/Montserrat/Montserrat-Bold.woff) format('woff')
+  
+}
+
+/*
+# Icomoon - Icon_type 01
+*/
+@font-face {
+    font-family:'icomoon';
+    font-style:normal;
+    font-weight:400;
+    src:url(/html/fonts/icomoon/icomoon.woff) format('woff')
+}
