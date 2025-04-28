@@ -78,16 +78,24 @@ with tab1:
 with tab2:
     st.subheader("🕸 키워드 동시출현 네트워크 (Graph)")
     try:
+        node_ids = set()
         nodes = []
         edges = []
-        
+
+        # 노드를 중복 없이 만들기
         for link in report["cooccurrence"]:
             source = link['source']
             target = link['target']
             count = link['count']
-            
-            nodes.append(Node(id=source, label=source))
-            nodes.append(Node(id=target, label=target))
+
+            if source not in node_ids:
+                nodes.append(Node(id=source, label=source))
+                node_ids.add(source)
+
+            if target not in node_ids:
+                nodes.append(Node(id=target, label=target))
+                node_ids.add(target)
+
             edges.append(Edge(source=source, target=target, label=str(count)))
 
         config = Config(
