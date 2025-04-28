@@ -134,7 +134,7 @@ with col_side:
 
 
 # CSV 파일 읽기
-    df = pd.read_csv(f"assets/{selected_snapshot}_search_results.csv", encoding="utf-8-sig")
+    df = pd.read_csv(f"assets/data/{selected_snapshot}_search_results.csv", encoding="utf-8-sig")
     
     # title + snippet 합치기 (full_text 컬럼 만들기)
     df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
