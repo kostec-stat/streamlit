@@ -1,0 +1,8 @@
+streamlit
+pandas
+json
+altair
+networkx
+pyvis.network
+streamlit.components.v1
+os
