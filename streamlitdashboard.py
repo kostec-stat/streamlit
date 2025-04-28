@@ -40,9 +40,31 @@ selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dat
 # --- 5. 메인 대시보드
 st.title("📈 주간 키워드 대시보드")
     
-# --- 6. 데이터 경로 설정
+# --- 6-1. 데이터 경로 설정
 report_path = f"assets/reports/{selected_keyword}_{selected_snapshot}.json"
 trend_path = f"assets/data/{selected_snapshot}_trend_summary.json"
+search_results_path = f"assets/data/{selected_snapshot}_search_results.csv"
+
+# --- 6-2. 데이터 로딩
+try:
+    report = load_json(report_path)
+except FileNotFoundError:
+    st.error(f"보고서 파일을 찾을 수 없습니다: {report_path}")
+    st.stop()
+
+try:
+    trend_json = load_json(trend_path)
+    trend_data = pd.DataFrame(trend_json["trend_data"])
+except Exception as e:
+    st.error(f"트렌드 데이터 로딩 실패: {e}")
+    st.stop()
+
+try:
+    df = pd.read_csv(search_results_path, encoding="utf-8-sig")
+    df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
+except FileNotFoundError:
+    st.error(f"검색 결과 파일을 찾을 수 없습니다: {search_results_path}")
+    st.stop()
     
 try:
     report = load_json(report_path)
