@@ -31,8 +31,6 @@ selected_keyword = st.sidebar.selectbox("관심 키워드 선택", keywords)
 selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
 
 # --- 4. 메인 대시보드 (3:1 구조)
-col_main, col_side = st.columns([3, 1])
-
 with col_main:
     st.title("📈 주간 키워드 대시보드")
     
@@ -47,7 +45,7 @@ with col_main:
         st.stop()
     
     # 탭
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관어", "🏆 Top 20"])
+    tab1, tab2, tab3 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관어"])
 
     with tab1:
         st.subheader("📊 키워드별 빈도수 통계")
