@@ -42,7 +42,7 @@ trend_path = f"assets/data/{selected_snapshot}_trend_summary.json"
 # 데이터 로딩
 @st.cache_data
 def load_report(path):
-    with open(path, encoding='utf-8') as f:
+    with open(path, encoding='utf-8-sig') as f:
         return json.load(f)
 
 try:
