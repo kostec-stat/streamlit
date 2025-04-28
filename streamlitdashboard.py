@@ -19,7 +19,7 @@ def local_css(file_name):
     st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
 
 # assets/css 폴더의 main.css를 읽어오기
-local_css("assets/css/common.css")
+local_css("assets/css/main.css")
 # --- 3. 데이터 불러오기
 def load_keywords(filepath):
     with open(filepath, "r", encoding="utf-8") as f:
