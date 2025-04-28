@@ -64,7 +64,12 @@ with tab1:
     
     st.subheader("📈 키워드 트렌드 차트")
     try:
-        trend_data = pd.read_json(trend_path)
+        # JSON 파일 직접 열기
+        with open(trend_path, encoding='utf-8-sig') as f:
+            trend_json = json.load(f)
+        
+        # trend_data 부분만 DataFrame으로 변환
+        trend_data = pd.DataFrame(trend_json["trend_data"])
         chart = alt.Chart(trend_data).mark_line(point=True).encode(
             x='date:T',
             y=alt.Y('count:Q', title='빈도수'),
