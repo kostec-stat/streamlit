@@ -29,6 +29,7 @@ keywords = load_keywords("assets/input/keywords.txt")  # 키워드 파일 경로
 snapshot_dates = ['20250429']
 
 # Streamlit App 시작
+col_main, col_side = st.columns([3, 1])
 with col_main:
     st.set_page_config(page_title="📈 키워드 대시보드", layout="wide")
     st.title("📈 주간 키워드 대시보드")
