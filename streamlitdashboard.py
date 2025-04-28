@@ -14,6 +14,7 @@ import altair as alt
 import networkx as nx
 from pyvis.network import Network
 import streamlit.components.v1 as components
+from streamlit_agraph import agraph, Node, Edge, Config
 import os
 
 # 키워드, 스냅샷 날짜 리스트
@@ -75,19 +76,32 @@ with tab1:
 
 # 2. 키워드 네트워크
 with tab2:
-    st.subheader("🕸 키워드 동시출현 네트워크")
+    st.subheader("🕸 키워드 동시출현 네트워크 (Graph)")
     try:
-        G = nx.Graph()
-        for link in report["cooccurrence"]:
-            G.add_edge(link['source'], link['target'], weight=link['count'])
+        nodes = []
+        edges = []
         
-        net = Network(height="500px", width="100%", bgcolor="#ffffff", font_color="black")
-        net.from_nx(G)
-        net.save_graph("network.html")
-        components.iframe("network.html", height=550)
+        for link in report["cooccurrence"]:
+            source = link['source']
+            target = link['target']
+            count = link['count']
+            
+            nodes.append(Node(id=source, label=source))
+            nodes.append(Node(id=target, label=target))
+            edges.append(Edge(source=source, target=target, label=str(count)))
+
+        config = Config(
+            width=800,
+            height=600,
+            directed=False,
+            physics=True,
+            hierarchical=False
+        )
+
+        agraph(nodes=nodes, edges=edges, config=config)
+
     except Exception as e:
         st.error(f"네트워크 그래프 로딩 실패: {e}")
-
 # 3. 연관어 통계
 with tab3:
     st.subheader("🔍 키워드 연관어 통계")
