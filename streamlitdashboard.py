@@ -78,7 +78,7 @@ with tab2:
     st.subheader("🕸 키워드 동시출현 네트워크")
     try:
         G = nx.Graph()
-        for link in report["co_occurrence_network"]:
+        for link in report["cooccurrence"]:
             G.add_edge(link['source'], link['target'], weight=link['weight'])
         
         net = Network(height="500px", width="100%", bgcolor="#ffffff", font_color="black")
