@@ -31,7 +31,7 @@ def load_json(path):
 
 # 키워드, 스냅샷 날짜
 keywords = load_keywords("assets/input/keywords.txt")
-snapshot_dates = ['20250429']
+snapshot_dates = ['20250429', '20250501']
 
 # --- 4. 사이드바
 selected_keyword = st.sidebar.selectbox("관심 키워드 선택", keywords)
