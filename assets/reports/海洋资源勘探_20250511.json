@@ -1,0 +1,478 @@
+﻿{
+  "keyword": "海洋资源勘探",
+  "snapshot": "20250511",
+  "frequency_stats": [
+    {
+      "keyword": "科技创新政策",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "科技发展规划",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "国家创新体系",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 10
+    },
+    {
+      "keyword": "科技体制改革",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 11
+    },
+    {
+      "keyword": "产学研结合",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "联合研究中心",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "政府间科技合作",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "科技合作协定",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "科技成果转化",
+      "site_count": 11,
+      "site_coverage": 11,
+      "rank": 1
+    },
+    {
+      "keyword": "知识产权保护",
+      "site_count": 9,
+      "site_coverage": 9,
+      "rank": 2
+    },
+    {
+      "keyword": "科技伦理规范",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "公共基础设施",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "创新驱动发展",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 12
+    },
+    {
+      "keyword": "新质生产力",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 13
+    },
+    {
+      "keyword": "联合研究",
+      "site_count": 2,
+      "site_coverage": 2,
+      "rank": 19
+    },
+    {
+      "keyword": "生物技术",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "光电技术",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "人工智能",
+      "site_count": 8,
+      "site_coverage": 8,
+      "rank": 3
+    },
+    {
+      "keyword": "人才培训",
+      "site_count": 3,
+      "site_coverage": 3,
+      "rank": 16
+    },
+    {
+      "keyword": "量子通信",
+      "site_count": 5,
+      "site_coverage": 5,
+      "rank": 7
+    },
+    {
+      "keyword": "小型模块化反应堆",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "合成生物学",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 14
+    },
+    {
+      "keyword": "技术转移",
+      "site_count": 5,
+      "site_coverage": 5,
+      "rank": 8
+    },
+    {
+      "keyword": "高端装备制造",
+      "site_count": 3,
+      "site_coverage": 3,
+      "rank": 17
+    },
+    {
+      "keyword": "数字医疗",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "超高清视频",
+      "site_count": 2,
+      "site_coverage": 2,
+      "rank": 20
+    },
+    {
+      "keyword": "工业互联网安全",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "智慧城市",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 15
+    },
+    {
+      "keyword": "脑机接口",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "元宇宙",
+      "site_count": 5,
+      "site_coverage": 5,
+      "rank": 9
+    },
+    {
+      "keyword": "智能电网",
+      "site_count": 2,
+      "site_coverage": 2
+    },
+    {
+      "keyword": "固态电池",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "细胞治疗",
+      "site_count": 2,
+      "site_coverage": 2
+    },
+    {
+      "keyword": "卫星互联网",
+      "site_count": 3,
+      "site_coverage": 3,
+      "rank": 18
+    },
+    {
+      "keyword": "智能传感器",
+      "site_count": 2,
+      "site_coverage": 2
+    },
+    {
+      "keyword": "光量子芯片",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "氢能重卡",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "空间太阳能电站",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "基因治疗",
+      "site_count": 6,
+      "site_coverage": 6,
+      "rank": 6
+    },
+    {
+      "keyword": "零碳建筑",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "智能语音",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "区块链存证",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "深海采矿",
+      "site_count": 1,
+      "site_coverage": 1
+    },
+    {
+      "keyword": "虚拟电厂",
+      "site_count": 7,
+      "site_coverage": 7,
+      "rank": 5
+    },
+    {
+      "keyword": "智慧港口",
+      "site_count": 2,
+      "site_coverage": 2
+    },
+    {
+      "keyword": "数字人民币",
+      "site_count": 8,
+      "site_coverage": 8,
+      "rank": 4
+    }
+  ],
+  "cooccurrence": [
+    {
+      "source": "国家创新体系",
+      "target": "科技体制改革",
+      "count": 2
+    },
+    {
+      "source": "国家创新体系",
+      "target": "科技创新政策",
+      "count": 1
+    },
+    {
+      "source": "科技体制改革",
+      "target": "科技创新政策",
+      "count": 1
+    },
+    {
+      "source": "科技伦理规范",
+      "target": "科技发展规划",
+      "count": 1
+    },
+    {
+      "source": "国家创新体系",
+      "target": "新质生产力",
+      "count": 1
+    },
+    {
+      "source": "政府间科技合作",
+      "target": "科技合作协定",
+      "count": 1
+    },
+    {
+      "source": "政府间科技合作",
+      "target": "联合研究",
+      "count": 1
+    },
+    {
+      "source": "科技合作协定",
+      "target": "联合研究",
+      "count": 1
+    },
+    {
+      "source": "产学研结合",
+      "target": "国家创新体系",
+      "count": 1
+    },
+    {
+      "source": "联合研究",
+      "target": "联合研究中心",
+      "count": 1
+    },
+    {
+      "source": "创新驱动发展",
+      "target": "科技成果转化",
+      "count": 2
+    },
+    {
+      "source": "光电技术",
+      "target": "量子通信",
+      "count": 1
+    },
+    {
+      "source": "合成生物学",
+      "target": "生物技术",
+      "count": 1
+    },
+    {
+      "source": "人才培训",
+      "target": "技术转移",
+      "count": 1
+    },
+    {
+      "source": "人工智能",
+      "target": "智慧城市",
+      "count": 1
+    },
+    {
+      "source": "人工智能",
+      "target": "脑机接口",
+      "count": 1
+    }
+  ],
+  "associations": [
+    {
+      "term": "科技成果转化",
+      "count": 11
+    },
+    {
+      "term": "知识产权保护",
+      "count": 9
+    },
+    {
+      "term": "人工智能",
+      "count": 8
+    },
+    {
+      "term": "数字人民币",
+      "count": 8
+    }
+  ],
+  "top_keywords": [
+    {
+      "keyword": "科技成果转化",
+      "site_count": 11,
+      "site_coverage": 11,
+      "rank": 1
+    },
+    {
+      "keyword": "知识产权保护",
+      "site_count": 9,
+      "site_coverage": 9,
+      "rank": 2
+    },
+    {
+      "keyword": "人工智能",
+      "site_count": 8,
+      "site_coverage": 8,
+      "rank": 3
+    },
+    {
+      "keyword": "数字人民币",
+      "site_count": 8,
+      "site_coverage": 8,
+      "rank": 4
+    },
+    {
+      "keyword": "虚拟电厂",
+      "site_count": 7,
+      "site_coverage": 7,
+      "rank": 5
+    },
+    {
+      "keyword": "基因治疗",
+      "site_count": 6,
+      "site_coverage": 6,
+      "rank": 6
+    },
+    {
+      "keyword": "量子通信",
+      "site_count": 5,
+      "site_coverage": 5,
+      "rank": 7
+    },
+    {
+      "keyword": "技术转移",
+      "site_count": 5,
+      "site_coverage": 5,
+      "rank": 8
+    },
+    {
+      "keyword": "元宇宙",
+      "site_count": 5,
+      "site_coverage": 5,
+      "rank": 9
+    },
+    {
+      "keyword": "国家创新体系",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 10
+    },
+    {
+      "keyword": "科技体制改革",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 11
+    },
+    {
+      "keyword": "创新驱动发展",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 12
+    },
+    {
+      "keyword": "新质生产力",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 13
+    },
+    {
+      "keyword": "合成生物学",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 14
+    },
+    {
+      "keyword": "智慧城市",
+      "site_count": 4,
+      "site_coverage": 4,
+      "rank": 15
+    },
+    {
+      "keyword": "人才培训",
+      "site_count": 3,
+      "site_coverage": 3,
+      "rank": 16
+    },
+    {
+      "keyword": "高端装备制造",
+      "site_count": 3,
+      "site_coverage": 3,
+      "rank": 17
+    },
+    {
+      "keyword": "卫星互联网",
+      "site_count": 3,
+      "site_coverage": 3,
+      "rank": 18
+    },
+    {
+      "keyword": "联合研究",
+      "site_count": 2,
+      "site_coverage": 2,
+      "rank": 19
+    },
+    {
+      "keyword": "超高清视频",
+      "site_count": 2,
+      "site_coverage": 2,
+      "rank": 20
+    }
+  ]
+}
