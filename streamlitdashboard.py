@@ -9,6 +9,7 @@ import altair as alt
 import networkx as nx
 from streamlit_agraph import agraph, Node, Edge, Config
 import os
+from collections import defaultdict
 
 # --- 1. 설정 (가장 먼저)
 st.set_page_config(page_title="📈 한중과기협력센터 키워드 대시보드", layout="wide")
