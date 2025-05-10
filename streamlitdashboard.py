@@ -219,27 +219,49 @@ with tab3:
 
 # --- 7.4 Top 20 키워드 + 관련 사이트
 with tab4:
-if summary_type == "전체":
-    st.subheader("🏆Top 20 키워드와 관련 사이트")
+    if summary_type == "전체":
+        st.subheader("🏆Top 20 키워드와 관련 사이트")
+        
+        # 데이터 읽기 (full_text 생성 포함)
+        search_results_path = f"assets/data/{snapshot_dates[-1]}_search_results.csv"
+        try:
+            df = pd.read_csv(search_results_path, encoding="utf-8-sig")
+            df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
+        except FileNotFoundError:
+            st.error(f"검색 결과 파일이 없습니다: {search_results_path}")
+            st.stop()
+        
+        # 키워드 빈도수 집계
+        keyword_counter = {kw: df["full_text"].str.contains(kw, na=False, regex=False).sum() for kw in keywords}
+        top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
+        
+        # 관련 기사 정리
+        keyword_sections = {}
+        for kw, _ in top_keywords:
+            matched_rows = df[df["full_text"].str.contains(kw, na=False, regex=False)].copy()
+            matched_rows = matched_rows[["title", "link", "snippet"]]
+            matched_rows["snippet"] = matched_rows["snippet"].str.slice(0, 200)
+            keyword_sections[kw] = matched_rows
     
-    # 데이터 읽기 (full_text 생성 포함)
-    search_results_path = f"assets/data/{snapshot_dates[-1]}_search_results.csv"
-    try:
-        df = pd.read_csv(search_results_path, encoding="utf-8-sig")
-        df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
-    except FileNotFoundError:
-        st.error(f"검색 결과 파일이 없습니다: {search_results_path}")
-        st.stop()
+        # 📁 엑셀 버퍼 생성
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+            for kw, sub_df in keyword_sections.items():
+                sheet_name = kw[:31]  # 시트 이름은 31자 제한
+                sub_df.to_excel(writer, index=False, sheet_name=sheet_name)
     
-    # 키워드 빈도수 집계
-    keyword_counter = {kw: df["full_text"].str.contains(kw, na=False, regex=False).sum() for kw in keywords}
-    top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
+        # 📥 다운로드 버튼
+        st.download_button(
+            label="📥 키워드별 관련 기사 엑셀 다운로드",
+            data=output.getvalue(),
+            file_name=f"{snapshot_dates[-1]}_top20_keywords.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
     
-    # 하단 패널 표시
-    for idx, (kw, count) in enumerate(top_keywords, 1):
-        with st.expander(f"**{idx}. {kw}** ({count}회 등장)", expanded=False):
-            matched_rows = df[df["full_text"].str.contains(kw, na=False, regex=False)]
-            for _, row in matched_rows.iterrows():
-                st.markdown(f"- [{row['title']}]({row['link']})")
-                st.caption(f"{row['snippet'][:80]}...")
+        # 👁️ 기존 UI도 유지
+        for idx, (kw, count) in enumerate(top_keywords, 1):
+            with st.expander(f"**{idx}. {kw}** ({count}회 등장)", expanded=False):
+                for _, row in keyword_sections[kw].iterrows():
+                    st.markdown(f"- [{row['title']}]({row['link']})")
+                    st.caption(f"{row['snippet'][:80]}...")
 
