@@ -82,18 +82,17 @@ with tab1:
     selected_freq_df = freq_df[freq_df["keyword"] == selected_keyword]
     st.dataframe(selected_freq_df)
 
-    st.subheader(f"📈 {selected_keyword} 트렌드 차트")
+    st.subheader(f"📈 전체 키워드 트렌드 차트")
     trend_data_long = trend_data.melt(id_vars=["date"], var_name="keyword", value_name="count")
-    trend_data_filtered = trend_data_long[trend_data_long["keyword"] == selected_keyword]
     
-    # 차트
-    chart = alt.Chart(trend_data_filtered).mark_line(point=True).encode(
+    chart = alt.Chart(trend_data_long).mark_line().encode(
         x='date:T',
-        y=alt.Y('count:Q', title='빈도수'),
-        color=alt.value('teal')
-    )
+        y='count:Q',
+        color='keyword:N',  # keyword별 색상
+        tooltip=['date:T', 'keyword:N', 'count:Q']
+    ).interactive()
+    
     st.altair_chart(chart, use_container_width=True)
-
 # --- 7.2 네트워크 그래프
 with tab2:
     st.subheader(f"🕸 {selected_keyword} 관련 네트워크")
