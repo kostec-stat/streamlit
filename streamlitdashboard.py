@@ -11,7 +11,7 @@ from streamlit_agraph import agraph, Node, Edge, Config
 import os
 
 # --- 1. 설정 (가장 먼저)
-st.set_page_config(page_title="📈 키워드 대시보드", layout="wide")
+st.set_page_config(page_title="📈 한중과기협력센터 키워드 대시보드", layout="wide")
 # --- 2. CSS 적용
 def local_css(file_name):
     with open(file_name, "r", encoding="utf-8") as f:
@@ -36,9 +36,10 @@ snapshot_dates = ['20250429', '20250501', '20250511']
 # --- 4. 사이드바
 selected_keyword = st.sidebar.selectbox("관심 키워드 선택", keywords)
 selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
+summary_type = st.sidebar.selectbox("주기별 요약 보고서 선택", ["주간", "연간", "전체"], index=0)
 
 # --- 5. 메인 대시보드
-st.title("📈 주간 키워드 대시보드")
+st.title("📈 키워드 대시보드")
     
 # --- 6-1. 데이터 경로 설정
 report_path = f"assets/reports/{selected_keyword}_{selected_snapshot}.json"
@@ -102,6 +103,7 @@ with tab1:
             color=alt.value('crimson')  # 단일 색상
         )
         st.altair_chart(chart, use_container_width=True)
+    
 # --- 7.2 네트워크 그래프
 with tab2:
     st.subheader(f"🕸 {selected_keyword} 관련 네트워크")
@@ -136,25 +138,27 @@ with tab3:
 
 # --- 5. 하단(푸터) Top 20 키워드 + 관련 사이트
 st.divider()
-st.subheader("🏆 Top 20 키워드 및 관련 사이트")
+if summary_type == "전체":
+    st.subheader("🏆 요약 보고서: Top 20 키워드 및 관련 사이트")
+    
+    # 데이터 읽기 (full_text 생성 포함)
+    search_results_path = f"assets/data/{snapshot_dates[-1]}_search_results.csv"
+    try:
+        df = pd.read_csv(search_results_path, encoding="utf-8-sig")
+        df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
+    except FileNotFoundError:
+        st.error(f"검색 결과 파일이 없습니다: {search_results_path}")
+        st.stop()
+    
+    # 키워드 빈도수 집계
+    keyword_counter = {kw: df["full_text"].str.contains(kw, na=False, regex=False).sum() for kw in keywords}
+    top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
+    
+    # 하단 패널 표시
+    for idx, (kw, count) in enumerate(top_keywords, 1):
+        with st.expander(f"**{idx}. {kw}** ({count}회 등장)", expanded=False):
+            matched_rows = df[df["full_text"].str.contains(kw, na=False, regex=False)]
+            for _, row in matched_rows.iterrows():
+                st.markdown(f"- [{row['title']}]({row['link']})")
+                st.caption(f"{row['snippet'][:80]}...")
 
-# 데이터 읽기 (full_text 생성 포함)
-search_results_path = f"assets/data/{selected_snapshot}_search_results.csv"
-try:
-    df = pd.read_csv(search_results_path, encoding="utf-8-sig")
-    df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
-except FileNotFoundError:
-    st.error(f"검색 결과 파일이 없습니다: {search_results_path}")
-    st.stop()
-
-# 키워드 빈도수 집계
-keyword_counter = {kw: df["full_text"].str.contains(kw, na=False, regex=False).sum() for kw in keywords}
-top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
-
-# 하단 패널 표시
-for idx, (kw, count) in enumerate(top_keywords, 1):
-    with st.expander(f"**{idx}. {kw}** ({count}회 등장)", expanded=False):
-        matched_rows = df[df["full_text"].str.contains(kw, na=False, regex=False)]
-        for _, row in matched_rows.iterrows():
-            st.markdown(f"- [{row['title']}]({row['link']})")
-            st.caption(f"{row['snippet'][:80]}...")
