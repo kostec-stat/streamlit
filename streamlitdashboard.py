@@ -158,30 +158,21 @@ with tab2:
 
 # --- 7.3 연관어 통계
 with tab3:
-    st.subheader("🔍 연관어가 많은 상위 20개 키워드")
+    st.subheader("🔍 전체 연관어 Top 20")
 
-    # 1. keyword별 연관어 수 집계
-    from collections import defaultdict
+    # count 기준으로 정렬
+    associations_sorted = sorted(report["associations"], key=lambda x: x["count"], reverse=True)[:20]
 
-    assoc_dict = defaultdict(list)
-    for assoc in report["associations"]:
-        assoc_dict[assoc["term"]].append(assoc)
+    # 2열 표시
+    col1, col2 = st.columns(2)
+    half = len(associations_sorted) // 2
 
-    # 2. keyword별 전체 연관어 등장 횟수 합산
-    keyword_assoc_count = {
-        k: sum(item["count"] for item in v)
-        for k, v in assoc_dict.items()
-    }
-
-    # 3. 상위 20개 키워드 추출
-    top20_keywords = sorted(keyword_assoc_count.items(), key=lambda x: x[1], reverse=True)[:20]
-
-    # 4. 각 키워드에 대해 연관어 리스트 표시
-    for kw, total_count in top20_keywords:
-        with st.expander(f"📌 {kw} (총 {total_count}회 연관)"):
-            sorted_terms = sorted(assoc_dict[kw], key=lambda x: x["count"], reverse=True)
-            for term in sorted_terms:
-                st.markdown(f"- 🔹 **{term['term']}** ({term['count']}회)")
+    for i, assoc in enumerate(associations_sorted):
+        text = f"🔹 {assoc['term']} ({assoc['count']}회)"
+        if i < half:
+            col1.write(text)
+        else:
+            col2.write(text)
 
 # --- 5. 하단(푸터) Top 20 키워드 + 관련 사이트
 st.divider()
