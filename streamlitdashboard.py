@@ -35,9 +35,9 @@ keywords = load_keywords("assets/input/keywords.txt")
 snapshot_dates = ['20250429', '20250501', '20250511']
 
 # --- 4. 사이드바
-selected_keyword = st.sidebar.selectbox("관심 키워드 선택", keywords)
-selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
-summary_type = st.sidebar.selectbox("주기별 요약 보고서 선택", ["주간", "연간", "전체"], index=0)
+#selected_keyword = st.sidebar.selectbox("관심 키워드 선택", keywords)
+#selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
+summary_type = st.sidebar.selectbox("주기별 요약 보고서 선택", ["전체",  "연간", "주간"], index=0)
 
 # --- 5. 메인 대시보드
 st.title("📈 키워드 대시보드")
@@ -88,12 +88,21 @@ tab1, tab2, tab3 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관�
 
 # --- 7.1 빈도수 통계
 with tab1:
-    st.subheader(f"📊 {selected_keyword} 빈도수 통계")
-    freq_df = pd.DataFrame(report["frequency_stats"])
-    selected_freq_df = freq_df[freq_df["keyword"] == selected_keyword]
-    st.dataframe(selected_freq_df)
+    st.subheader("📊 전체 키워드 빈도수 통계")
 
-    st.subheader(f"📈 빈도수 상위 10 키워드 트렌드 차트")
+    # 전체 빈도수 통계 DataFrame
+    freq_df = pd.DataFrame(report["frequency_stats"])
+
+    # 빈도수가 0 초과인 키워드만 필터링
+    filtered_df = freq_df[freq_df["count"] > 0]
+
+    # count 기준 내림차순 정렬
+    sorted_df = filtered_df.sort_values(by="count", ascending=False).reset_index(drop=True)
+
+    # 데이터프레임 출력
+    st.dataframe(sorted_df, use_container_width=True)
+    
+    st.subheader(f"📈 빈도수 상위 20 키워드 트렌드 차트")
     n_cols = 5
     rows = [top_keywords[i:i + n_cols] for i in range(0, len(top_keywords), n_cols)]
     
