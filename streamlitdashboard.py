@@ -120,25 +120,63 @@ with tab1:
     
 # --- 7.2 네트워크 그래프
 with tab2:
-    st.subheader("🕸 전체 키워드 네트워크 (Top 20 중심 연결망)")
+    st.subheader("🕸 전체 키워드 네트워크 (Top 20 중심)")
 
-    # 1. keyword별 연결 count 총합 계산
+    # 📌 스타일 프리셋 선택
+    style_option = st.selectbox("그래프 스타일을 선택하세요", ["예시1 - 기본", "예시2 - 계층형", "예시3 - 랜덤 고정"])
+
+    # 📌 스타일별 Config 프리셋 정의
+    if style_option == "예시1 - 기본":
+        config = Config(
+            width=900,
+            height=700,
+            directed=False,
+            physics=True,
+            hierarchical=False,
+            nodeHighlightBehavior=True,
+            highlightColor="#FFCC00",
+            collapsible=True,
+            node={"color": "#00BFFF"},
+            edge={"color": "#AAAAAA"},
+            layout={"improvedLayout": True}
+        )
+    elif style_option == "예시2 - 계층형":
+        config = Config(
+            width=1000,
+            height=700,
+            directed=True,
+            physics=False,
+            hierarchical=True,
+            layout={"hierarchical": {"enabled": True, "direction": "LR"}},
+            node={"color": "#a29bfe"},
+            edge={"color": "#dfe6e9"}
+        )
+    elif style_option == "예시3 - 랜덤 고정":
+        config = Config(
+            width=900,
+            height=600,
+            physics=False,
+            hierarchical=False,
+            node={"color": "#6c5ce7"},
+            edge={"color": "#b2bec3"},
+            layout={"randomSeed": 7}
+        )
+
+    # 🔍 키워드별 연결 count 합산 → Top 20 추출
     keyword_link_count = defaultdict(int)
     for link in report["cooccurrence"]:
         keyword_link_count[link["source"]] += link["count"]
         keyword_link_count[link["target"]] += link["count"]
 
-    # 2. 상위 20개 중심 키워드 선정
     top20_keywords = sorted(keyword_link_count.items(), key=lambda x: x[1], reverse=True)[:20]
     top20_keywords = {kw for kw, _ in top20_keywords}
 
-    # 3. Top 20 키워드 관련 링크만 필터링
     filtered_links = [
         link for link in report["cooccurrence"]
         if link["source"] in top20_keywords or link["target"] in top20_keywords
     ]
 
-    # 4. 전체 노드/엣지 구성
+    # 🧩 노드/엣지 구성
     node_ids = set()
     nodes = []
     edges = []
@@ -155,12 +193,11 @@ with tab2:
 
         edges.append(Edge(source=source, target=target, label=str(count)))
 
-    # 5. 네트워크 시각화
+    # 📊 그래프 출력
     try:
-        config = Config(width=900, height=700, directed=False, physics=True, hierarchical=False)
         agraph(nodes=nodes, edges=edges, config=config)
     except Exception as e:
-        st.error(f"전체 네트워크 그래프 로딩 실패: {e}")
+        st.error(f"그래프 렌더링 실패: {e}")
 
 # --- 7.3 연관어 통계
 with tab3:
