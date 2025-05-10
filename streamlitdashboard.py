@@ -84,17 +84,14 @@ tab1, tab2, tab3 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관�
 with tab1:
     st.subheader("📊 전체 키워드 빈도수 통계")
 
-    # 전체 빈도수 통계 DataFrame
-    freq_df = pd.DataFrame(report["frequency_stats"])
+    keyword_totals_df = keyword_totals.reset_index()
+    keyword_totals_df.columns = ["keyword", "count"]
 
-    # 빈도수가 0 초과인 키워드만 필터링
-    filtered_df = freq_df[freq_df["count"] > 0]
+    # 0 이상만 필터링
+    keyword_totals_df = keyword_totals_df[keyword_totals_df["count"] > 0].reset_index(drop=True)
 
-    # count 기준 내림차순 정렬
-    sorted_df = filtered_df.sort_values(by="count", ascending=False).reset_index(drop=True)
-
-    # 데이터프레임 출력
-    st.dataframe(sorted_df, use_container_width=True)
+    # 표로 출력
+    st.dataframe(keyword_totals_df, use_container_width=True)
     
     st.subheader(f"📈 빈도수 상위 20 키워드 트렌드 차트")
     n_cols = 5
