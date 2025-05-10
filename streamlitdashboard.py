@@ -222,9 +222,9 @@ with tab3:
 # --- 7.4 Top 20 키워드 + 관련 사이트
 with tab4:
     if summary_type == "전체":
-        st.subheader("🏆Top 20 키워드와 관련 사이트")
-        
-        # 데이터 읽기 (full_text 생성 포함)
+        st.subheader("🏆 Top 20 키워드와 관련 사이트")
+
+        # 최신 스냅샷 날짜의 파일 불러오기
         search_results_path = f"assets/data/{snapshot_dates[-1]}_search_results.csv"
         try:
             df = pd.read_csv(search_results_path, encoding="utf-8-sig")
@@ -232,17 +232,24 @@ with tab4:
         except FileNotFoundError:
             st.error(f"검색 결과 파일이 없습니다: {search_results_path}")
             st.stop()
-        
-        # 키워드 빈도수 집계
-        keyword_counter = {kw: df["full_text"].str.contains(kw, na=False, regex=False).sum() for kw in keywords}
+
+        # 키워드별 등장 횟수 계산
+        keyword_counter = {
+            kw: df["full_text"].str.contains(kw, na=False, regex=False).sum()
+            for kw in keywords
+        }
         top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
-        
-        # 👁️ 기존 UI도 유지
+
+        # 각 키워드에 대해 관련 기사 목록 출력
         for idx, (kw, count) in enumerate(top_keywords, 1):
+            matched_rows = df[df["full_text"].str.contains(kw, na=False, regex=False)]
             with st.expander(f"**{idx}. {kw}** ({count}회 등장)", expanded=False):
-                for _, row in keyword_sections[kw].iterrows():
-                    st.markdown(f"- [{row['title']}]({row['link']})")
-                    st.caption(f"{row['snippet'][:80]}...")
+                if matched_rows.empty:
+                    st.caption("해당 키워드 관련 기사가 없습니다.")
+                else:
+                    for _, row in matched_rows.iterrows():
+                        st.markdown(f"- [{row['title']}]({row['link']})")
+                        st.caption(f"{row['snippet'][:80]}...")
 
 with tab5: 
     st.subheader("📦 스냅샷 엑셀 다운로드")
