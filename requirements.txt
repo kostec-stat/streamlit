@@ -4,4 +4,3 @@ altair
 networkx
 streamlit_agraph
 xlsxwriter
-zipfile
