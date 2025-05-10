@@ -165,7 +165,7 @@ with tab3:
 
     assoc_dict = defaultdict(list)
     for assoc in report["associations"]:
-        assoc_dict[assoc["keyword"]].append(assoc)
+        assoc_dict[assoc["term"]].append(assoc)
 
     # 2. keyword별 전체 연관어 등장 횟수 합산
     keyword_assoc_count = {
