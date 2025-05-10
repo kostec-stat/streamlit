@@ -35,24 +35,24 @@ keywords = load_keywords("assets/input/keywords.txt")
 snapshot_dates = ['20250429', '20250501', '20250511']
 
 # --- 4. 사이드바
-#selected_keyword = st.sidebar.selectbox("관심 키워드 선택", keywords)
-#selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
+selected_keyword = st.sidebar.selectbox("관심 키워드 선택", keywords)
+selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
 summary_type = st.sidebar.selectbox("주기별 요약 보고서 선택", ["전체",  "연간", "주간"], index=0)
 
 # --- 5. 메인 대시보드
 st.title("📈 키워드 대시보드")
     
 # --- 6-1. 데이터 경로 설정
-#report_path = f"assets/reports/{selected_keyword}_{selected_snapshot}.json"
+report_path = f"assets/reports/{selected_keyword}_{selected_snapshot}.json"
 trend_path = f"assets/data/{snapshot_dates[-1]}_trend_summary.json"
-#search_results_path = f"assets/data/{selected_snapshot}_search_results.csv"
+search_results_path = f"assets/data/{selected_snapshot}_search_results.csv"
 
 # --- 6-2. 데이터 로딩
-#try:
-#    report = load_json(report_path)
-#except FileNotFoundError:
-#    st.error(f"보고서 파일을 찾을 수 없습니다: {report_path}")
-#    st.stop()
+try:
+    report = load_json(report_path)
+except FileNotFoundError:
+    st.error(f"보고서 파일을 찾을 수 없습니다: {report_path}")
+    st.stop()
 
 try:
     trend_json = load_json(trend_path)
