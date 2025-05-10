@@ -113,35 +113,70 @@ with tab1:
     
 # --- 7.2 네트워크 그래프
 with tab2:
-    st.subheader(f"🕸 {selected_keyword} 관련 네트워크")
-    try:
-        node_ids = set()
-        nodes = []
-        edges = []
+    st.subheader("🕸 연관어 네트워크 Top 20 키워드 중심")
 
-        for link in report["cooccurrence"]:
-            if selected_keyword in (link['source'], link['target']):
-                source, target, count = link['source'], link['target'], link['count']
+    # 1. keyword별 연결횟수 총합 계산
+    keyword_link_count = defaultdict(int)
+    for link in report["cooccurrence"]:
+        keyword_link_count[link["source"]] += link["count"]
+        keyword_link_count[link["target"]] += link["count"]
 
-                if source not in node_ids:
-                    nodes.append(Node(id=source, label=source, font={"color": "white"}))
-                    node_ids.add(source)
-                if target not in node_ids:
-                    nodes.append(Node(id=target, label=target, font={"color": "white"}))
-                    node_ids.add(target)
+    # 2. 상위 20개 키워드 선정
+    top20_keywords = sorted(keyword_link_count.items(), key=lambda x: x[1], reverse=True)[:20]
+    top20_keywords = [kw for kw, _ in top20_keywords]
 
-                edges.append(Edge(source=source, target=target, label=str(count)))
+    # 3. 키워드별 네트워크 생성
+    for keyword in top20_keywords:
+        with st.expander(f"📌 {keyword} 중심 네트워크"):
+            node_ids = set()
+            nodes = []
+            edges = []
 
-        config = Config(width=800, height=600, directed=False, physics=True, hierarchical=False)
-        agraph(nodes=nodes, edges=edges, config=config)
-    except Exception as e:
-        st.error(f"네트워크 그래프 로딩 실패: {e}")
+            for link in report["cooccurrence"]:
+                if keyword in (link['source'], link['target']):
+                    source, target, count = link['source'], link['target'], link['count']
+
+                    if source not in node_ids:
+                        nodes.append(Node(id=source, label=source, font={"color": "white"}))
+                        node_ids.add(source)
+                    if target not in node_ids:
+                        nodes.append(Node(id=target, label=target, font={"color": "white"}))
+                        node_ids.add(target)
+
+                    edges.append(Edge(source=source, target=target, label=str(count)))
+
+            try:
+                config = Config(width=700, height=500, directed=False, physics=True, hierarchical=False)
+                agraph(nodes=nodes, edges=edges, config=config)
+            except Exception as e:
+                st.error(f"{keyword} 네트워크 그래프 로딩 실패: {e}")
 
     # --- 7.3 연관어 통계
 with tab3:
-    st.subheader(f"🔍 {selected_keyword} 연관어 통계")
+    st.subheader("🔍 연관어가 많은 상위 20개 키워드")
+
+    # 1. keyword별 연관어 수 집계
+    from collections import defaultdict
+
+    assoc_dict = defaultdict(list)
     for assoc in report["associations"]:
-        st.write(f"🔹 {assoc['term']} ({assoc['count']}회)")
+        assoc_dict[assoc["keyword"]].append(assoc)
+
+    # 2. keyword별 전체 연관어 등장 횟수 합산
+    keyword_assoc_count = {
+        k: sum(item["count"] for item in v)
+        for k, v in assoc_dict.items()
+    }
+
+    # 3. 상위 20개 키워드 추출
+    top20_keywords = sorted(keyword_assoc_count.items(), key=lambda x: x[1], reverse=True)[:20]
+
+    # 4. 각 키워드에 대해 연관어 리스트 표시
+    for kw, total_count in top20_keywords:
+        with st.expander(f"📌 {kw} (총 {total_count}회 연관)"):
+            sorted_terms = sorted(assoc_dict[kw], key=lambda x: x["count"], reverse=True)
+            for term in sorted_terms:
+                st.markdown(f"- 🔹 **{term['term']}** ({term['count']}회)")
 
 # --- 5. 하단(푸터) Top 20 키워드 + 관련 사이트
 st.divider()
