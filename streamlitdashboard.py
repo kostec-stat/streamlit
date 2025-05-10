@@ -55,6 +55,15 @@ except FileNotFoundError:
 try:
     trend_json = load_json(trend_path)
     trend_data = pd.DataFrame(trend_json["trend_data"])
+    trend_data["date"] = pd.to_datetime(trend_data["date"])  # 날짜 형식 변환
+    # 4. 총 빈도수 합산 기준 상위 10개 키워드 추출
+    keyword_cols = [col for col in trend_data.columns if col != "date"]
+    keyword_totals = trend_data[keyword_cols].sum().sort_values(ascending=False)
+    top_keywords = keyword_totals.head(10).index.tolist()
+
+    trend_data_long = trend_data.melt(id_vars=["date"], var_name="keyword", value_name="count")
+    trend_data_top10 = trend_data_long[trend_data_long["keyword"].isin(top_keywords)]
+
 except Exception as e:
     st.error(f"트렌드 데이터 로딩 실패: {e}")
     st.stop()
@@ -82,17 +91,17 @@ with tab1:
     selected_freq_df = freq_df[freq_df["keyword"] == selected_keyword]
     st.dataframe(selected_freq_df)
 
-    st.subheader(f"📈 전체 키워드 트렌드 차트")
-    trend_data_long = trend_data.melt(id_vars=["date"], var_name="keyword", value_name="count")
-    
-    chart = alt.Chart(trend_data_long).mark_line().encode(
-        x='date:T',
-        y='count:Q',
-        color='keyword:N',  # keyword별 색상
-        tooltip=['date:T', 'keyword:N', 'count:Q']
-    ).interactive()
-    
-    st.altair_chart(chart, use_container_width=True)
+    st.subheader(f"📈 빈도수 상위 10 키워드 트렌드 차트")
+    for keyword in top_keywords:
+        st.subheader(f"🔹 {keyword}")
+        df_kw = trend_data_top10[trend_data_top10["keyword"] == keyword]
+        
+        chart = alt.Chart(df_kw).mark_line(point=True).encode(
+            x='date:T',
+            y=alt.Y('count:Q', title='빈도수'),
+            color=alt.value('crimson')  # 단일 색상
+        )
+        st.altair_chart(chart, use_container_width=True)
 # --- 7.2 네트워크 그래프
 with tab2:
     st.subheader(f"🕸 {selected_keyword} 관련 네트워크")
