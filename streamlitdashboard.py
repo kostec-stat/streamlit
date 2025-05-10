@@ -114,45 +114,49 @@ with tab1:
     
 # --- 7.2 네트워크 그래프
 with tab2:
-    st.subheader("🕸 연관어 네트워크 Top 20 키워드 중심")
+    st.subheader("🕸 전체 키워드 네트워크 (Top 20 중심 연결망)")
 
-    # 1. keyword별 연결횟수 총합 계산
+    # 1. keyword별 연결 count 총합 계산
     keyword_link_count = defaultdict(int)
     for link in report["cooccurrence"]:
         keyword_link_count[link["source"]] += link["count"]
         keyword_link_count[link["target"]] += link["count"]
 
-    # 2. 상위 20개 키워드 선정
+    # 2. 상위 20개 중심 키워드 선정
     top20_keywords = sorted(keyword_link_count.items(), key=lambda x: x[1], reverse=True)[:20]
-    top20_keywords = [kw for kw, _ in top20_keywords]
+    top20_keywords = {kw for kw, _ in top20_keywords}
 
-    # 3. 키워드별 네트워크 생성
-    for keyword in top20_keywords:
-        with st.expander(f"📌 {keyword} 중심 네트워크"):
-            node_ids = set()
-            nodes = []
-            edges = []
+    # 3. Top 20 키워드 관련 링크만 필터링
+    filtered_links = [
+        link for link in report["cooccurrence"]
+        if link["source"] in top20_keywords or link["target"] in top20_keywords
+    ]
 
-            for link in report["cooccurrence"]:
-                if keyword in (link['source'], link['target']):
-                    source, target, count = link['source'], link['target'], link['count']
+    # 4. 전체 노드/엣지 구성
+    node_ids = set()
+    nodes = []
+    edges = []
 
-                    if source not in node_ids:
-                        nodes.append(Node(id=source, label=source, font={"color": "white"}))
-                        node_ids.add(source)
-                    if target not in node_ids:
-                        nodes.append(Node(id=target, label=target, font={"color": "white"}))
-                        node_ids.add(target)
+    for link in filtered_links:
+        source, target, count = link['source'], link['target'], link['count']
 
-                    edges.append(Edge(source=source, target=target, label=str(count)))
+        if source not in node_ids:
+            nodes.append(Node(id=source, label=source, font={"color": "white"}))
+            node_ids.add(source)
+        if target not in node_ids:
+            nodes.append(Node(id=target, label=target, font={"color": "white"}))
+            node_ids.add(target)
 
-            try:
-                config = Config(width=700, height=500, directed=False, physics=True, hierarchical=False)
-                agraph(nodes=nodes, edges=edges, config=config)
-            except Exception as e:
-                st.error(f"{keyword} 네트워크 그래프 로딩 실패: {e}")
+        edges.append(Edge(source=source, target=target, label=str(count)))
 
-    # --- 7.3 연관어 통계
+    # 5. 네트워크 시각화
+    try:
+        config = Config(width=900, height=700, directed=False, physics=True, hierarchical=False)
+        agraph(nodes=nodes, edges=edges, config=config)
+    except Exception as e:
+        st.error(f"전체 네트워크 그래프 로딩 실패: {e}")
+
+# --- 7.3 연관어 통계
 with tab3:
     st.subheader("🔍 연관어가 많은 상위 20개 키워드")
 
