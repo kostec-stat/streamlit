@@ -43,7 +43,7 @@ summary_type = st.sidebar.selectbox("주기별 요약 보고서 선택", ["전�
 st.title("📈 키워드 대시보드")
     
 # --- 6-1. 데이터 경로 설정
-report_path = f"assets/reports/{selected_keyword}_{selected_snapshot}.json"
+#report_path = f"assets/reports/{selected_keyword}_{selected_snapshot}.json"
 trend_path = f"assets/data/{snapshot_dates[-1]}_trend_summary.json"
 search_results_path = f"assets/data/{selected_snapshot}_search_results.csv"
 
