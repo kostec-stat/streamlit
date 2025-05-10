@@ -60,10 +60,10 @@ try:
     # 4. 총 빈도수 합산 기준 상위 10개 키워드 추출
     keyword_cols = [col for col in trend_data.columns if col != "date"]
     keyword_totals = trend_data[keyword_cols].sum().sort_values(ascending=False)
-    top_keywords = keyword_totals.head(10).index.tolist()
+    top_keywords = keyword_totals.head(20).index.tolist()
 
     trend_data_long = trend_data.melt(id_vars=["date"], var_name="keyword", value_name="count")
-    trend_data_top10 = trend_data_long[trend_data_long["keyword"].isin(top_keywords)]
+    trend_data_top20 = trend_data_long[trend_data_long["keyword"].isin(top_keywords)]
 
 except Exception as e:
     st.error(f"트렌드 데이터 로딩 실패: {e}")
@@ -93,16 +93,23 @@ with tab1:
     st.dataframe(selected_freq_df)
 
     st.subheader(f"📈 빈도수 상위 10 키워드 트렌드 차트")
-    for keyword in top_keywords:
-        st.subheader(f"🔹 {keyword}")
-        df_kw = trend_data_top10[trend_data_top10["keyword"] == keyword]
-        
-        chart = alt.Chart(df_kw).mark_line(point=True).encode(
-            x='date:T',
-            y=alt.Y('count:Q', title='빈도수'),
-            color=alt.value('crimson')  # 단일 색상
-        )
-        st.altair_chart(chart, use_container_width=True)
+    n_cols = 5
+    rows = [top_keywords[i:i + n_cols] for i in range(0, len(top_keywords), n_cols)]
+    
+    for row_keywords in rows:
+        cols = st.columns(n_cols)
+        for idx, keyword in enumerate(row_keywords):
+            with cols[idx]:
+                st.markdown(f"**{keyword}**")
+                df_kw = trend_data_top20[trend_data_top20["keyword"] == keyword]
+    
+                chart = alt.Chart(df_kw).mark_line(point=True).encode(
+                    x=alt.X('date:T', axis=alt.Axis(labelFontSize=8, titleFontSize=10)),
+                    y=alt.Y('count:Q', title='', axis=alt.Axis(labelFontSize=8)),
+                    color=alt.value('crimson')
+                ).properties(width=220, height=180)
+    
+                st.altair_chart(chart, use_container_width=False)
     
 # --- 7.2 네트워크 그래프
 with tab2:
