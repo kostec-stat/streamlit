@@ -8,7 +8,8 @@ import json
 import altair as alt
 import networkx as nx
 from streamlit_agraph import agraph, Node, Edge, Config
-import os, io, xlsxwriter
+import os, io
+import xlsxwriter
 from collections import defaultdict
 
 # --- 1. 설정 (가장 먼저)
