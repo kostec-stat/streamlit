@@ -48,11 +48,11 @@ trend_path = f"assets/data/{snapshot_dates[-1]}_trend_summary.json"
 #search_results_path = f"assets/data/{selected_snapshot}_search_results.csv"
 
 # --- 6-2. 데이터 로딩
-try:
-    report = load_json(report_path)
-except FileNotFoundError:
-    st.error(f"보고서 파일을 찾을 수 없습니다: {report_path}")
-    st.stop()
+#try:
+#    report = load_json(report_path)
+#except FileNotFoundError:
+#    st.error(f"보고서 파일을 찾을 수 없습니다: {report_path}")
+#    st.stop()
 
 try:
     trend_json = load_json(trend_path)
@@ -70,18 +70,12 @@ except Exception as e:
     st.error(f"트렌드 데이터 로딩 실패: {e}")
     st.stop()
 
-try:
-    df = pd.read_csv(search_results_path, encoding="utf-8-sig")
-    df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
-except FileNotFoundError:
-    st.error(f"검색 결과 파일을 찾을 수 없습니다: {search_results_path}")
-    st.stop()
-    
-try:
-    report = load_json(report_path)
-except FileNotFoundError:
-    st.error("보고서 파일을 찾을 수 없습니다.")
-    st.stop()
+#try:
+#    df = pd.read_csv(search_results_path, encoding="utf-8-sig")
+#    df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
+#except FileNotFoundError:
+#    st.error(f"검색 결과 파일을 찾을 수 없습니다: {search_results_path}")
+#    st.stop()
     
 # 탭
 tab1, tab2, tab3 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관어"])
