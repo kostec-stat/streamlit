@@ -10,6 +10,7 @@ import networkx as nx
 from streamlit_agraph import agraph, Node, Edge, Config
 import os, io
 import xlsxwriter
+import zipfile
 from collections import defaultdict
 
 # --- 1. 설정 (가장 먼저)
@@ -71,15 +72,15 @@ except Exception as e:
     st.error(f"트렌드 데이터 로딩 실패: {e}")
     st.stop()
 
-#try:
-#    df = pd.read_csv(search_results_path, encoding="utf-8-sig")
-#    df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
-#except FileNotFoundError:
-#    st.error(f"검색 결과 파일을 찾을 수 없습니다: {search_results_path}")
-#    st.stop()
+try:
+    df = pd.read_csv(search_results_path, encoding="utf-8-sig")
+    df["full_text"] = df["title"].fillna('') + " " + df["snippet"].fillna('')
+except FileNotFoundError:
+    st.error(f"검색 결과 파일을 찾을 수 없습니다: {search_results_path}")
+    st.stop()
     
 # 탭
-tab1, tab2, tab3, tab4 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관어", "🏆 보고서"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관어", "🏆 보고서", "📥 다운로드"])
 
 # --- 7.1 빈도수 통계
 with tab1:
@@ -236,29 +237,6 @@ with tab4:
         keyword_counter = {kw: df["full_text"].str.contains(kw, na=False, regex=False).sum() for kw in keywords}
         top_keywords = sorted(keyword_counter.items(), key=lambda x: x[1], reverse=True)[:20]
         
-        # 관련 기사 정리
-        keyword_sections = {}
-        for kw, _ in top_keywords:
-            matched_rows = df[df["full_text"].str.contains(kw, na=False, regex=False)].copy()
-            matched_rows = matched_rows[["title", "link", "snippet"]]
-            matched_rows["snippet"] = matched_rows["snippet"].str.slice(0, 200)
-            keyword_sections[kw] = matched_rows
-    
-        # 📁 엑셀 버퍼 생성
-        output = io.BytesIO()
-        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-            for kw, sub_df in keyword_sections.items():
-                sheet_name = kw[:31]  # 시트 이름은 31자 제한
-                sub_df.to_excel(writer, index=False, sheet_name=sheet_name)
-    
-        # 📥 다운로드 버튼
-        st.download_button(
-            label="📥 키워드별 관련 기사 엑셀 다운로드",
-            data=output.getvalue(),
-            file_name=f"{snapshot_dates[-1]}_top20_keywords.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-    
         # 👁️ 기존 UI도 유지
         for idx, (kw, count) in enumerate(top_keywords, 1):
             with st.expander(f"**{idx}. {kw}** ({count}회 등장)", expanded=False):
@@ -266,3 +244,59 @@ with tab4:
                     st.markdown(f"- [{row['title']}]({row['link']})")
                     st.caption(f"{row['snippet'][:80]}...")
 
+with tab5: 
+    st.subheader("📦 스냅샷 엑셀 다운로드")
+
+    # 1. 단일 스냅샷 선택
+    selected_snapshot = st.selectbox("📅 다운로드할 스냅샷 선택", snapshot_dates[::-1])
+    search_results_path = f"assets/data/{selected_snapshot}_search_results.csv"
+
+    try:
+        df = pd.read_csv(search_results_path, encoding="utf-8-sig")
+
+        # 엑셀로 변환
+        output = io.BytesIO()
+        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+            df.to_excel(writer, index=False, sheet_name="search_results")
+        output.seek(0)  # 버퍼 리셋
+
+        st.download_button(
+            label=f"📥 {selected_snapshot} 검색 결과 엑셀 다운로드",
+            data=output.getvalue(),
+            file_name=f"{selected_snapshot}_search_results.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+    except FileNotFoundError:
+        st.error(f"❌ 파일이 존재하지 않습니다: {search_results_path}")
+
+    st.markdown("---")
+
+    # 2. 전체 ZIP 다운로드
+    if st.button("📥 전체 스냅샷 ZIP 다운로드"):
+        zip_buffer = io.BytesIO()
+
+        with zipfile.ZipFile(zip_buffer, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
+            for snapshot in snapshot_dates:
+                csv_path = f"assets/data/{snapshot}_search_results.csv"
+                try:
+                    df = pd.read_csv(csv_path, encoding="utf-8-sig")
+
+                    excel_buffer = io.BytesIO()
+                    with pd.ExcelWriter(excel_buffer, engine="xlsxwriter") as writer:
+                        df.to_excel(writer, index=False, sheet_name="search_results")
+                    excel_buffer.seek(0)
+
+                    zf.writestr(f"{snapshot}_search_results.xlsx", excel_buffer.getvalue())
+
+                except FileNotFoundError:
+                    st.warning(f"❌ 파일 없음: {csv_path}")
+                    continue
+
+        zip_buffer.seek(0)
+        st.download_button(
+            label="📦 전체 스냅샷 ZIP 다운로드",
+            data=zip_buffer.getvalue(),
+            file_name="all_snapshots_search_results.zip",
+            mime="application/zip"
+        )
