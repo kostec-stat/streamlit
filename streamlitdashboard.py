@@ -82,16 +82,22 @@ tab1, tab2, tab3 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관�
 
 # --- 7.1 빈도수 통계
 with tab1:
-    st.subheader("📊 전체 키워드 빈도수 통계")
+    st.subheader("📊 주기별 키워드 빈도수 통계")
 
-    keyword_totals_df = keyword_totals.reset_index()
-    keyword_totals_df.columns = ["keyword", "count"]
+    trend_df = trend_data.copy()
+    trend_df["date"] = trend_df["date"].dt.strftime("%Y-%m-%d")  # 날짜 포맷 예쁘게
 
-    # 0 이상만 필터링
-    keyword_totals_df = keyword_totals_df[keyword_totals_df["count"] > 0].reset_index(drop=True)
+    # 0인 값 제거를 위해 melt 후 다시 피벗
+    trend_long = trend_df.melt(id_vars="date", var_name="keyword", value_name="count")
+    trend_long = trend_long[trend_long["count"] > 0]  # 0 빈도 제거
 
-    # 표로 출력
-    st.dataframe(keyword_totals_df, use_container_width=True)
+    # 날짜 x 키워드 테이블 구성
+    trend_pivot = trend_long.pivot_table(index="date", columns="keyword", values="count", fill_value=0)
+
+    # keyword 알파벳/한글 순 정렬
+    trend_pivot = trend_pivot.reindex(sorted(trend_pivot.columns), axis=1)
+
+    st.dataframe(trend_pivot, use_container_width=True)
     
     st.subheader(f"📈 빈도수 상위 20 키워드 트렌드 차트")
     n_cols = 5
