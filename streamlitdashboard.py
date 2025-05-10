@@ -78,7 +78,7 @@ except Exception as e:
 #    st.stop()
     
 # 탭
-tab1, tab2, tab3 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관어"])
+tab1, tab2, tab3, tab4 = st.tabs(["📊 빈도수", "🕸 네트워크", "🔍 연관어", "🏆 보고서"])
 
 # --- 7.1 빈도수 통계
 with tab1:
@@ -217,10 +217,10 @@ with tab3:
         else:
             col2.write(text)
 
-# --- 5. 하단(푸터) Top 20 키워드 + 관련 사이트
-st.divider()
+# --- 7.4 Top 20 키워드 + 관련 사이트
+with tab4:
 if summary_type == "전체":
-    st.subheader("🏆 요약 보고서: Top 20 키워드 및 관련 사이트")
+    st.subheader("🏆Top 20 키워드와 관련 사이트")
     
     # 데이터 읽기 (full_text 생성 포함)
     search_results_path = f"assets/data/{snapshot_dates[-1]}_search_results.csv"
