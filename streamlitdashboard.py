@@ -440,29 +440,34 @@ with tab5:
     df_global_summary["zh_keyword"] = df_global_summary["Keyword"].str.strip().str.lower().map(map_dict)
     
     matched_zh = set(df_global_summary["zh_keyword"].dropna())
-    intersection = zh_set & matched_zh
-    only_domestic = zh_set - matched_zh
-    only_global = matched_zh - zh_set
-
-    # 1. 국내 순위표 생성
-    dom_rank = (
+    # 1. 국내 순위표
+    df_rank_china = (
         df_summary
         .groupby("Keyword", as_index=False)["Keyword Count"].sum()
         .assign(Rank_China=lambda df: df["Keyword Count"].rank(ascending=False, method="min").astype(int))
-        [["Keyword", "Rank_China"]]
+        .sort_values("Rank_China")
+        [["Rank_China", "Keyword", "Keyword Count"]]
     )
     
-    # 2. 글로벌 순위표 생성
-    glob_rank = (
+    # 2. 글로벌 순위표 (zh_keyword 기준)
+    df_rank_global = (
         df_global_summary
         .groupby("zh_keyword", as_index=False)["Keyword Count"].sum()
         .assign(Rank_Global=lambda df: df["Keyword Count"].rank(ascending=False, method="min").astype(int))
+        .sort_values("Rank_Global")
         .rename(columns={"zh_keyword": "Keyword"})
-        [["Keyword", "Rank_Global"]]
+        [["Rank_Global", "Keyword", "Keyword Count"]]
     )
 
-    df_rank_table = pd.merge(dom_rank, glob_rank, on="Keyword", how="outer")
-    df_rank_table = df_rank_table.sort_values(by=["Rank_China", "Rank_Global"], na_position="last")
+    st.markdown("### 🏅 중국 vs 글로벌 키워드 순위 나란히 비교")
     
-    st.markdown("### 📋 중국(Rank_China) vs 글로벌(Rank_Global) 키워드 순위 비교")
-    st.dataframe(df_rank_table, use_container_width=True)
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 🇨🇳 중국 키워드 순위 (Rank_China)")
+        st.dataframe(df_rank_china.reset_index(drop=True), use_container_width=True)
+    
+    with col2:
+        st.markdown("#### 🌍 글로벌 키워드 순위 (Rank_Global)")
+        st.dataframe(df_rank_global.reset_index(drop=True), use_container_width=True)
+
