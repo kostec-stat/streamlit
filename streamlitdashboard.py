@@ -57,13 +57,13 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
                 current_date=current_date,        # '20250518' 같은 문자열
                 source_sites=source_sites        # 문자열 또는 사이트 목록
             )
-            st.write(prompt1)
+            #st.write(prompt1)
             prompt2 = prompt_template.format(
                 keywords=en_keywords,        # 문자열 또는 리스트 join한 값
                 current_date=current_date,        # '20250518' 같은 문자열
                 source_sites="*"        # 문자열 또는 사이트 목록
             )
-            st.write(prompt2)
+            #st.write(prompt2)
                 # Claude API 호출
             message = client.messages.create(
                 model="claude-3-7-sonnet-20250219",
@@ -72,7 +72,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
                 messages=[{"role": "user", "content": [{"type": "text", "text": prompt1}]}]
             )
     
-            st.write(prompt1)
+            #st.write(prompt1)
             
                 # 결과 파싱
             text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
@@ -101,11 +101,6 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         
                 # 저장
             excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
-            with pd.ExcelWriter(excel_path, engine="xlsxwriter") as writer:
-                df_sheet1.to_excel(writer, index=False, sheet_name="Summary Table")
-                df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
-                pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
-    
                 # 동시출현 및 연관어 분석
             df_summary = df_sheet1.iloc[1:].reset_index(drop=True)
             df_summary.columns = [col.strip() for col in df_summary.columns]
@@ -126,6 +121,8 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         
             with pd.ExcelWriter(excel_path, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
                 df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
+                df_sheeet2.to_excel(writer, index=False, sheet_name="Sources")
+                pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
                 df_cooccur.to_excel(writer, index=False, sheet_name="Cooccurrence")
                 df_association.to_excel(writer, index=False, sheet_name="Associations")
         
