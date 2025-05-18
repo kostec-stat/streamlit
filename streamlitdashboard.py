@@ -30,7 +30,6 @@ snapshot_dates = sorted({os.path.basename(f).split("_")[0] for f in snapshot_fil
 selected_snapshot = st.sidebar.selectbox("📅 스냅샷 날짜 선택", snapshot_dates)
 excel_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
 
-
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🛰 주간 동향 수집")
 	with st.spinner(f"📡 {st.session_state['current_date']} 기준 수집 중입니다..."):
