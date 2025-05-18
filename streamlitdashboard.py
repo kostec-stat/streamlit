@@ -418,10 +418,13 @@ with tab5:
         st.stop()
 
     # 4. 글로벌 키워드 매핑 (영문 → 중문)
-    map_dict = dict(zip(df_map["en_keyword"], df_map["zh_keyword"]))
-
-    # df_global_summary에 zh_keyword 컬럼 직접 생성
-    df_global_summary["zh_keyword"] = df_global_summary["Keyword"].map(map_dict)
+    map_dict = {
+        en.strip().lower(): zh.strip()
+        for en, zh in zip(df_map["en_keyword"], df_map["zh_keyword"])
+    }
+    
+    # df_global_summary의 Keyword도 정규화해서 매핑
+    df_global_summary["zh_keyword"] = df_global_summary["Keyword"].str.strip().str.lower().map(map_dict)
 
     st.write(df_global_summary)
     
