@@ -227,8 +227,17 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # --- TAB 1: 빈도수 통계
 with tab1:
     st.subheader("📌 5줄 요약")
-    df_exec = df_exec.iloc[1:].reset_index(drop=True)
-    st.markdown(df_exec.iloc[0, 0])
+    df_exec.columns = [c.strip() for c in df_exec.columns]
+
+    # 모든 셀을 문자열로 합친 후, '1.'부터 시작하는 부분 추출
+    full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
+    start_index = full_text.find("1.")
+
+    if start_index != -1:
+        cleaned_summary = full_text[start_index:].strip()
+        st.markdown(cleaned_summary)
+    else:
+        st.warning("⚠️ '1.'로 시작하는 요약 본문을 찾을 수 없습니다.")
 
     download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
     try:
