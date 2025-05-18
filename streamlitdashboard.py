@@ -27,10 +27,9 @@ input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today
 api_token = st.sidebar.text_input("🔐 수집 암호 입력", type="password")
 github_token = st.sidebar.text_input("🪪 업로드 암호 입력", type="password")
 
-current_date = input_date
 if isinstance(input_date, tuple):
-    current_date = input_date[0]
-print(current_date)
+    input_date = input_date[0]
+    print(current_date)
             # 다시 확인: 날짜 형식인지
 if isinstance(input_date, (date, datetime)):
     current_date = datetime.strptime(str(input_date), "%Y-%m-%d").strftime("%Y%m%d")
