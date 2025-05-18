@@ -20,7 +20,15 @@ def local_css(file_name):
 
 local_css("assets/css/main.css")
 
-# --- 3. 파일 선택 및 로딩
+# --- 3. 사이드바 
+
+
+input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today())
+api_token = st.sidebar.text_input("🔐 API 토큰 입력", type="password")
+if st.sidebar.button("🛰 주간 동향 수집 시작"):
+    st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
+
+st.sidebar.markdown("---")
 snapshot_dates = ['20250418', '20250425', '20250502', '20250509', '20250516']
 selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
 excel_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
