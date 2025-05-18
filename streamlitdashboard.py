@@ -130,7 +130,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         
             with open(file_path, "rb") as f:
                 content = f.read()
-            path_in_repo = f"data/{current_date}_trend_summary.xlsx"
+            path_in_repo = f"assets/data/{current_date}_trend_summary.xlsx"
         
             try:
                 existing_file = repo.get_contents(path_in_repo)
