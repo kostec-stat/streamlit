@@ -18,8 +18,8 @@ st.set_page_config(page_title="한중과기협력센터 키워드 대시보드",
 
 # --- 2. CSS 적용
 def local_css(file_name):
-    with open(file_name, "r", encoding="utf-8") as f:
-        css_content = f.read()
+	with open(file_name, "r", encoding="utf-8") as f:
+    	css_content = f.read()
     st.markdown(f"<style>{css_content}</style>", unsafe_allow_html=True)
 
 local_css("assets/css/main.css")
@@ -39,9 +39,9 @@ api_token = st.text_input("🔐 Claude API 토큰", type="password", key="expand
 github_token = st.text_input("🪪 GitHub Token", type="password", key="expander_git")
         
 if st.button("🚀 수집 시작(중국)", key="expander_run"):
-    with st.spinner(f"📡 {st.session_state['current_date']} 기준 수집 중입니다... 최대 3~5분 소요."):
-        try:
-            import os
+	with st.spinner(f"📡 {st.session_state['current_date']} 기준 수집 중입니다... 최대 3~5분 소요."):
+    	try:
+        	import os
             import anthropic
             import re
             from io import StringIO
@@ -103,8 +103,8 @@ if st.button("🚀 수집 시작(중국)", key="expander_run"):
             
             st.write("Step 3: RE전 sheet1:" + sheet1_text)
             st.write("Step 3: RE전 sheet2:" + sheet2_text)
-                    
-            sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet1_text, re.DOTALL)
+
+			sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet1_text, re.DOTALL)
 			sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet2_text, re.DOTALL)
                     
             sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
