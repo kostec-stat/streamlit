@@ -4,3 +4,4 @@ altair
 networkx
 streamlit_agraph
 openpyxl
+anthropic
