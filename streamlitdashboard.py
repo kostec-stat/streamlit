@@ -27,96 +27,96 @@ input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today
 api_token = st.sidebar.text_input("🔐 API 토큰 입력", type="password")
 if st.sidebar.button("🛰 주간 동향 수집 시작"):
     with st.spinner("⏳ Claude API를 통해 주간 동향을 수집하고 있습니다. 약 3~5분 정도 소요됩니다..."):
-    try:
-        import os
-        import anthropic
-        import re
-        from io import StringIO
-        from itertools import combinations
-        from openpyxl import load_workbook
+        try:
+            import os
+            import anthropic
+            import re
+            from io import StringIO
+            from itertools import combinations
+            from openpyxl import load_workbook
+    
+            # API 연결
+            client = anthropic.Anthropic(api_key=api_token)
+    
+            with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
+                keywords = f.read().strip()
+            with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
+                en_keywords = f.read().strip()
+            with open("assets/input/sites.txt", "r", encoding="utf-8") as f:
+                source_sites = f.read().strip()
+            with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
+                prompt = f.read().strip()
+    
+            current_date = input_date.strftime("%Y%m%d")
+    
+            # Claude API 호출
+            message = client.messages.create(
+                model="claude-3-7-sonnet-20250219",
+                max_tokens=20000,
+                temperature=1,
+                messages=[{"role": "user", "content": [{"type": "text", "text": prompt}]}]
+            )
+    
+            # 결과 파싱
+            text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
+            match = re.search(r"<excel_report>(.*?)</excel_report>", text_data, re.DOTALL)
+            text_block = match.group(0) if match else None
+    
+            sheet1_start = text_block.find("<sheet1>")
+            sheet1_end = text_block.find("</sheet1>")
+            sheet2_start = text_block.find("<sheet2>")
+            sheet2_end = text_block.find("</sheet2>")
+            summary_start = text_block.find("<executive_summary>")
+            summary_end = text_block.find("</executive_summary>")
+    
+            sheet1_text = text_block[sheet1_start:sheet1_end]
+            sheet2_text = text_block[sheet2_start:sheet2_end]
+            executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
+    
+            sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet1_text)
+            sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet2_text)
+    
+            sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
+            sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
+    
+            df_sheet1 = pd.read_csv(StringIO(sheet1_table_md), sep="|", engine="python").dropna(axis=1, how="all")
+            df_sheet2 = pd.read_csv(StringIO(sheet2_table_md), sep="|", engine="python").dropna(axis=1, how="all")
+    
+            # 저장
+            excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
+            with pd.ExcelWriter(excel_path, engine="xlsxwriter") as writer:
+                df_sheet1.to_excel(writer, index=False, sheet_name="Summary Table")
+                df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
+                pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
 
-        # API 연결
-        client = anthropic.Anthropic(api_key=api_token)
-
-        with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
-            keywords = f.read().strip()
-        with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
-            en_keywords = f.read().strip()
-        with open("assets/input/sites.txt", "r", encoding="utf-8") as f:
-            source_sites = f.read().strip()
-        with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
-            prompt = f.read().strip()
-
-        current_date = input_date.strftime("%Y%m%d")
-
-        # Claude API 호출
-        message = client.messages.create(
-            model="claude-3-7-sonnet-20250219",
-            max_tokens=20000,
-            temperature=1,
-            messages=[{"role": "user", "content": [{"type": "text", "text": prompt}]}]
-        )
-
-        # 결과 파싱
-        text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
-        match = re.search(r"<excel_report>(.*?)</excel_report>", text_data, re.DOTALL)
-        text_block = match.group(0) if match else None
-
-        sheet1_start = text_block.find("<sheet1>")
-        sheet1_end = text_block.find("</sheet1>")
-        sheet2_start = text_block.find("<sheet2>")
-        sheet2_end = text_block.find("</sheet2>")
-        summary_start = text_block.find("<executive_summary>")
-        summary_end = text_block.find("</executive_summary>")
-
-        sheet1_text = text_block[sheet1_start:sheet1_end]
-        sheet2_text = text_block[sheet2_start:sheet2_end]
-        executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
-
-        sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet1_text)
-        sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet2_text)
-
-        sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
-        sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
-
-        df_sheet1 = pd.read_csv(StringIO(sheet1_table_md), sep="|", engine="python").dropna(axis=1, how="all")
-        df_sheet2 = pd.read_csv(StringIO(sheet2_table_md), sep="|", engine="python").dropna(axis=1, how="all")
-
-        # 저장
-        excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
-        with pd.ExcelWriter(excel_path, engine="xlsxwriter") as writer:
-            df_sheet1.to_excel(writer, index=False, sheet_name="Summary Table")
-            df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
-            pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
-
-        # 동시출현 및 연관어 분석
-        df_summary = df_sheet1.iloc[1:].reset_index(drop=True)
-        df_summary.columns = [col.strip() for col in df_summary.columns]
-        keywords_list = [kw.strip() for kw in df_summary["Keyword"].dropna().unique().tolist()]
-
-        cooccur_counter = defaultdict(int)
-        association_counter = defaultdict(int)
-        for _, row in df_summary.iterrows():
-            text = (str(row.get("Detailed Summary", "")) + " " + str(row.get("Short Summary", ""))).lower()
-            present_keywords = [kw for kw in keywords_list if kw.lower() in text]
-            for kw1, kw2 in combinations(sorted(set(present_keywords)), 2):
-                cooccur_counter[(kw1, kw2)] += 1
-            for kw in present_keywords:
-                association_counter[kw] += 1
-
-        df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
-        df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
-
-        with pd.ExcelWriter(excel_path, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
-            df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
-            df_cooccur.to_excel(writer, index=False, sheet_name="Cooccurrence")
-            df_association.to_excel(writer, index=False, sheet_name="Associations")
-
-        st.sidebar.success(f"✅ {current_date} 기준 주간 동향 수집 및 저장 완료!")
-
-    except Exception as e:
-        st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
-    st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
+            # 동시출현 및 연관어 분석
+            df_summary = df_sheet1.iloc[1:].reset_index(drop=True)
+            df_summary.columns = [col.strip() for col in df_summary.columns]
+            keywords_list = [kw.strip() for kw in df_summary["Keyword"].dropna().unique().tolist()]
+    
+            cooccur_counter = defaultdict(int)
+            association_counter = defaultdict(int)
+            for _, row in df_summary.iterrows():
+                text = (str(row.get("Detailed Summary", "")) + " " + str(row.get("Short Summary", ""))).lower()
+                present_keywords = [kw for kw in keywords_list if kw.lower() in text]
+                for kw1, kw2 in combinations(sorted(set(present_keywords)), 2):
+                    cooccur_counter[(kw1, kw2)] += 1
+                for kw in present_keywords:
+                    association_counter[kw] += 1
+    
+            df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
+            df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
+    
+            with pd.ExcelWriter(excel_path, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
+                df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
+                df_cooccur.to_excel(writer, index=False, sheet_name="Cooccurrence")
+                df_association.to_excel(writer, index=False, sheet_name="Associations")
+    
+            st.sidebar.success(f"✅ {current_date} 기준 주간 동향 수집 및 저장 완료!")
+    
+        except Exception as e:
+            st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
+        st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
 
 st.sidebar.markdown("---")
 snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
