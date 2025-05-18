@@ -119,7 +119,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
             df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
         
-            with pd.ExcelWriter(excel_path, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
+            with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w", if_sheet_exists="replace") as writer:
                 df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
                 df_sheeet2.to_excel(writer, index=False, sheet_name="Sources")
                 pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
