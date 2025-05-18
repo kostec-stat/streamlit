@@ -113,19 +113,35 @@ with tab1:
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
-    st.subheader("동시출현 네트워크")
+    st.subheader("🕸 동시출현 네트워크")
+    # 사용자 선택 드롭다운
+    selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
+    layout_config = layout_options[selected_layout]
 
-    config = Config(width=900, height=700, directed=False, physics=True,
-                    hierarchical=False, nodeHighlightBehavior=True, highlightColor="#FFCC00",
-                    collapsible=True, node={"color": "#00BFFF"}, edge={"color": "#AAAAAA"})
+    # 노드/엣지 구성
+    nodes = [Node(id=row["source"], label=row["source"], font={"color": "white"}) for row in df_cooccur.itertuples()]
+    nodes += [Node(id=row["target"], label=row["target"], font={"color": "white"}) for row in df_cooccur.itertuples()]
+    nodes = {n.id: n for n in nodes}.values()  # 중복 제거
 
-    top_links = df_cooccur.sort_values("count", ascending=False).head(100)
-    top_nodes = pd.unique(top_links[['source', 'target']].values.ravel())
+    edges = [Edge(source=row.source, target=row.target, label=str(row.count)) for row in df_cooccur.itertuples()]
 
-    nodes = [Node(id=kw, label=kw, font={"color": "white"}) for kw in top_nodes]
-    edges = [Edge(source=row['source'], target=row['target'], label=str(row['count'])) for _, row in top_links.iterrows()]
+    # 네트워크 config 설정
+    config = Config(
+        width=900,
+        height=700,
+        nodeHighlightBehavior=True,
+        highlightColor="#FFCC00",
+        collapsible=True,
+        node={"color": "#00BFFF"},
+        edge={"color": "#AAAAAA"},
+        **layout_config
+    )
 
-    agraph(nodes=nodes, edges=edges, config=config)
+    try:
+        agraph(nodes=nodes, edges=edges, config=config)
+    except Exception as e:
+        st.error(f"❌ 네트워크 그래프 렌더링 실패: {e}")
+
 
 # --- TAB 3: 연관어
 with tab3:
