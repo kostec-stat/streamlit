@@ -240,7 +240,7 @@ if st.button("🚀 수집 시작(글로벌)", key="expander_run"):
             st.write("Step 3-1: 시트 응답1" + df_sheet1)
             st.write("Step 3-2: 시트 응답2" + df_sheet2)
                             # 저장
-            excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
+            excel_path = f"assets/data/{current_date}_trend_summary_en.xlsx"
                             # 동시출현 및 연관어 분석
             df_summary = df_sheet1.iloc[1:].reset_index(drop=True)
             df_summary.columns = [col.strip() for col in df_summary.columns]
