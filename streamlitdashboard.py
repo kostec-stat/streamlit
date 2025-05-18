@@ -29,10 +29,9 @@ github_token = st.sidebar.text_input("🪪 업로드 암호 입력", type="passw
 
 if isinstance(input_date, tuple):
     input_date = input_date[0]
-    print(current_date)
             # 다시 확인: 날짜 형식인지
 if isinstance(input_date, (date, datetime)):
-    current_date = datetime.strptime(str(input_date), "%Y-%m-%d").strftime("%Y%m%d")
+    current_date = input_date.strftime("%Y%m%d")
 else:
     st.error("❌ 날짜 형식이 올바르지 않습니다.")
     st.stop()
@@ -141,8 +140,6 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
     
         except Exception as e:
             st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
-    
-        st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
         
         from github import Github
         repo_name = "kostec-stat/streamlit"
@@ -162,7 +159,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             except Exception:
                 repo.create_file(path_in_repo, f"add {path_in_repo}", content)
         
-            st.success(f"✅ {current_date} 기준 주간 동향 수집, 저장 및 GitHub 업로드 완료!")
+            st.success(f" {current_date} 기준 주간 동향 수집, 저장 및 GitHub 업로드 완료!")
         except Exception as upload_err:
             st.warning(f"⚠️ 수집은 완료되었으나 GitHub 업로드 실패: {upload_err}")
                 
