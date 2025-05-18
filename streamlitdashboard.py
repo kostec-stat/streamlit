@@ -24,7 +24,8 @@ local_css("assets/css/main.css")
 
 # --- 3. 사이드바 
 input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today())
-api_token = st.sidebar.text_input("🔐 API 토큰 입력", type="password")
+api_token = st.sidebar.text_input("🔐 수집 암호 입력", type="password")
+github_token = st.sidebar.text_input("🪪 업로드 암호 입력", type="password")
 if st.sidebar.button("🛰 주간 동향 수집 시작"):
     with st.spinner("⏳ Claude API를 통해 주간 동향을 수집하고 있습니다. 약 3~5분 정도 소요됩니다..."):
         try:
@@ -117,7 +118,31 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         except Exception as e:
             st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
         st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
-
+        from github import Github
+        repo_name = "YOUR_GITHUB_USERNAME/YOUR_REPO_NAME"
+        file_path = f"assets/data/{current_date}_trend_summary.xlsx"
+        
+        try:
+            g = Github(github_token)
+            repo = g.get_repo(repo_name)
+        
+            with open(file_path, "rb") as f:
+                content = f.read()
+            path_in_repo = f"data/{current_date}_trend_summary.xlsx"
+        
+            try:
+                existing_file = repo.get_contents(path_in_repo)
+                repo.update_file(existing_file.path, f"update {path_in_repo}", content, existing_file.sha)
+            except Exception:
+                repo.create_file(path_in_repo, f"add {path_in_repo}", content)
+        
+            st.success(f"✅ {current_date} 기준 주간 동향 수집, 저장 및 GitHub 업로드 완료!")
+        except Exception as upload_err:
+            st.warning(f"⚠️ 수집은 완료되었으나 GitHub 업로드 실패: {upload_err}")
+        
+            except Exception as e:
+                st.error(f"❌ 수집 중 오류 발생: {e}")
+            st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
 st.sidebar.markdown("---")
 snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
 snapshot_dates = sorted({os.path.basename(f).split("_")[0] for f in snapshot_files})
