@@ -41,6 +41,14 @@ except Exception as e:
     st.error(f"분석데이터 로드 실패: {e}")
     st.stop()
 
+df_summary.columns = [col.strip() for col in df_summary.columns]
+
+# 존재하는 컬럼인지 확인
+if "Keyword Count" not in df_summary.columns:
+    st.error("❌ 'Keyword Count' 컬럼을 찾을 수 없습니다.")
+    st.write("🔎 현재 컬럼 목록:", df_summary.columns.tolist())
+    st.stop()
+
 # --- 4. 탭 구성
 tab1, tab2, tab3, tab4 = st.tabs([
     "📊 빈도수", 
