@@ -21,7 +21,7 @@ def local_css(file_name):
 local_css("assets/css/main.css")
 
 # --- 3. 파일 선택 및 로딩
-snapshot_dates = ['20250418', '20250425', '20250502', '20250509', '20250518']
+snapshot_dates = ['20250418', '20250425', '20250502', '20250509', '20250516']
 selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
 excel_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
 
