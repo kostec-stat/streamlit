@@ -41,7 +41,7 @@ github_token = st.text_input("🪪 GitHub Token", type="password", key="expander
 if st.button("🚀 수집 시작(중국)", key="expander_run"):
     with st.spinner(f"📡 {st.session_state['current_date']} 기준 수집 중입니다... 최대 3~5분 소요."):
         try:
-        	import os
+            import os
             import anthropic
             import re
             from io import StringIO
