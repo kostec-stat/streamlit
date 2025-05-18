@@ -460,8 +460,10 @@ with tab5:
         .rename(columns={"zh_keyword": "Keyword"})
         [["Keyword", "Rank_Global"]]
     )
-    
+
+    st.markdown(glob_rank.to_html(escape=False, index=False), unsafe_allow_html=True)
     # 3. 병합 및 순위 차이 계산
+    """
     df_rank_compare = pd.merge(dom_rank, glob_rank, on="Keyword", how="outer")  # 전체 키워드 포함
     df_rank_compare["Rank_Diff"] = df_rank_compare["Rank_Domestic"] - df_rank_compare["Rank_Global"]
 
@@ -494,6 +496,6 @@ with tab5:
     
     st.markdown("### 🏅 Top 20 키워드 기반 순위 차이")
     st.altair_chart(chart_top20, use_container_width=True)
-        
+        """
 
 
