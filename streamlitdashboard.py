@@ -121,7 +121,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         
             with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
                 df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
-                df_sheeet2.to_excel(writer, index=False, sheet_name="Sources")
+                df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
                 pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
                 df_cooccur.to_excel(writer, index=False, sheet_name="Cooccurrence")
                 df_association.to_excel(writer, index=False, sheet_name="Associations")
