@@ -42,6 +42,12 @@ except Exception as e:
     st.stop()
 
 df_summary.columns = [col.strip() for col in df_summary.columns]
+df_cooccur.columns = [col.strip() for col in df_cooccur.columns]
+
+if "count" not in df_cooccur.columns:
+    st.error("❌ 'count' 컬럼이 존재하지 않습니다.")
+    st.write("📌 현재 컬럼:", df_cooccur.columns.tolist())
+    st.stop()
 
 # 존재하는 컬럼인지 확인
 if "Keyword Count" not in df_summary.columns:
