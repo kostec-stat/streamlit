@@ -388,23 +388,26 @@ with tab4:
     
 with tab5:
     st.subheader("🌐 국내-글로벌 키워드 비교")
-    # 파일에서 키워드 불러오기
-    with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
-        zh_keywords = [line.strip() for line in f if line.strip()]
+
+    # 1. 국내용 Summary Table
+    excel_path_domestic = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
+    df_summary = pd.read_excel(excel_path_domestic, sheet_name="Summary Table")
+    df_summary.columns = [col.strip() for col in df_summary.columns]
     
-    with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
-        en_keywords = [line.strip() for line in f if line.strip()]
+    # 2. 글로벌용 Summary Table
+    excel_path_global = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
+    df_global_summary = pd.read_excel(excel_path_global, sheet_name="Summary Table")
+    df_global_summary.columns = [col.strip() for col in df_global_summary.columns]
+
+    # 키워드 세트 (영문 기준)
+    domestic_keywords = set(df_summary["Keyword"].dropna().astype(str))
+    global_keywords = set(df_global_summary["Keyword"].dropna().astype(str))
     
-    # 길이 확인 (안 맞으면 에러)
-    if len(zh_keywords) != len(en_keywords):
-        st.error(f"❌ 키워드 수가 다릅니다! keywords.txt={len(zh_keywords)}, en_keywords.txt={len(en_keywords)}")
-        st.stop()
+    # 비교
+    intersection = sorted(domestic_keywords & global_keywords)
+    only_domestic = sorted(domestic_keywords - global_keywords)
+    only_global = sorted(global_keywords - domestic_keywords)
     
-    # 매핑 테이블 생성
-    df_map = pd.DataFrame({
-        "zh_keyword": zh_keywords,
-        "en_keyword": en_keywords
-    })
 
     # 국내 키워드 -> 영어 변환
     df_domestic = df_summary.merge(df_map, left_on="Keyword", right_on="zh_keyword", how="left")
