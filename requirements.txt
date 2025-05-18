@@ -3,4 +3,4 @@ pandas
 altair
 networkx
 streamlit_agraph
-xlsxwriter
+openpyxl
