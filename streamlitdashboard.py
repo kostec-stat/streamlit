@@ -47,6 +47,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
                 source_sites = f.read().strip()
             with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
                 prompt = f.read().strip()
+            print("PROMPT: " + prompt)
     
             current_date = input_date.strftime("%Y%m%d")
     
