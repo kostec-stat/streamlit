@@ -26,6 +26,18 @@ local_css("assets/css/main.css")
 input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today())
 api_token = st.sidebar.text_input("🔐 수집 암호 입력", type="password")
 github_token = st.sidebar.text_input("🪪 업로드 암호 입력", type="password")
+
+if isinstance(input_date, tuple):
+    input_date = input_date[0]
+print(current_date)
+            # 다시 확인: 날짜 형식인지
+if isinstance(input_date, (date, datetime)):
+    current_date = datetime.strptime(str(input_date), "%Y-%m-%d").strftime("%Y%m%d")
+else:
+    st.error("❌ 날짜 형식이 올바르지 않습니다.")
+    st.stop()
+print(current_date)
+
 if st.sidebar.button("🛰 주간 동향 수집 시작"):
     with st.spinner("⏳ Claude API를 통해 주간 동향을 수집하고 있습니다. 약 3~5분 정도 소요됩니다..."):
         try:
@@ -38,16 +50,6 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
     
             # API 연결
             client = anthropic.Anthropic(api_key=api_token)
-            if isinstance(input_date, tuple):
-                input_date = input_date[0]
-            print(current_date)
-            # 다시 확인: 날짜 형식인지
-            if isinstance(input_date, (date, datetime)):
-                current_date = datetime.strptime(str(input_date), "%Y-%m-%d").strftime("%Y%m%d")
-            else:
-                st.error("❌ 날짜 형식이 올바르지 않습니다.")
-                st.stop()
-            print(current_date)
     
             with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
                 keywords = f.read().strip()
