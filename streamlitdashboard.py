@@ -8,6 +8,7 @@ import altair as alt
 from streamlit_agraph import agraph, Node, Edge, Config
 from collections import defaultdict
 import os, io, zipfile
+import datetime
 
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
@@ -23,7 +24,7 @@ local_css("assets/css/main.css")
 # --- 3. 사이드바 
 
 
-input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today())
+input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=datetime.today())
 api_token = st.sidebar.text_input("🔐 API 토큰 입력", type="password")
 if st.sidebar.button("🛰 주간 동향 수집 시작"):
     st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
