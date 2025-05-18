@@ -73,12 +73,13 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             )
     
             #st.write(prompt1)
+            st.write("Step 1: RAG 수행 완료.")
             
                 # 결과 파싱
             text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
             match = re.search(r"<excel_report>(.*?)</excel_report>", text_data, re.DOTALL)
             text_block = match.group(0) if match else None
-        
+            st.write("Step 2: 파싱한 응답 출력" + text_block)
             sheet1_start = text_block.find("<sheet1>")
             sheet1_end = text_block.find("</sheet1>")
             sheet2_start = text_block.find("<sheet2>")
