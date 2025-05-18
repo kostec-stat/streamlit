@@ -425,7 +425,6 @@ with tab5:
     
     # df_global_summary의 Keyword도 정규화해서 매핑
     df_global_summary["zh_keyword"] = df_global_summary["Keyword"].str.strip().str.lower().map(map_dict)
-
     
     matched_zh = set(df_global_summary["zh_keyword"].dropna())
     intersection = zh_set & matched_zh
@@ -434,7 +433,7 @@ with tab5:
 
    # 1. 국내 순위표 생성
     dom_rank = (
-        df_summary[df_summary["Keyword"].isin(intersection)]
+        df_summary[df_summary["Keyword"]]
         .groupby("Keyword")["Keyword Count"].sum()
         .rank(ascending=False, method="min")
         .astype(int)
@@ -443,7 +442,7 @@ with tab5:
     
     # 2. 글로벌 순위표 생성 (en → zh 매핑 기반)
     glob_rank = (
-        df_global_summary[df_global_summary["zh_keyword"].isin(intersection)]
+        df_global_summary[df_global_summary["zh_keyword"]]
         .groupby("zh_keyword")["Keyword Count"].sum()
         .rank(ascending=False, method="min")
         .astype(int)
