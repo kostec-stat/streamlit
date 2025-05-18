@@ -390,55 +390,100 @@ with tab4:
     
 with tab5:
     st.subheader("🌐 국내-글로벌 키워드 비교")
+
     # 1. 키워드 매핑 테이블 생성
     with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
         zh_keywords = [line.strip() for line in f if line.strip()]
     with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
         en_keywords = [line.strip() for line in f if line.strip()]
-    
+
     df_map = pd.DataFrame({
         "zh_keyword": zh_keywords,
         "en_keyword": en_keywords
     })
-    # 1. 국내용 Summary Table
-    excel_path_domestic = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
-    df_summary = pd.read_excel(excel_path_domestic, sheet_name="Summary Table")
+
+    # 2. 국내 Summary Table
     df_summary.columns = [col.strip() for col in df_summary.columns]
-    
-    # 2. 글로벌용 Summary Table
-    excel_path_global = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
-    df_global_summary = pd.read_excel(excel_path_global, sheet_name="Summary Table")
-    df_global_summary.columns = [col.strip() for col in df_global_summary.columns]
-
-    # df_global_summary: en 키워드가 들어있는 글로벌 요약
-    df_global_summary = df_global_summary.merge(df_map, left_on="Keyword", right_on="en_keyword", how="left")
-
-    # 매핑 테이블 기반 비교 집합
     zh_set = set(df_summary["Keyword"])
-    en_set = set(df_global_summary["Keyword"])
 
-    # 매핑된 영어 키워드 → 중문
+    # 3. 글로벌 Summary Table
+    excel_path_global = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
+    try:
+        df_global_summary = pd.read_excel(excel_path_global, sheet_name="Summary Table")
+        df_global_summary.columns = [col.strip() for col in df_global_summary.columns]
+    except FileNotFoundError:
+        st.warning("❗ 글로벌 요약 파일이 존재하지 않습니다.")
+        st.stop()
+
+    # 4. 글로벌 키워드 매핑 (영문 → 중문)
+    df_global_summary = df_global_summary.merge(df_map, left_on="Keyword", right_on="en_keyword", how="left")
+    df_global_summary.rename(columns={"Keyword": "Keyword_EN"}, inplace=True)
+
     matched_zh = set(df_global_summary["zh_keyword"].dropna())
-
     intersection = zh_set & matched_zh
     only_domestic = zh_set - matched_zh
     only_global = matched_zh - zh_set
 
-    # Venn 다이어그램 그리기
+    # 🧭 Venn 다이어그램
     st.markdown("### 🧭 키워드 매핑 비교 (Venn Diagram)")
-
     fig, ax = plt.subplots()
     venn2(
         subsets=(len(only_domestic), len(only_global), len(intersection)),
-        set_labels=("중문 키워드", "글로벌 수집 결과"),
+        set_labels=("국내 키워드(중문)", "글로벌 수집 결과(중문 매핑)"),
         ax=ax
     )
     st.pyplot(fig)
 
-    # 매핑 테이블 출력
+    # 📋 테이블 출력
     st.markdown("### 📋 글로벌 수집 키워드 ↔ 중국어 매핑")
     st.dataframe(
-        df_global_summary[["Keyword", "zh_keyword", "Short Summary", "Source URL"]],
+        df_global_summary[["Keyword_EN", "zh_keyword", "Short Summary", "Source URL"]],
         use_container_width=True
     )
-    # 여기에 df_rolling_domestic vs df_rolling_global 시각화 가능
+
+    # 📈 트렌드 비교 시각화
+    st.markdown("### 📈 공통 키워드 트렌드 비교 (국내 vs 글로벌)")
+
+    # (1) 국내 피벗 → 이동 평균
+    df_merged = df_summary.merge(df_sources[["URL", "Publication Date"]],
+                                 how="left", left_on="Source URL", right_on="URL")
+    df_merged["Publication Date"] = pd.to_datetime(df_merged["Publication Date"])
+    df_daily = df_merged.groupby(["Publication Date", "Keyword"]).size().reset_index(name="count")
+    df_pivot_dom = df_daily.pivot_table(index="Publication Date", columns="Keyword", values="count", fill_value=0).sort_index()
+    df_rolling_dom = df_pivot_dom.rolling(window=7, min_periods=1).mean()
+
+    # (2) 글로벌도 유사하게 처리
+    df_global_merged = df_global_summary.merge(df_sheet2[["URL", "Publication Date"]],
+                                               how="left", left_on="Source URL", right_on="URL")
+    df_global_merged["Publication Date"] = pd.to_datetime(df_global_merged["Publication Date"])
+    df_global_merged["zh_keyword"] = df_global_merged["zh_keyword"].fillna("미매핑")
+    df_daily_global = df_global_merged.groupby(["Publication Date", "zh_keyword"]).size().reset_index(name="count")
+    df_pivot_global = df_daily_global.pivot_table(index="Publication Date", columns="zh_keyword", values="count", fill_value=0).sort_index()
+    df_rolling_global = df_pivot_global.rolling(window=7, min_periods=1).mean()
+
+    # (3) 공통 키워드 선택
+    common_keywords = sorted(intersection)
+    selected_compare_keywords = st.multiselect("🔍 비교할 공통 키워드 선택", common_keywords, default=common_keywords[:3])
+
+    if selected_compare_keywords:
+        df_dom_long = df_rolling_dom[selected_compare_keywords].reset_index().melt(
+            id_vars="Publication Date", var_name="Keyword", value_name="domestic"
+        )
+        df_glob_long = df_rolling_global[selected_compare_keywords].reset_index().melt(
+            id_vars="Publication Date", var_name="Keyword", value_name="global"
+        )
+        df_compare = pd.merge(df_dom_long, df_glob_long, on=["Publication Date", "Keyword"])
+
+        chart = alt.Chart(df_compare).transform_fold(
+            ["domestic", "global"],
+            as_=["source", "count"]
+        ).mark_line(point=True).encode(
+            x="Publication Date:T",
+            y="count:Q",
+            color="source:N",
+            strokeDash="source:N",
+            tooltip=["Publication Date:T", "Keyword:N", "source:N", "count:Q"]
+        ).properties(width=800, height=400)
+
+        st.altair_chart(chart, use_container_width=True)
+
