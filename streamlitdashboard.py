@@ -136,8 +136,10 @@ with tab2:
     layout_config = layout_options[selected_layout]
     
     # 노드/엣지 구성
-    nodes = [Node(id=row["source"], label=row["source"], font={"color": "white"}) for row in df_cooccur.itertuples()]
-    nodes += [Node(id=row["target"], label=row["target"], font={"color": "white"}) for row in df_cooccur.itertuples()]
+    nodes = []
+    for _, row in df_cooccur.iterrows():
+        nodes.append(Node(id=row["source"], label=row["source"], font={"color": "white"}))
+        nodes.append(Node(id=row["target"], label=row["target"], font={"color": "white"}))
     nodes = {n.id: n for n in nodes}.values()  # 중복 제거
 
     edges = [Edge(source=row.source, target=row.target, label=str(row.count)) for row in df_cooccur.itertuples()]
