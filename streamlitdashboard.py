@@ -402,7 +402,7 @@ with tab4:
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
     
 with tab5:
-    st.subheader("🌐 국내-글로벌 키워드 비교")
+    st.subheader("🌐 중국-글로벌 키워드 비교")
 
     # 1. 키워드 매핑 테이블 생성
     with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
@@ -444,15 +444,15 @@ with tab5:
     only_domestic = zh_set - matched_zh
     only_global = matched_zh - zh_set
 
-  # 1. 국내 순위표 생성 (Keyword 기준 그룹화 → Keyword Count 합산 → 순위화)
+    # 1. 국내 순위표 생성
     dom_rank = (
         df_summary
         .groupby("Keyword", as_index=False)["Keyword Count"].sum()
-        .assign(Rank_Domestic=lambda df: df["Keyword Count"].rank(ascending=False, method="min").astype(int))
+        .assign(Rank_China=lambda df: df["Keyword Count"].rank(ascending=False, method="min").astype(int))
         [["Keyword", "Rank_China"]]
     )
     
-    # 2. 글로벌 순위표 생성 (zh_keyword 기준 그룹화 → Keyword Count 합산 → 순위화)
+    # 2. 글로벌 순위표 생성
     glob_rank = (
         df_global_summary
         .groupby("zh_keyword", as_index=False)["Keyword Count"].sum()
@@ -464,5 +464,5 @@ with tab5:
     df_rank_table = pd.merge(dom_rank, glob_rank, on="Keyword", how="outer")
     df_rank_table = df_rank_table.sort_values(by=["Rank_China", "Rank_Global"], na_position="last")
     
-    st.markdown("### 📋 국내(Rank_China) vs 글로벌(Rank_Global) 키워드 순위 비교")
+    st.markdown("### 📋 중국(Rank_China) vs 글로벌(Rank_Global) 키워드 순위 비교")
     st.dataframe(df_rank_table, use_container_width=True)
