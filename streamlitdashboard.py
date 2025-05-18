@@ -90,6 +90,9 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             sheet1_text = text_block[sheet1_start:sheet1_end]
             sheet2_text = text_block[sheet2_start:sheet2_end]
             executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
+
+            st.write("Step 3: RE전 sheet1:" + sheet1_text)
+            st.write("Step 3: RE전 sheet2:" + sheet2_text)
         
             sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet1_text)
             sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet2_text)
