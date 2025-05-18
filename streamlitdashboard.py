@@ -55,6 +55,24 @@ if "Keyword Count" not in df_summary.columns:
     st.write("🔎 현재 컬럼 목록:", df_summary.columns.tolist())
     st.stop()
 
+layout_options = {
+    "Force-Directed": {"physics": True, "hierarchical": False},
+    "Hierarchical - LR": {
+        "physics": False,
+        "hierarchical": True,
+        "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
+    },
+    "Hierarchical - TB": {
+        "physics": False,
+        "hierarchical": True,
+        "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
+    },
+    "Circular (Random Seed)": {
+        "physics": False,
+        "hierarchical": False,
+        "layout": {"randomSeed": 7}
+    }
+}
 # 1. 엑셀에서 시트 불러오기
 xls = pd.ExcelFile(excel_path)
 df_summary = pd.read_excel(xls, sheet_name="Summary Table")
@@ -71,7 +89,6 @@ df_merged = df_summary.merge(
     left_on="Source URL",
     right_on="URL"
 )
-
 # 4. 날짜 정리
 df_merged["Publication Date"] = pd.to_datetime(df_merged["Publication Date"])
 df_merged["Keyword"] = df_merged["Keyword"].astype(str)
