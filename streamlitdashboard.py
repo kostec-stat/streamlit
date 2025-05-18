@@ -223,11 +223,12 @@ df_pivot = df_daily.pivot_table(index="Publication Date", columns="Keyword", val
 df_rolling = df_pivot.rolling(window=7, min_periods=1).mean()
 
 # --- 4. 탭 구성
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 주간요약과 다운로드", 
     "🕸 동시출현과 연관어", 
     "🔍 빈도수 추적", 
-    "🏆 Top20과 드릴다운"
+    "🏆 Top20과 드릴다운",
+    "🌐 글로벌 비교"
 ])
 # --- TAB 1: 빈도수 통계
 with tab1:
@@ -384,3 +385,43 @@ with tab4:
     
     # st.markdown의 unsafe_allow_html로 링크와 툴팁 허용
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
+    
+with tab5:
+    st.subheader("🌐 국내-글로벌 키워드 비교")
+    # 파일에서 키워드 불러오기
+    with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
+        zh_keywords = [line.strip() for line in f if line.strip()]
+    
+    with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
+        en_keywords = [line.strip() for line in f if line.strip()]
+    
+    # 길이 확인 (안 맞으면 에러)
+    if len(zh_keywords) != len(en_keywords):
+        st.error(f"❌ 키워드 수가 다릅니다! keywords.txt={len(zh_keywords)}, en_keywords.txt={len(en_keywords)}")
+        st.stop()
+    
+    # 매핑 테이블 생성
+    df_map = pd.DataFrame({
+        "zh_keyword": zh_keywords,
+        "en_keyword": en_keywords
+    })
+
+    # 국내 키워드 -> 영어 변환
+    df_domestic = df_summary.merge(df_map, left_on="Keyword", right_on="zh_keyword", how="left")
+    domestic_en_keywords = set(df_domestic["en_keyword"].dropna().unique())
+    
+    # 글로벌 키워드 (그대로 영어)
+    global_keywords = set(df_global["Keyword"].dropna().unique())
+    
+    # 비교
+    intersection = sorted(domestic_en_keywords & global_keywords)
+    only_domestic = sorted(domestic_en_keywords - global_keywords)
+    only_global = sorted(global_keywords - domestic_en_keywords)
+
+    st.markdown(f"✅ 공통 키워드 수: {len(intersection)}")
+    st.markdown(f"📌 국내 전용 키워드: {', '.join(only_domestic[:5])} ...")
+    st.markdown(f"🌍 글로벌 전용 키워드: {', '.join(only_global[:5])} ...")
+
+    # 차이점 시각화 예시
+    st.subheader("📈 공통 키워드 트렌드 비교")
+    # 여기에 df_rolling_domestic vs df_rolling_global 시각화 가능
