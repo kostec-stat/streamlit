@@ -55,6 +55,36 @@ if "Keyword Count" not in df_summary.columns:
     st.write("🔎 현재 컬럼 목록:", df_summary.columns.tolist())
     st.stop()
 
+# 1. 엑셀에서 시트 불러오기
+xls = pd.ExcelFile(excel_path)
+df_summary = pd.read_excel(xls, sheet_name="Summary Table")
+df_sources = pd.read_excel(xls, sheet_name="Sources")
+
+# 2. 컬럼명 정리
+df_summary.columns = [c.strip() for c in df_summary.columns]
+df_sources.columns = [c.strip() for c in df_sources.columns]
+
+# 3. URL 기준으로 날짜 매핑
+df_merged = df_summary.merge(
+    df_sources[["URL", "Publication Date"]],
+    how="left",
+    left_on="Source URL",
+    right_on="URL"
+)
+
+# 4. 날짜 정리
+df_merged["Publication Date"] = pd.to_datetime(df_merged["Publication Date"])
+df_merged["Keyword"] = df_merged["Keyword"].astype(str)
+
+# 5. 일자별 키워드 등장 횟수 집계
+df_daily = df_merged.groupby(["Publication Date", "Keyword"]).size().reset_index(name="count")
+
+# 6. 피벗 테이블로 일자 x 키워드 형태
+df_pivot = df_daily.pivot_table(index="Publication Date", columns="Keyword", values="count", fill_value=0).sort_index()
+
+# 7. 7일 이동 평균
+df_rolling = df_pivot.rolling(window=7, min_periods=1).mean()
+
 # --- 4. 탭 구성
 tab1, tab2, tab3, tab4 = st.tabs([
     "📊 빈도수", 
@@ -66,6 +96,20 @@ tab1, tab2, tab3, tab4 = st.tabs([
 with tab1:
     st.subheader("키워드 Top 20")
     st.dataframe(df_summary.sort_values("Keyword Count", ascending=False).head(20), use_container_width=True)
+    st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
+    
+    selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
+    
+    if selected_keywords:
+        df_long = df_rolling[selected_keywords].reset_index().melt(id_vars="Publication Date", var_name="Keyword", value_name="7d_avg")
+    
+        chart = alt.Chart(df_long).mark_line().encode(
+            x="Publication Date:T",
+            y="7d_avg:Q",
+            color="Keyword:N"
+        ).properties(width=800, height=400)
+    
+        st.altair_chart(chart, use_container_width=True)
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
