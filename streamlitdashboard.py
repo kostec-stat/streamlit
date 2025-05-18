@@ -441,7 +441,7 @@ with tab5:
     # 📋 테이블 출력
     st.markdown("### 📋 글로벌 수집 키워드 ↔ 중국어 매핑")
     st.dataframe(
-        df_global_summary[["Keyword_EN", "zh_keyword", "Short Summary", "Source URL"]],
+        df_global_summary[["Keyword", "zh_keyword", "Short Summary", "Source URL"]],
         use_container_width=True
     )
 
