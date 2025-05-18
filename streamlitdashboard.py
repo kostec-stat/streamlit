@@ -43,7 +43,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
 
             # 다시 확인: 날짜 형식인지
             if isinstance(input_date, (date)):
-                current_date = input_date.strftime("%Y%m%d")
+                current_date = datetime.strptime(str(input_date), "%Y-%m-%d").strftime("%Y%m%d")
             else:
                 st.error("❌ 날짜 형식이 올바르지 않습니다.")
                 st.stop()
