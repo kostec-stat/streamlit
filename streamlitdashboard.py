@@ -449,7 +449,7 @@ with tab5:
         df_summary
         .groupby("Keyword", as_index=False)["Keyword Count"].sum()
         .assign(Rank_Domestic=lambda df: df["Keyword Count"].rank(ascending=False, method="min").astype(int))
-        [["Keyword", "Rank_Domestic"]]
+        [["Keyword", "Rank_China"]]
     )
     
     # 2. 글로벌 순위표 생성 (zh_keyword 기준 그룹화 → Keyword Count 합산 → 순위화)
