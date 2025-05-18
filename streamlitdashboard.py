@@ -51,7 +51,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # --- TAB 1: 빈도수 통계
 with tab1:
     st.subheader("키워드 Top 20")
-    st.dataframe(df_summary.sort_values(" Keyword Count ", ascending=False).head(20), use_container_width=True)
+    st.dataframe(df_summary.sort_values("Keyword Count", ascending=False).head(20), use_container_width=True)
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
