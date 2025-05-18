@@ -99,8 +99,8 @@ tab1, tab2, tab3, tab4 = st.tabs([
 ])
 # --- TAB 1: 빈도수 통계
 with tab1:
-    st.subheader("키워드 Top 20")
-    st.dataframe(df_summary.sort_values("Keyword Count", ascending=False).head(20), use_container_width=True)
+    st.subheader("📌 5줄 요약")
+    st.markdown(df_exec.iloc[0, 0])
     st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
 
     # 드롭다운: 그래프 유형 선택
@@ -198,5 +198,5 @@ with tab3:
 
 # --- TAB 4: 보고서
 with tab4:
-    st.subheader("Executive Summary")
-    st.markdown(df_exec.iloc[0, 0])
+    st.subheader("키워드 Top 20")
+    st.dataframe(df_summary.sort_values("Keyword Count", ascending=False).head(20), use_container_width=True)
