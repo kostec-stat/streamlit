@@ -33,12 +33,12 @@ excel_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🛰 주간 동향 수집")
 
-input_date = st.date_input("📆 수집 시작 날짜", value=date.today(), key="expander_date")
+input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today(), key="expander_date")
 current_date = input_date.strftime("%Y%m%d")
-api_token = st.text_input("🔐 Claude API 토큰", type="password", key="expander_api")
-github_token = st.text_input("🪪 GitHub Token", type="password", key="expander_git")
+api_token = st.sidebar.text_input("🔐 Claude API 토큰", type="password", key="expander_api")
+github_token = st.sidebar.text_input("🪪 GitHub Token", type="password", key="expander_git")
 
-if st.button("🚀 수집 시작(중국)", key="expander_run1"):
+if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
     with st.spinner(f"📡 {st.session_state['current_date']} 기준 수집 중입니다... 최대 3~5분 소요."):
         try:
             import os
@@ -167,7 +167,7 @@ if st.button("🚀 수집 시작(중국)", key="expander_run1"):
         except Exception as upload_err:
             st.warning(f"⚠️ 수집은 완료되었으나 GitHub 업로드 실패: {upload_err}")
 
-if st.button("🚀 수집 시작(글로벌)", key="expander_run2"):
+if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
     with st.spinner("⏳ 수집 중입니다. 최대 3~5분 소요..."):
         try:
             import os
