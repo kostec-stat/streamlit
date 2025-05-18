@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-# Author : Dr. Songhee Kang
+# Author : Prof. Dr. Songhee Kang
 # Description : KOSTEC stat visualizer using Excel-based trend summary
+# Date : 2025-04-14
+# Last Update : 2025-05-18
+# License : MIT
 
+# --- 0. 라이브러리 임포트
 import streamlit as st
 import pandas as pd
 import altair as alt
@@ -110,7 +114,6 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
 
             df_sheet1 = pd.read_csv(StringIO(sheet1_table_md), sep="|", engine="python").dropna(axis=1, how="all")
             df_sheet2 = pd.read_csv(StringIO(sheet2_table_md), sep="|", engine="python").dropna(axis=1, how="all")
-            
                             # 저장
             excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
                             # 동시출현 및 연관어 분석
@@ -316,33 +319,33 @@ if "Keyword Count" not in df_summary.columns:
     st.error("❌ 'Keyword Count' 컬럼을 찾을 수 없습니다.")
     st.write("🔎 현재 컬럼 목록:", df_summary.columns.tolist())
     st.stop()
-# 1. 엑셀에서 시트 불러오기
+# 엑셀에서 시트 불러오기
 xls = pd.ExcelFile(excel_path)
 df_summary = pd.read_excel(xls, sheet_name="Summary Table")
 df_sources = pd.read_excel(xls, sheet_name="Sources")
 
-# 2. 컬럼명 정리
+# 컬럼명 정리
 df_summary.columns = [c.strip() for c in df_summary.columns]
 df_sources.columns = [c.strip() for c in df_sources.columns]
 
-# 3. URL 기준으로 날짜 매핑
+# URL 기준으로 날짜 매핑
 df_merged = df_summary.merge(
     df_sources[["URL", "Publication Date"]],
     how="left",
     left_on="Source URL",
     right_on="URL"
 )
-# 4. 날짜 정리
+# 날짜 정리
 df_merged["Publication Date"] = pd.to_datetime(df_merged["Publication Date"])
 df_merged["Keyword"] = df_merged["Keyword"].astype(str)
 
-# 5. 일자별 키워드 등장 횟수 집계
+# 일자별 키워드 등장 횟수 집계
 df_daily = df_merged.groupby(["Publication Date", "Keyword"]).size().reset_index(name="count")
 
-# 6. 피벗 테이블로 일자 x 키워드 형태
+# 피벗 테이블로 일자 x 키워드 형태
 df_pivot = df_daily.pivot_table(index="Publication Date", columns="Keyword", values="count", fill_value=0).sort_index()
 
-# 7. 7일 이동 평균
+# 7일 이동 평균
 df_rolling = df_pivot.rolling(window=7, min_periods=1).mean()
 
 # --- 4. 탭 구성
@@ -370,29 +373,31 @@ with tab1:
             st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
     else:
         st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
-
-    download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
-    try:
-        with open(download_path, "rb") as f:
-            st.download_button(
-                label=f"📥 {selected_snapshot} 중국 주간동향 엑셀 다운로드",
-                data=f.read(),
-                file_name=f"{selected_snapshot}_trend_summary.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-    except Exception as e:
-        st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
-	download_path2 = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
-    try:
-        with open(download_path2, "rb") as f:
-            st.download_button(
-                label=f"📥 {selected_snapshot} 글로벌 주간동향 엑셀 다운로드",
-                data=f.read(),
-                file_name=f"{selected_snapshot}_trend_summary_en.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-    except Exception as e:
-        st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+    col1, col2 = st.columns(2)
+    with col1:
+        download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
+        try:
+            with open(download_path, "rb") as f:
+                st.download_button(
+                    label=f"📥 {selected_snapshot} 중국 주간동향 엑셀 다운로드",
+                    data=f.read(),
+                    file_name=f"{selected_snapshot}_trend_summary.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        except Exception as e:
+            st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+    with col2:
+        download_path2 = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
+        try:
+            with open(download_path2, "rb") as f:
+                st.download_button(
+                    label=f"📥 {selected_snapshot} 글로벌 주간동향 엑셀 다운로드",
+                    data=f.read(),
+                    file_name=f"{selected_snapshot}_trend_summary_en.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        except Exception as e:
+            st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
 
 
 
