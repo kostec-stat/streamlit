@@ -29,8 +29,8 @@ github_token = st.sidebar.text_input("🪪 업로드 암호 입력", type="passw
 
 current_date = input_date
 if isinstance(input_date, tuple):
-    input_date = input_date[0]
-print(input_date)
+    current_date = input_date[0]
+print(current_date)
             # 다시 확인: 날짜 형식인지
 if isinstance(input_date, (date, datetime)):
     current_date = datetime.strptime(str(input_date), "%Y-%m-%d").strftime("%Y%m%d")
