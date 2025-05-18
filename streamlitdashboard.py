@@ -227,7 +227,20 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # --- TAB 1: 빈도수 통계
 with tab1:
     st.subheader("📌 5줄 요약")
+    df_exec = df_exec.iloc[1:].reset_index(drop=True)
     st.markdown(df_exec.iloc[0, 0])
+
+    download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
+    try:
+        with open(download_path, "rb") as f:
+            st.download_button(
+                label="📥 선택된 스냅샷 엑셀 다운로드",
+                data=f.read(),
+                file_name=f"{selected_snapshot}_trend_summary.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+    except Exception as e:
+        st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
