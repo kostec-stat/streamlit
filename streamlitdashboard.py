@@ -438,7 +438,7 @@ with tab5:
     # 매핑 테이블 출력
     st.markdown("### 📋 글로벌 수집 키워드 ↔ 중국어 매핑")
     st.dataframe(
-        df_global_summary[["Keyword (EN)", "zh_keyword", "Short Summary", "Source URL"]],
+        df_global_summary[["Keyword", "zh_keyword", "Short Summary", "Source URL"]],
         use_container_width=True
     )
     # 여기에 df_rolling_domestic vs df_rolling_global 시각화 가능
