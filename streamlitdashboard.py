@@ -459,4 +459,34 @@ with tab5:
     st.markdown("### 📊 공통 키워드 순위 비교 (국내 vs 글로벌)")
     st.dataframe(df_rank_compare.sort_values("Rank_Diff", key=abs), use_container_width=True)
 
+    from altair import Chart, X, Y, Color, Tooltip
+    
+    # 공통 키워드 순위 비교 데이터 (앞서 만든 df_rank_compare)
+    df_rank_compare["Label"] = df_rank_compare["Keyword"]
+    df_rank_compare["Neg_Global_Rank"] = -df_rank_compare["Rank_Global"]  # 글로벌 순위는 반대로
+    
+    # 바차트 (좌우)
+    domestic_bar = alt.Chart(df_rank_compare).mark_bar().encode(
+        x=alt.X("Rank_Domestic:Q", title="국내 순위 (작을수록 상위)"),
+        y=alt.Y("Label:N", sort=alt.EncodingSortField(field="Rank_Domestic", order="ascending")),
+        color=alt.value("steelblue"),
+        tooltip=["Keyword", "Rank_Domestic"]
+    )
+    
+    global_bar = alt.Chart(df_rank_compare).mark_bar().encode(
+        x=alt.X("Neg_Global_Rank:Q", title="글로벌 순위 (작을수록 상위)"),
+        y=alt.Y("Label:N", sort=alt.EncodingSortField(field="Rank_Domestic", order="ascending")),
+        color=alt.value("crimson"),
+        tooltip=["Keyword", "Rank_Global"]
+    )
+    
+    chart = (global_bar + domestic_bar).properties(
+        width=700,
+        height=400,
+        title="🌐 공통 키워드 순위 비교: 국내 vs 글로벌"
+    )
+    
+    st.altair_chart(chart, use_container_width=True)
+    
+
 
