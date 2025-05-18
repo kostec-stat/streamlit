@@ -411,6 +411,8 @@ with tab5:
     try:
         df_global_summary = pd.read_excel(excel_path_global, sheet_name="Summary Table")
         df_global_summary.columns = [col.strip() for col in df_global_summary.columns]
+        df_global_sources = pd.read_excel(excel_path_global, sheet_name="Sources")
+        df_global_sources.columns = [col.strip() for col in df_global_sources.columns]
     except FileNotFoundError:
         st.warning("❗ 글로벌 요약 파일이 존재하지 않습니다.")
         st.stop()
@@ -453,7 +455,7 @@ with tab5:
     df_rolling_dom = df_pivot_dom.rolling(window=7, min_periods=1).mean()
 
     # (2) 글로벌도 유사하게 처리
-    df_global_merged = df_global_summary.merge(df_sheet2[["URL", "Publication Date"]],
+    df_global_merged = df_global_summary.merge(df_global_sources[["URL", "Publication Date"]],
                                                how="left", left_on="Source URL", right_on="URL")
     df_global_merged["Publication Date"] = pd.to_datetime(df_global_merged["Publication Date"])
     df_global_merged["zh_keyword"] = df_global_merged["zh_keyword"].fillna("미매핑")
