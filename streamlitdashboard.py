@@ -10,6 +10,8 @@ from collections import defaultdict
 import os, io, zipfile
 from datetime import date, datetime
 import glob, time
+from matplotlib_venn import venn2
+import matplotlib.pyplot as plt
 
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
@@ -388,7 +390,16 @@ with tab4:
     
 with tab5:
     st.subheader("🌐 국내-글로벌 키워드 비교")
-
+    # 1. 키워드 매핑 테이블 생성
+    with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
+        zh_keywords = [line.strip() for line in f if line.strip()]
+    with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
+        en_keywords = [line.strip() for line in f if line.strip()]
+    
+    df_map = pd.DataFrame({
+        "zh_keyword": zh_keywords,
+        "en_keyword": en_keywords
+    })
     # 1. 국내용 Summary Table
     excel_path_domestic = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
     df_summary = pd.read_excel(excel_path_domestic, sheet_name="Summary Table")
@@ -399,32 +410,35 @@ with tab5:
     df_global_summary = pd.read_excel(excel_path_global, sheet_name="Summary Table")
     df_global_summary.columns = [col.strip() for col in df_global_summary.columns]
 
-    # 키워드 세트 (영문 기준)
-    domestic_keywords = set(df_summary["Keyword"].dropna().astype(str))
-    global_keywords = set(df_global_summary["Keyword"].dropna().astype(str))
-    
-    # 비교
-    intersection = sorted(domestic_keywords & global_keywords)
-    only_domestic = sorted(domestic_keywords - global_keywords)
-    only_global = sorted(global_keywords - domestic_keywords)
-    
+    # df_global_summary: en 키워드가 들어있는 글로벌 요약
+    df_global_summary = df_global_summary.merge(df_map, left_on="Keyword", right_on="en_keyword", how="left")
 
-    # 국내 키워드 -> 영어 변환
-    df_domestic = df_summary.merge(df_map, left_on="Keyword", right_on="zh_keyword", how="left")
-    domestic_en_keywords = set(df_domestic["en_keyword"].dropna().unique())
-    
-    # 글로벌 키워드 (그대로 영어)
-    global_keywords = set(df_global["Keyword"].dropna().unique())
-    
-    # 비교
-    intersection = sorted(domestic_en_keywords & global_keywords)
-    only_domestic = sorted(domestic_en_keywords - global_keywords)
-    only_global = sorted(global_keywords - domestic_en_keywords)
+    # 매핑 테이블 기반 비교 집합
+    zh_set = set(df_map["zh_keyword"])
+    en_set = set(df_global_summary["Keyword"])
 
-    st.markdown(f"✅ 공통 키워드 수: {len(intersection)}")
-    st.markdown(f"📌 국내 전용 키워드: {', '.join(only_domestic[:5])} ...")
-    st.markdown(f"🌍 글로벌 전용 키워드: {', '.join(only_global[:5])} ...")
+    # 매핑된 영어 키워드 → 중문
+    matched_zh = set(df_global_summary["zh_keyword"].dropna())
 
-    # 차이점 시각화 예시
-    st.subheader("📈 공통 키워드 트렌드 비교")
+    intersection = zh_set & matched_zh
+    only_domestic = zh_set - matched_zh
+    only_global = matched_zh - zh_set
+
+    # Venn 다이어그램 그리기
+    st.markdown("### 🧭 키워드 매핑 비교 (Venn Diagram)")
+
+    fig, ax = plt.subplots()
+    venn2(
+        subsets=(len(only_domestic), len(only_global), len(intersection)),
+        set_labels=("국내 키워드 (중)", "글로벌 수집 결과 (매핑된 중문)"),
+        ax=ax
+    )
+    st.pyplot(fig)
+
+    # 매핑 테이블 출력
+    st.markdown("### 📋 글로벌 수집 키워드 ↔ 중국어 매핑")
+    st.dataframe(
+        df_global_summary[["Keyword (EN)", "zh_keyword", "Short Summary", "Source URL"]],
+        use_container_width=True
+    )
     # 여기에 df_rolling_domestic vs df_rolling_global 시각화 가능
