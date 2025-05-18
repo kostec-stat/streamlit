@@ -38,7 +38,7 @@ def load_excel_data(path):
 try:
     df_summary, df_sources, df_exec, df_cooccur, df_assoc = load_excel_data(excel_path)
 except Exception as e:
-    st.error(f"\uc5d0\ud1a0\uacac \ud30c\uc77c \ub85c\ub4dc \uc2e4\ud328: {e}")
+    st.error(f"분석데이터 로드 실패: {e}")
     st.stop()
 
 # --- 4. 탭 구성
