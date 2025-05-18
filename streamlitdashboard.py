@@ -418,8 +418,10 @@ with tab5:
         st.stop()
 
     # 4. 글로벌 키워드 매핑 (영문 → 중문)
-    df_global_summary = df_global_summary.merge(df_map, left_on="Keyword", right_on="en_keyword", how="left")
-    df_global_summary.rename(columns={"Keyword": "Keyword_EN"}, inplace=True)
+    map_dict = dict(zip(df_map["en_keyword"], df_map["zh_keyword"]))
+
+    # df_global_summary에 zh_keyword 컬럼 직접 생성
+    df_global_summary["zh_keyword"] = df_global_summary["Keyword"].map(map_dict)
 
     matched_zh = set(df_global_summary["zh_keyword"].dropna())
     intersection = zh_set & matched_zh
