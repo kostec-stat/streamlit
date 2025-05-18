@@ -94,14 +94,14 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             st.write("Step 3: RE전 sheet1:" + sheet1_text)
             st.write("Step 3: RE전 sheet2:" + sheet2_text)
         
-            sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet1_text)
-            sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet2_text)
+            #sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet1_text)
+            #sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet2_text)
         
-            sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
-            sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
+            #sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
+            #sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
         
-            df_sheet1 = pd.read_csv(StringIO(sheet1_table_md), sep="|", engine="python").dropna(axis=1, how="all")
-            df_sheet2 = pd.read_csv(StringIO(sheet2_table_md), sep="|", engine="python").dropna(axis=1, how="all")
+            df_sheet1 = pd.read_csv(StringIO(sheet1_text), sep="|", engine="python").dropna(axis=1, how="all")
+            df_sheet2 = pd.read_csv(StringIO(sheet2_text), sep="|", engine="python").dropna(axis=1, how="all")
             st.write("Step 3-1: 시트 응답1" + df_sheet1)
             st.write("Step 3-2: 시트 응답2" + df_sheet2)
                 # 저장
