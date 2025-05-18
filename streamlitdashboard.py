@@ -401,7 +401,7 @@ with tab5:
         "zh_keyword": zh_keywords,
         "en_keyword": en_keywords
     })
-    st.write(df_map)
+    #st.write(df_map)
     # 2. 국내 Summary Table
     df_summary.columns = [col.strip() for col in df_summary.columns]
     zh_set = set(df_summary["Keyword"])
