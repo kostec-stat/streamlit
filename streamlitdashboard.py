@@ -9,7 +9,7 @@ from streamlit_agraph import agraph, Node, Edge, Config
 from collections import defaultdict
 import os, io, zipfile
 from datetime import date, datetime
-import glob
+import glob, time
 
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
