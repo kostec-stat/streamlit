@@ -54,25 +54,6 @@ if "Keyword Count" not in df_summary.columns:
     st.error("❌ 'Keyword Count' 컬럼을 찾을 수 없습니다.")
     st.write("🔎 현재 컬럼 목록:", df_summary.columns.tolist())
     st.stop()
-
-layout_options = {
-    "Force-Directed": {"physics": True, "hierarchical": False},
-    "Hierarchical - LR": {
-        "physics": False,
-        "hierarchical": True,
-        "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
-    },
-    "Hierarchical - TB": {
-        "physics": False,
-        "hierarchical": True,
-        "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
-    },
-    "Circular (Random Seed)": {
-        "physics": False,
-        "hierarchical": False,
-        "layout": {"randomSeed": 7}
-    }
-}
 # 1. 엑셀에서 시트 불러오기
 xls = pd.ExcelFile(excel_path)
 df_summary = pd.read_excel(xls, sheet_name="Summary Table")
@@ -131,10 +112,29 @@ with tab1:
 # --- TAB 2: 동시출현 네트워크
 with tab2:
     st.subheader("🕸 동시출현 네트워크")
+
+    layout_options = {
+        "Force-Directed": {"physics": True, "hierarchical": False},
+        "Hierarchical - LR": {
+            "physics": False,
+            "hierarchical": True,
+            "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
+        },
+        "Hierarchical - TB": {
+            "physics": False,
+            "hierarchical": True,
+            "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
+        },
+        "Circular (Random Seed)": {
+            "physics": False,
+            "hierarchical": False,
+            "layout": {"randomSeed": 7}
+        }
+    }
     # 사용자 선택 드롭다운
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
     layout_config = layout_options[selected_layout]
-
+    
     # 노드/엣지 구성
     nodes = [Node(id=row["source"], label=row["source"], font={"color": "white"}) for row in df_cooccur.itertuples()]
     nodes += [Node(id=row["target"], label=row["target"], font={"color": "white"}) for row in df_cooccur.itertuples()]
