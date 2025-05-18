@@ -120,7 +120,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
         
         from github import Github
-        repo_name = "YOUR_GITHUB_USERNAME/YOUR_REPO_NAME"
+        repo_name = "kostec-stat/streamlit"
         file_path = f"assets/data/{current_date}_trend_summary.xlsx"
         
         try:
@@ -143,6 +143,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         
             except Exception as e:
                 st.error(f"❌ 수집 중 오류 발생: {e}")
+                
 st.sidebar.markdown("---")
 snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
 snapshot_dates = sorted({os.path.basename(f).split("_")[0] for f in snapshot_files})
