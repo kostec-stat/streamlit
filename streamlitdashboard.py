@@ -58,13 +58,13 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         prompt1 = prompt_template.format(
             keywords=keywords,        # 문자열 또는 리스트 join한 값
             current_date=current_date,        # '20250518' 같은 문자열
-            sites=source_sites        # 문자열 또는 사이트 목록
+            source_sites=source_sites        # 문자열 또는 사이트 목록
         )
         st.write(prompt1)
         prompt2 = prompt_template.format(
             keywords=en_keywords,        # 문자열 또는 리스트 join한 값
             current_date=current_date,        # '20250518' 같은 문자열
-            sites="*"        # 문자열 또는 사이트 목록
+            source_sites="*"        # 문자열 또는 사이트 목록
         )
         st.write(prompt2)
             # Claude API 호출
