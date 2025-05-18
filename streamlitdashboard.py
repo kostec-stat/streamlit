@@ -10,7 +10,7 @@ from collections import defaultdict
 import os, io, zipfile
 
 # --- 1. 설정
-st.set_page_config(page_title="\ud83d\udcc8 \ud55c\uc911\uacfc\uae30\ud611\ub825\uc13c\ud130 \ud0a4\uc6cc\ub4dc \ub370\uc2dc\ubcf4\ub4dc", layout="wide")
+st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
 
 # --- 2. CSS 적용
 def local_css(file_name):
