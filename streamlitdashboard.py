@@ -105,7 +105,7 @@ if st.button("🚀 수집 시작(중국)", key="expander_run"):
             st.write("Step 3: RE전 sheet2:" + sheet2_text)
                     
             sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet1_text, re.DOTALL)
-	    sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet2_text, re.DOTALL)
+	    	sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet2_text, re.DOTALL)
                     
             sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
             sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
