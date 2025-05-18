@@ -38,10 +38,15 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
     
             # API 연결
             client = anthropic.Anthropic(api_key=api_token)
-            st.write("🧪 input_date type:", type(input_date), input_date)
             if isinstance(input_date, tuple):
                 input_date = input_date[0]
-            current_date = input_date.strftime("%Y%m%d")
+
+            # 다시 확인: 날짜 형식인지
+            if isinstance(input_date, (date, datetime)):
+                current_date = input_date.strftime("%Y%m%d")
+            else:
+                st.error("❌ 날짜 형식이 올바르지 않습니다.")
+                st.stop()
             print(current_date)
     
             with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
