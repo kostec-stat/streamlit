@@ -333,141 +333,180 @@ with tab5:
         st.markdown("#### 🌍 글로벌 키워드 순위 (Rank_Global)")
         st.dataframe(df_rank_global.reset_index(drop=True), use_container_width=True)
 
-with st.expander("🛰 주간 동향 수집하기 (클릭하여 열기)", expanded=False):
-    st.markdown("### 수집 입력값을 설정하세요")
 
-    input_date = st.date_input("📆 수집 시작 날짜", value=date.today(), key="expander_date")
-    current_date = input_date.strftime("%Y%m%d")
+st.markdown("""
+    <style>
+    .fixed-bottom-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f0f2f6;
+        padding: 0.8rem 1.5rem;
+        border-top: 1px solid #ccc;
+        z-index: 100;
+        box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+    }
+    .fixed-bottom-panel input {
+        margin-right: 0.5rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
+with st.container():
+    st.markdown('<div class="fixed-bottom-panel">', unsafe_allow_html=True)
 
-    api_token = st.text_input("🔐 Claude API 토큰", type="password", key="expander_api")
-    github_token = st.text_input("🪪 GitHub Token", type="password", key="expander_git")
+    cols = st.columns([1, 1, 1, 1])
+    with cols[0]:
+        input_date_fixed = st.date_input("📆 날짜", value=date.today(), key="fixed_date")
+    with cols[1]:
+        api_token_fixed = st.text_input("🔐 Claude API 토큰", type="password", key="fixed_api")
+    with cols[2]:
+        github_token_fixed = st.text_input("🪪 GitHub Token", type="password", key="fixed_git")
+    with cols[3]:
+        if st.button("🛰 수집 실행", key="fixed_run"):
+            current_date = input_date_fixed.strftime("%Y%m%d")
+            st.session_state["run_collection"] = True
+            st.session_state["current_date"] = current_date
+            st.session_state["api_token"] = api_token_fixed
+            st.session_state["github_token"] = github_token_fixed
 
-    if st.button("🚀 수집 시작", key="expander_run"):
-        with st.spinner("⏳ 수집 중입니다. 최대 3~5분 소요..."):
-            # 여기서 수집 로직 호출
-            try:
-                import os
-                import anthropic
-                import re
-                from io import StringIO
-                from itertools import combinations
-                from openpyxl import load_workbook
-           
-                    # API 연결
-                client = anthropic.Anthropic(api_key=api_token)
+    st.markdown('</div>', unsafe_allow_html=True)
+    if st.session_state.get("run_collection"):
+        with st.spinner(f"📡 {st.session_state['current_date']} 기준 수집 중입니다..."):
             
-                with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
-                    keywords = f.read().strip()
-                with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
-                    en_keywords = f.read().strip()
-                with open("assets/input/sites.txt", "r", encoding="utf-8") as f:
-                    source_sites = f.read().strip()
-                with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
-                    prompt_template = f.read()
-                   
-                    # 변수 정의
-                prompt1 = prompt_template.format(
-                    keywords=keywords,        # 문자열 또는 리스트 join한 값
-                    current_date=current_date,        # '20250518' 같은 문자열
-                    source_sites=source_sites        # 문자열 또는 사이트 목록
-                )
-                #st.write(prompt1)
-                prompt2 = prompt_template.format(
-                    keywords=en_keywords,        # 문자열 또는 리스트 join한 값
-                    current_date=current_date,        # '20250518' 같은 문자열
-                    source_sites="*"        # 문자열 또는 사이트 목록
-                )
-                #st.write(prompt2)
-                    # Claude API 호출
-                message = client.messages.create(
-                    model="claude-3-7-sonnet-20250219",
-                    max_tokens=20000,
-                    temperature=1,
-                    messages=[{"role": "user", "content": [{"type": "text", "text": prompt1}]}]
-                )
+            input_date = st.date_input("📆 수집 시작 날짜", value=date.today(), key="expander_date")
+            current_date = input_date.strftime("%Y%m%d")
         
-                #st.write(prompt1)
-                st.write("Step 1: RAG 수행 완료.")
+            api_token = st.text_input("🔐 Claude API 토큰", type="password", key="expander_api")
+            github_token = st.text_input("🪪 GitHub Token", type="password", key="expander_git")
+        
+            if st.button("🚀 수집 시작", key="expander_run"):
+                with st.spinner("⏳ 수집 중입니다. 최대 3~5분 소요..."):
+                    # 여기서 수집 로직 호출
+                    try:
+                        import os
+                        import anthropic
+                        import re
+                        from io import StringIO
+                        from itertools import combinations
+                        from openpyxl import load_workbook
+                   
+                            # API 연결
+                        client = anthropic.Anthropic(api_key=api_token)
+                    
+                        with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
+                            keywords = f.read().strip()
+                        with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
+                            en_keywords = f.read().strip()
+                        with open("assets/input/sites.txt", "r", encoding="utf-8") as f:
+                            source_sites = f.read().strip()
+                        with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
+                            prompt_template = f.read()
+                           
+                            # 변수 정의
+                        prompt1 = prompt_template.format(
+                            keywords=keywords,        # 문자열 또는 리스트 join한 값
+                            current_date=current_date,        # '20250518' 같은 문자열
+                            source_sites=source_sites        # 문자열 또는 사이트 목록
+                        )
+                        #st.write(prompt1)
+                        prompt2 = prompt_template.format(
+                            keywords=en_keywords,        # 문자열 또는 리스트 join한 값
+                            current_date=current_date,        # '20250518' 같은 문자열
+                            source_sites="*"        # 문자열 또는 사이트 목록
+                        )
+                        #st.write(prompt2)
+                            # Claude API 호출
+                        message = client.messages.create(
+                            model="claude-3-7-sonnet-20250219",
+                            max_tokens=20000,
+                            temperature=1,
+                            messages=[{"role": "user", "content": [{"type": "text", "text": prompt1}]}]
+                        )
                 
-                    # 결과 파싱
-                text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
-                match = re.search(r"<excel_report>(.*?)</excel_report>", text_data, re.DOTALL)
-                text_block = match.group(0) if match else None
-                st.write("Step 2: 파싱한 응답 출력" + text_block)
-                sheet1_start = text_block.find("<sheet1>")
-                sheet1_end = text_block.find("</sheet1>")
-                sheet2_start = text_block.find("<sheet2>")
-                sheet2_end = text_block.find("</sheet2>")
-                summary_start = text_block.find("<executive_summary>")
-                summary_end = text_block.find("</executive_summary>")
+                        #st.write(prompt1)
+                        st.write("Step 1: RAG 수행 완료.")
+                        
+                            # 결과 파싱
+                        text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
+                        match = re.search(r"<excel_report>(.*?)</excel_report>", text_data, re.DOTALL)
+                        text_block = match.group(0) if match else None
+                        st.write("Step 2: 파싱한 응답 출력" + text_block)
+                        sheet1_start = text_block.find("<sheet1>")
+                        sheet1_end = text_block.find("</sheet1>")
+                        sheet2_start = text_block.find("<sheet2>")
+                        sheet2_end = text_block.find("</sheet2>")
+                        summary_start = text_block.find("<executive_summary>")
+                        summary_end = text_block.find("</executive_summary>")
+                    
+                        sheet1_text = text_block[sheet1_start:sheet1_end]
+                        sheet2_text = text_block[sheet2_start:sheet2_end]
+                        executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
             
-                sheet1_text = text_block[sheet1_start:sheet1_end]
-                sheet2_text = text_block[sheet2_start:sheet2_end]
-                executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
-    
-                st.write("Step 3: RE전 sheet1:" + sheet1_text)
-                st.write("Step 3: RE전 sheet2:" + sheet2_text)
-            
-                #sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet1_text)
-                #sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet2_text)
-            
-                #sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
-                #sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
-            
-                df_sheet1 = pd.read_csv(StringIO(sheet1_text), sep="|", engine="python").dropna(axis=1, how="all")
-                df_sheet2 = pd.read_csv(StringIO(sheet2_text), sep="|", engine="python").dropna(axis=1, how="all")
-                st.write("Step 3-1: 시트 응답1" + df_sheet1)
-                st.write("Step 3-2: 시트 응답2" + df_sheet2)
-                    # 저장
-                excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
-                    # 동시출현 및 연관어 분석
-                df_summary = df_sheet1.iloc[1:].reset_index(drop=True)
-                df_summary.columns = [col.strip() for col in df_summary.columns]
-                keywords_list = [kw.strip() for kw in df_summary["Keyword"].dropna().unique().tolist()]
-            
-                cooccur_counter = defaultdict(int)
-                association_counter = defaultdict(int)
-                for _, row in df_summary.iterrows():
-                    text = (str(row.get("Detailed Summary", "")) + " " + str(row.get("Short Summary", ""))).lower()
-                    present_keywords = [kw for kw in keywords_list if kw.lower() in text]
-                    for kw1, kw2 in combinations(sorted(set(present_keywords)), 2):
-                        cooccur_counter[(kw1, kw2)] += 1
-                    for kw in present_keywords:
-                        association_counter[kw] += 1
-            
-                df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
-                df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
-            
-                with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
-                    df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
-                    df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
-                    pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
-                    df_cooccur.to_excel(writer, index=False, sheet_name="Cooccurrence")
-                    df_association.to_excel(writer, index=False, sheet_name="Associations")
-            
-                st.sidebar.success(f"{current_date} 기준 주간 동향 수집 및 저장 완료!")
-            
-            except Exception as e:
-            	st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
-                
-            from github import Github
-            repo_name = "kostec-stat/streamlit"
-            file_path = f"assets/data/{current_date}_trend_summary.xlsx"
-                
-            try:
-                g = Github(github_token)
-                repo = g.get_repo(repo_name)
-                
-                with open(file_path, "rb") as f:
-                    content = f.read()
-                path_in_repo = f"assets/data/{current_date}_trend_summary.xlsx"
-                
-                try:
-                    existing_file = repo.get_contents(path_in_repo)
-                    repo.update_file(existing_file.path, f"update {path_in_repo}", content, existing_file.sha)
-                except Exception:
-                    repo.create_file(path_in_repo, f"add {path_in_repo}", content)
-                
-                st.success(f" {current_date} 기준 주간 동향 수집, 저장 및 GitHub 업로드 완료!")
-            except Exception as upload_err:
-                st.warning(f"⚠️ 수집은 완료되었으나 GitHub 업로드 실패: {upload_err}")
+                        st.write("Step 3: RE전 sheet1:" + sheet1_text)
+                        st.write("Step 3: RE전 sheet2:" + sheet2_text)
+                    
+                        #sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet1_text)
+                        #sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet2_text)
+                    
+                        #sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
+                        #sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
+                    
+                        df_sheet1 = pd.read_csv(StringIO(sheet1_text), sep="|", engine="python").dropna(axis=1, how="all")
+                        df_sheet2 = pd.read_csv(StringIO(sheet2_text), sep="|", engine="python").dropna(axis=1, how="all")
+                        st.write("Step 3-1: 시트 응답1" + df_sheet1)
+                        st.write("Step 3-2: 시트 응답2" + df_sheet2)
+                            # 저장
+                        excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
+                            # 동시출현 및 연관어 분석
+                        df_summary = df_sheet1.iloc[1:].reset_index(drop=True)
+                        df_summary.columns = [col.strip() for col in df_summary.columns]
+                        keywords_list = [kw.strip() for kw in df_summary["Keyword"].dropna().unique().tolist()]
+                    
+                        cooccur_counter = defaultdict(int)
+                        association_counter = defaultdict(int)
+                        for _, row in df_summary.iterrows():
+                            text = (str(row.get("Detailed Summary", "")) + " " + str(row.get("Short Summary", ""))).lower()
+                            present_keywords = [kw for kw in keywords_list if kw.lower() in text]
+                            for kw1, kw2 in combinations(sorted(set(present_keywords)), 2):
+                                cooccur_counter[(kw1, kw2)] += 1
+                            for kw in present_keywords:
+                                association_counter[kw] += 1
+                    
+                        df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
+                        df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
+                    
+                        with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
+                            df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
+                            df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
+                            pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
+                            df_cooccur.to_excel(writer, index=False, sheet_name="Cooccurrence")
+                            df_association.to_excel(writer, index=False, sheet_name="Associations")
+                    
+                        st.sidebar.success(f"{current_date} 기준 주간 동향 수집 및 저장 완료!")
+                    
+                    except Exception as e:
+                    	st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
+                        
+                    from github import Github
+                    repo_name = "kostec-stat/streamlit"
+                    file_path = f"assets/data/{current_date}_trend_summary.xlsx"
+                        
+                    try:
+                        g = Github(github_token)
+                        repo = g.get_repo(repo_name)
+                        
+                        with open(file_path, "rb") as f:
+                            content = f.read()
+                        path_in_repo = f"assets/data/{current_date}_trend_summary.xlsx"
+                        
+                        try:
+                            existing_file = repo.get_contents(path_in_repo)
+                            repo.update_file(existing_file.path, f"update {path_in_repo}", content, existing_file.sha)
+                        except Exception:
+                            repo.create_file(path_in_repo, f"add {path_in_repo}", content)
+                        
+                        st.success(f" {current_date} 기준 주간 동향 수집, 저장 및 GitHub 업로드 완료!")
+                    except Exception as upload_err:
+                        st.warning(f"⚠️ 수집은 완료되었으나 GitHub 업로드 실패: {upload_err}")
+                    st.session_state["run_collection"] = False  # 재실행 방지
