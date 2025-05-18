@@ -26,6 +26,7 @@ local_css("assets/css/main.css")
 input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today())
 api_token = st.sidebar.text_input("🔐 API 토큰 입력", type="password")
 if st.sidebar.button("🛰 주간 동향 수집 시작"):
+    with st.spinner("⏳ Claude API를 통해 주간 동향을 수집하고 있습니다. 약 3~5분 정도 소요됩니다..."):
     try:
         import os
         import anthropic
@@ -72,8 +73,8 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         sheet2_text = text_block[sheet2_start:sheet2_end]
         executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
 
-        sheet1_table_match = re.search(r"(\|.+?\|\|[-|]+\|(?:\|.*?\|)+)", sheet1_text)
-        sheet2_table_match = re.search(r"(\|.+?\|\|[-|]+\|(?:\|.*?\|)+)", sheet2_text)
+        sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet1_text)
+        sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|(?:\n\|.*?\|)+)", sheet2_text)
 
         sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
         sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
