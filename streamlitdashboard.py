@@ -22,8 +22,6 @@ def local_css(file_name):
 local_css("assets/css/main.css")
 
 # --- 3. 사이드바 
-
-
 input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today())
 api_token = st.sidebar.text_input("🔐 API 토큰 입력", type="password")
 if st.sidebar.button("🛰 주간 동향 수집 시작"):
