@@ -423,6 +423,8 @@ with tab5:
     # df_global_summary에 zh_keyword 컬럼 직접 생성
     df_global_summary["zh_keyword"] = df_global_summary["Keyword"].map(map_dict)
 
+    st.write(df_global_summary)
+    
     matched_zh = set(df_global_summary["zh_keyword"].dropna())
     intersection = zh_set & matched_zh
     only_domestic = zh_set - matched_zh
