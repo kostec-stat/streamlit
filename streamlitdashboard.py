@@ -461,41 +461,8 @@ with tab5:
         [["Keyword", "Rank_Global"]]
     )
 
-    st.markdown(glob_rank.to_html(escape=False, index=False), unsafe_allow_html=True)
-    # 3. 병합 및 순위 차이 계산
-    """
-    df_rank_compare = pd.merge(dom_rank, glob_rank, on="Keyword", how="outer")  # 전체 키워드 포함
-    df_rank_compare["Rank_Diff"] = df_rank_compare["Rank_Domestic"] - df_rank_compare["Rank_Global"]
-
-    # 시각화 정렬: 차이 큰 순서로 Top N
-# 국내 Top 20 키워드
-    top20_dom = df_summary.sort_values("Keyword Count", ascending=False).head(20)["Keyword"].tolist()
-
-    # 글로벌 Top 20 키워드 (zh_keyword 기준)
-    top20_glob = (
-        df_global_summary[df_global_summary["zh_keyword"].notna()]
-        .groupby("zh_keyword")["Keyword Count"].sum()
-        .sort_values(ascending=False)
-        .head(20)
-        .index.tolist()
-    )
+    df_rank_table = pd.merge(dom_rank, glob_rank, on="Keyword", how="outer")
+    df_rank_table = df_rank_table.sort_values(by=["Rank_China", "Rank_Global"], na_position="last")
     
-    # 병합용 키워드 목록
-    top_keywords_union = sorted(set(top20_dom + top20_glob))
-    
-    # 순위표에서 해당 키워드만 필터
-    df_top_rank_compare = df_rank_compare[df_rank_compare["Keyword"].isin(top_keywords_union)].copy()
-    
-    # 시각화
-    chart_top20 = alt.Chart(df_top_rank_compare).mark_bar().encode(
-        x=alt.X("Rank_Diff:Q", title="순위 차이 (국내 - 글로벌)"),
-        y=alt.Y("Keyword:N", sort="-x"),
-        color=alt.condition("datum.Rank_Diff > 0", alt.value("steelblue"), alt.value("crimson")),
-        tooltip=["Keyword", "Rank_Domestic", "Rank_Global", "Rank_Diff"]
-    ).properties(width=700, height=400)
-    
-    st.markdown("### 🏅 Top 20 키워드 기반 순위 차이")
-    st.altair_chart(chart_top20, use_container_width=True)
-        """
-
-
+    st.markdown("### 📋 국내(Rank_China) vs 글로벌(Rank_Global) 키워드 순위 비교")
+    st.dataframe(df_rank_table, use_container_width=True)
