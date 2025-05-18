@@ -198,5 +198,33 @@ with tab3:
 
 # --- TAB 4: 보고서
 with tab4:
-    st.subheader("키워드 Top 20")
-    st.dataframe(df_summary.sort_values("Keyword Count", ascending=False).head(20), use_container_width=True)
+    st.subheader("📌 키워드 Top 20 (상세 보기 포함)")
+
+    top_df = df_summary.sort_values("Keyword Count", ascending=False).head(20).copy()
+    top_df = top_df.reset_index(drop=True)
+    
+    # 컬럼명 정리
+    top_df.columns = [c.strip() for c in top_df.columns]
+    
+    # 새 테이블 만들기
+    table_data = []
+    
+    for i, row in top_df.iterrows():
+        index = i + 1
+        keyword = row["Keyword"]
+        count = row["Keyword Count"]
+        # 링크 열기 (새 탭)
+        link_html = f'<a href="{row["Source URL"]}" target="_blank">🔗 링크</a>'
+    
+        # 툴팁 Summary
+        short = row["Short Summary"]
+        detailed = row["Detailed Summary"]
+        summary_html = f'<span title="{detailed}">{short}</span>'
+    
+        table_data.append((index, keyword, count, summary_html, link_html))
+    
+    # 표를 DataFrame으로 재생성 (표시용)
+    df_display = pd.DataFrame(table_data, columns=["#", "Keyword", "Count", "Summary", "Source"])
+    
+    # st.markdown의 unsafe_allow_html로 링크와 툴팁 허용
+    st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
