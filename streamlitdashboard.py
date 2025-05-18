@@ -130,7 +130,7 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
 
             df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
             df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
-			st.write("Step 4: 동시출현 및 연관어 분석 완료")
+            st.write("Step 4: 동시출현 및 연관어 분석 완료")
 
             with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
                 df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
@@ -224,7 +224,7 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
             sheet1_text = text_block[sheet1_start:sheet1_end]
             sheet2_text = text_block[sheet2_start:sheet2_end]
             executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
-			sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet1_text, re.DOTALL)
+            sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet1_text, re.DOTALL)
             sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet2_text, re.DOTALL)
 
             sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
@@ -252,7 +252,7 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
 
             df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
             df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
-			st.write("Step 4: 동시출현 및 연관어 분석 완료")
+            st.write("Step 4: 동시출현 및 연관어 분석 완료")
             with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
                 df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
                 df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
