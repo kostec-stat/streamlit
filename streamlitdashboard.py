@@ -265,29 +265,41 @@ with tab1:
 # --- TAB 2: 동시출현 네트워크
 with tab2:
     st.subheader("🕸 동시출현 네트워크")
-
+    layout_config = {
+    "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
+    "randomSeed": 42,           # 항상 비슷한 위치에서 배치
+    "hierarchical": False       # 계층형 비활성화 (기본 중심 정렬)
+}
     layout_options = {
-        "Force-Directed": {"physics": True, "hierarchical": False},
+        "Force-Directed": {
+            "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
+            "randomSeed": 42,     
+            "hierarchical": False},
         "Hierarchical - LR": {
+            "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
+            "randomSeed": 42,  
             "physics": False,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
         },
         "Hierarchical - TB": {
+            "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
+            "randomSeed": 42,  
             "physics": False,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
         },
         "Circular (Random Seed)": {
+            "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
+            "randomSeed": 42,  
             "physics": False,
             "hierarchical": False,
-            "layout": {"randomSeed": 7}
         }
     }
     # 사용자 선택 드롭다운
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
     layout_config = layout_options[selected_layout]
-    
+
     # 노드/엣지 구성
     nodes = []
     for _, row in df_cooccur.iterrows():
@@ -306,7 +318,8 @@ with tab2:
         collapsible=True,
         node={"color": "#00BFFF"},
         edge={"color": "#AAAAAA"},
-        **layout_config
+        layout=layout_config,
+        physics=True,  # 중요: 그래그래프 물리 기반 재배치 활성화
     )
 
     try:
@@ -453,16 +466,34 @@ with tab5:
     df_rank_compare["Rank_Diff"] = df_rank_compare["Rank_Domestic"] - df_rank_compare["Rank_Global"]
 
     # 시각화 정렬: 차이 큰 순서로 Top N
-    df_vis = df_rank_compare.dropna().sort_values("Rank_Diff", key=abs).head(10)
+# 국내 Top 20 키워드
+    top20_dom = df_summary.sort_values("Keyword Count", ascending=False).head(20)["Keyword"].tolist()
+
+    # 글로벌 Top 20 키워드 (zh_keyword 기준)
+    top20_glob = (
+        df_global_summary[df_global_summary["zh_keyword"].notna()]
+        .groupby("zh_keyword")["Keyword Count"].sum()
+        .sort_values(ascending=False)
+        .head(20)
+        .index.tolist()
+    )
     
-    chart = alt.Chart(df_vis).mark_bar().encode(
+    # 병합용 키워드 목록
+    top_keywords_union = sorted(set(top20_dom + top20_glob))
+    
+    # 순위표에서 해당 키워드만 필터
+    df_top_rank_compare = df_rank_compare[df_rank_compare["Keyword"].isin(top_keywords_union)].copy()
+    
+    # 시각화
+    chart_top20 = alt.Chart(df_top_rank_compare).mark_bar().encode(
         x=alt.X("Rank_Diff:Q", title="순위 차이 (국내 - 글로벌)"),
         y=alt.Y("Keyword:N", sort="-x"),
         color=alt.condition("datum.Rank_Diff > 0", alt.value("steelblue"), alt.value("crimson")),
         tooltip=["Keyword", "Rank_Domestic", "Rank_Global", "Rank_Diff"]
     ).properties(width=700, height=400)
     
-    st.altair_chart(chart, use_container_width=True)
-    
+    st.markdown("### 🏅 Top 20 키워드 기반 순위 차이")
+    st.altair_chart(chart_top20, use_container_width=True)
+        
 
 
