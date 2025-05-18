@@ -414,7 +414,7 @@ with tab5:
     df_global_summary = df_global_summary.merge(df_map, left_on="Keyword", right_on="en_keyword", how="left")
 
     # 매핑 테이블 기반 비교 집합
-    zh_set = set(df_map["zh_keyword"])
+    zh_set = set(df_summary["Keyword"])
     en_set = set(df_global_summary["Keyword"])
 
     # 매핑된 영어 키워드 → 중문
@@ -430,7 +430,7 @@ with tab5:
     fig, ax = plt.subplots()
     venn2(
         subsets=(len(only_domestic), len(only_global), len(intersection)),
-        set_labels=("국내 키워드 (중)", "글로벌 수집 결과 (매핑된 중문)"),
+        set_labels=("중문 키워드", "글로벌 수집 결과"),
         ax=ax
     )
     st.pyplot(fig)
