@@ -39,6 +39,8 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             # API 연결
             client = anthropic.Anthropic(api_key=api_token)
 
+            if isinstance(input_date, tuple):
+                input_date = input_date[0]
             current_date = input_date.strftime("%Y%m%d")
             print(current_date)
     
