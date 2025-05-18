@@ -49,7 +49,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
                 source_sites = f.read().strip()
             
             
-            with open("prompt_template.txt", "r", encoding="utf-8") as f:
+            with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
                 prompt_template = f.read()
             
             # 변수 정의
