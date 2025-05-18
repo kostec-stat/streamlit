@@ -38,6 +38,8 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
     
             # API 연결
             client = anthropic.Anthropic(api_key=api_token)
+
+            current_date = input_date.strftime("%Y%m%d")
     
             with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
                 keywords = f.read().strip()
@@ -45,18 +47,29 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
                 en_keywords = f.read().strip()
             with open("assets/input/sites.txt", "r", encoding="utf-8") as f:
                 source_sites = f.read().strip()
-            with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
-                prompt = f.read().strip()
-            print("PROMPT: " + prompt)
-    
-            current_date = input_date.strftime("%Y%m%d")
+            
+            
+            with open("prompt_template.txt", "r", encoding="utf-8") as f:
+                prompt_template = f.read()
+            
+            # 변수 정의
+            prompt1 = prompt_template.format(
+                keywords=keywords,        # 문자열 또는 리스트 join한 값
+                date=current_date,        # '20250518' 같은 문자열
+                sites=source_sites        # 문자열 또는 사이트 목록
+            )
+            prompt2 = = prompt_template.format(
+                keywords=en_keywords,        # 문자열 또는 리스트 join한 값
+                date=current_date,        # '20250518' 같은 문자열
+                sites="*"        # 문자열 또는 사이트 목록
+            )
     
             # Claude API 호출
             message = client.messages.create(
                 model="claude-3-7-sonnet-20250219",
                 max_tokens=20000,
                 temperature=1,
-                messages=[{"role": "user", "content": [{"type": "text", "text": prompt}]}]
+                messages=[{"role": "user", "content": [{"type": "text", "text": prompt1}]}]
             )
     
             # 결과 파싱
