@@ -402,7 +402,7 @@ with tab4:
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
     
 with tab5:
-    st.subheader("🌐 중국-글로벌 키워드 비교")
+    st.subheader("🏅 중국 vs 글로벌 키워드 순위 비교")
 
     # 1. 키워드 매핑 테이블 생성
     with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
@@ -458,8 +458,6 @@ with tab5:
         .rename(columns={"zh_keyword": "Keyword"})
         [["Rank_Global", "Keyword", "Keyword Count"]]
     )
-
-    st.markdown("### 🏅 중국 vs 글로벌 키워드 순위 나란히 비교")
     
     col1, col2 = st.columns(2)
     
