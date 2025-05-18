@@ -9,6 +9,7 @@ from streamlit_agraph import agraph, Node, Edge, Config
 from collections import defaultdict
 import os, io, zipfile
 from datetime import date
+import glob
 
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
@@ -28,7 +29,6 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
     try:
         import os
         import anthropic
-        import pandas as pd
         import re
         from io import StringIO
         from itertools import combinations
@@ -37,15 +37,16 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         # API 연결
         client = anthropic.Anthropic(api_key=api_token)
 
-        with open("../input/keywords.txt", "r", encoding="utf-8") as f:
+        with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
             keywords = f.read().strip()
-        with open("../input/sites.txt", "r", encoding="utf-8") as f:
+        with open("assets/input/en_keywords.txt", "r", encoding="utf-8") as f:
+            en_keywords = f.read().strip()
+        with open("assets/input/sites.txt", "r", encoding="utf-8") as f:
             source_sites = f.read().strip()
+        with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
+            prompt = f.read().strip()
 
         current_date = input_date.strftime("%Y%m%d")
-
-        # 프롬프트 구성
-        prompt = f"""[프롬프트 텍스트 그대로 유지]"""
 
         # Claude API 호출
         message = client.messages.create(
@@ -71,12 +72,8 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         sheet2_text = text_block[sheet2_start:sheet2_end]
         executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
 
-        sheet1_table_match = re.search(r"(\|.+?\|
-\|[-|]+\|(?:
-\|.*?\|)+)", sheet1_text)
-        sheet2_table_match = re.search(r"(\|.+?\|
-\|[-|]+\|(?:
-\|.*?\|)+)", sheet2_text)
+        sheet1_table_match = re.search(r"(\|.+?\|\|[-|]+\|(?:\|.*?\|)+)", sheet1_text)
+        sheet2_table_match = re.search(r"(\|.+?\|\|[-|]+\|(?:\|.*?\|)+)", sheet2_text)
 
         sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
         sheet2_table_md = sheet2_table_match.group(1).strip() if sheet2_table_match else ""
@@ -85,7 +82,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
         df_sheet2 = pd.read_csv(StringIO(sheet2_table_md), sep="|", engine="python").dropna(axis=1, how="all")
 
         # 저장
-        excel_path = f"../data/{current_date}_trend_summary.xlsx"
+        excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
         with pd.ExcelWriter(excel_path, engine="xlsxwriter") as writer:
             df_sheet1.to_excel(writer, index=False, sheet_name="Summary Table")
             df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
@@ -121,8 +118,9 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
     st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
 
 st.sidebar.markdown("---")
-snapshot_dates = ['20250418', '20250425', '20250502', '20250509', '20250516']
-selected_snapshot = st.sidebar.selectbox("스냅샷 날짜 선택", snapshot_dates)
+snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
+snapshot_dates = sorted({os.path.basename(f).split("_")[0] for f in snapshot_files})
+selected_snapshot = st.sidebar.selectbox("📅 스냅샷 날짜 선택", snapshot_dates)
 excel_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
 
 @st.cache_data
