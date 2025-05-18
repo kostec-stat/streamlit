@@ -51,8 +51,6 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             en_keywords = f.read().strip()
         with open("assets/input/sites.txt", "r", encoding="utf-8") as f:
             source_sites = f.read().strip()
-          
-            
         with open("assets/input/prompt.txt", "r", encoding="utf-8") as f:
             prompt_template = f.read()
            
@@ -62,12 +60,13 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             date=current_date,        # '20250518' 같은 문자열
             sites=source_sites        # 문자열 또는 사이트 목록
         )
+        st.write(prompt1)
         prompt2 = prompt_template.format(
             keywords=en_keywords,        # 문자열 또는 리스트 join한 값
             date=current_date,        # '20250518' 같은 문자열
             sites="*"        # 문자열 또는 사이트 목록
         )
-    
+        st.write(prompt2)
             # Claude API 호출
         message = client.messages.create(
             model="claude-3-7-sonnet-20250219",
@@ -75,7 +74,9 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             temperature=1,
             messages=[{"role": "user", "content": [{"type": "text", "text": prompt1}]}]
         )
-    
+
+        st.write(prompt1)
+        
             # 결과 파싱
         text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
         match = re.search(r"<excel_report>(.*?)</excel_report>", text_data, re.DOTALL)
