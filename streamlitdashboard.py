@@ -431,59 +431,36 @@ with tab5:
     only_domestic = zh_set - matched_zh
     only_global = matched_zh - zh_set
 
-   # 1. 국내 순위표 생성
+  # 1. 국내 순위표 생성 (Keyword 기준 그룹화 → Keyword Count 합산 → 순위화)
     dom_rank = (
         df_summary
-        .groupby("Keyword")["Keyword Count"].sum()
-        .rank(ascending=False, method="min")
-        .astype(int)
-        .reset_index(name="Rank_Domestic")
+        .groupby("Keyword", as_index=False)["Keyword Count"].sum()
+        .assign(Rank_Domestic=lambda df: df["Keyword Count"].rank(ascending=False, method="min").astype(int))
+        [["Keyword", "Rank_Domestic"]]
     )
     
-    # 2. 글로벌 순위표 생성 (en → zh 매핑 기반)
+    # 2. 글로벌 순위표 생성 (zh_keyword 기준 그룹화 → Keyword Count 합산 → 순위화)
     glob_rank = (
         df_global_summary
-        .groupby("zh_keyword")["Keyword Count"].sum()
-        .rank(ascending=False, method="min")
-        .astype(int)
-        .reset_index()
-        .rename(columns={"zh_keyword": "Keyword", "Keyword Count": "Rank_Global"})
+        .groupby("zh_keyword", as_index=False)["Keyword Count"].sum()
+        .assign(Rank_Global=lambda df: df["Keyword Count"].rank(ascending=False, method="min").astype(int))
+        .rename(columns={"zh_keyword": "Keyword"})
+        [["Keyword", "Rank_Global"]]
     )
     
-    # 3. 병합 후 순위 차이 계산
-    df_rank_compare = pd.merge(dom_rank, glob_rank, on="Keyword", how="inner")
+    # 3. 병합 및 순위 차이 계산
+    df_rank_compare = pd.merge(dom_rank, glob_rank, on="Keyword", how="outer")  # 전체 키워드 포함
     df_rank_compare["Rank_Diff"] = df_rank_compare["Rank_Domestic"] - df_rank_compare["Rank_Global"]
-    
-    # 4. 표시
-    st.markdown("### 📊 공통 키워드 순위 비교 (국내 vs 글로벌)")
-    st.dataframe(df_rank_compare.sort_values("Rank_Diff", key=abs), use_container_width=True)
 
-    from altair import Chart, X, Y, Color, Tooltip
+    # 시각화 정렬: 차이 큰 순서로 Top N
+    df_vis = df_rank_compare.dropna().sort_values("Rank_Diff", key=abs).head(10)
     
-    # 공통 키워드 순위 비교 데이터 (앞서 만든 df_rank_compare)
-    df_rank_compare["Label"] = df_rank_compare["Keyword"]
-    df_rank_compare["Neg_Global_Rank"] = -df_rank_compare["Rank_Global"]  # 글로벌 순위는 반대로
-    
-    # 바차트 (좌우)
-    domestic_bar = alt.Chart(df_rank_compare).mark_bar().encode(
-        x=alt.X("Rank_Domestic:Q", title="국내 순위 (작을수록 상위)"),
-        y=alt.Y("Label:N", sort=alt.EncodingSortField(field="Rank_Domestic", order="ascending")),
-        color=alt.value("steelblue"),
-        tooltip=["Keyword", "Rank_Domestic"]
-    )
-    
-    global_bar = alt.Chart(df_rank_compare).mark_bar().encode(
-        x=alt.X("Neg_Global_Rank:Q", title="글로벌 순위 (작을수록 상위)"),
-        y=alt.Y("Label:N", sort=alt.EncodingSortField(field="Rank_Domestic", order="ascending")),
-        color=alt.value("crimson"),
-        tooltip=["Keyword", "Rank_Global"]
-    )
-    
-    chart = (global_bar + domestic_bar).properties(
-        width=700,
-        height=400,
-        title="🌐 공통 키워드 순위 비교: 국내 vs 글로벌"
-    )
+    chart = alt.Chart(df_vis).mark_bar().encode(
+        x=alt.X("Rank_Diff:Q", title="순위 차이 (국내 - 글로벌)"),
+        y=alt.Y("Keyword:N", sort="-x"),
+        color=alt.condition("datum.Rank_Diff > 0", alt.value("steelblue"), alt.value("crimson")),
+        tooltip=["Keyword", "Rank_Domestic", "Rank_Global", "Rank_Diff"]
+    ).properties(width=700, height=400)
     
     st.altair_chart(chart, use_container_width=True)
     
