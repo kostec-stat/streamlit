@@ -40,6 +40,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             client = anthropic.Anthropic(api_key=api_token)
 
             current_date = input_date.strftime("%Y%m%d")
+            print(current_date)
     
             with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
                 keywords = f.read().strip()
