@@ -88,7 +88,7 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
             text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
             match = re.search(r"<excel_report>(.*?)</excel_report>", text_data, re.DOTALL)
             text_block = match.group(0) if match else None
-            st.write("Step 2: 파싱한 응답 출력" + text_block)
+            st.write("Step 2: 메시지 파싱 완료.")
             sheet1_start = text_block.find("<sheet1>")
             sheet1_end = text_block.find("</sheet1>")
             sheet2_start = text_block.find("<sheet2>")
@@ -100,8 +100,7 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
             sheet2_text = text_block[sheet2_start:sheet2_end]
             executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
 
-            st.write("Step 3: RE전 sheet1:" + sheet1_text)
-            st.write("Step 3: RE전 sheet2:" + sheet2_text)
+            st.write("Step 3: 엑셀 시트 파싱 완료")
 
             sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet1_text, re.DOTALL)
             sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet2_text, re.DOTALL)
@@ -111,8 +110,7 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
 
             df_sheet1 = pd.read_csv(StringIO(sheet1_table_md), sep="|", engine="python").dropna(axis=1, how="all")
             df_sheet2 = pd.read_csv(StringIO(sheet2_table_md), sep="|", engine="python").dropna(axis=1, how="all")
-            st.write("Step 3-1: 시트 응답1" + df_sheet1)
-            st.write("Step 3-2: 시트 응답2" + df_sheet2)
+            
                             # 저장
             excel_path = f"assets/data/{current_date}_trend_summary.xlsx"
                             # 동시출현 및 연관어 분석
@@ -132,6 +130,7 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
 
             df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
             df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
+			st.write("Step 4: 동시출현 및 연관어 분석 완료")
 
             with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
                 df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
@@ -140,7 +139,7 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
                 df_cooccur.to_excel(writer, index=False, sheet_name="Cooccurrence")
                 df_association.to_excel(writer, index=False, sheet_name="Associations")
 
-            st.sidebar.success(f"{current_date} 기준 주간 동향 수집 및 저장 완료!")
+            st.sidebar.success(f"{current_date} 기준 주간 중국 동향 수집 및 저장 완료!")
 
         except Exception as e:
             st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
@@ -214,7 +213,7 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
             text_data = message.content[0].text if isinstance(message.content, list) else message.content.text
             match = re.search(r"<excel_report>(.*?)</excel_report>", text_data, re.DOTALL)
             text_block = match.group(0) if match else None
-            st.write("Step 2: 파싱한 응답 출력" + text_block)
+            st.write("Step 2: 메시지 파싱 완료.")
             sheet1_start = text_block.find("<sheet1>")
             sheet1_end = text_block.find("</sheet1>")
             sheet2_start = text_block.find("<sheet2>")
@@ -225,11 +224,7 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
             sheet1_text = text_block[sheet1_start:sheet1_end]
             sheet2_text = text_block[sheet2_start:sheet2_end]
             executive_summary_text = text_block[summary_start + len("<executive_summary>"):summary_end].strip()
-
-            st.write("Step 3: RE전 sheet1:" + sheet1_text)
-            st.write("Step 3: RE전 sheet2:" + sheet2_text)
-
-            sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet1_text, re.DOTALL)
+			sheet1_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet1_text, re.DOTALL)
             sheet2_table_match = re.search(r"(\|.+?\|\n\|[-|]+\|\n(.+?))$", sheet2_text, re.DOTALL)
 
             sheet1_table_md = sheet1_table_match.group(1).strip() if sheet1_table_match else ""
@@ -237,8 +232,7 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
 
             df_sheet1 = pd.read_csv(StringIO(sheet1_table_md), sep="|", engine="python").dropna(axis=1, how="all")
             df_sheet2 = pd.read_csv(StringIO(sheet2_table_md), sep="|", engine="python").dropna(axis=1, how="all")
-            st.write("Step 3-1: 시트 응답1" + df_sheet1)
-            st.write("Step 3-2: 시트 응답2" + df_sheet2)
+            st.write("Step 3: 엑셀 시트 파싱 완료")
                             # 저장
             excel_path = f"assets/data/{current_date}_trend_summary_en.xlsx"
                             # 동시출현 및 연관어 분석
@@ -258,7 +252,7 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
 
             df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
             df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
-
+			st.write("Step 4: 동시출현 및 연관어 분석 완료")
             with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
                 df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
                 df_sheet2.to_excel(writer, index=False, sheet_name="Sources")
@@ -266,7 +260,7 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
                 df_cooccur.to_excel(writer, index=False, sheet_name="Cooccurrence")
                 df_association.to_excel(writer, index=False, sheet_name="Associations")
 
-            st.sidebar.success(f"{current_date} 기준 주간 동향 수집 및 저장 완료!")
+            st.sidebar.success(f"{current_date} 기준 주간 글로벌 동향 수집 및 저장 완료!")
 
         except Exception as e:
             st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
