@@ -119,7 +119,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             df_cooccur = pd.DataFrame([{"source": k1, "target": k2, "count": v} for (k1, k2), v in cooccur_counter.items()])
             df_association = pd.DataFrame([{"term": k, "count": v} for k, v in association_counter.items()])
         
-            with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w", if_sheet_exists="replace") as writer:
+            with pd.ExcelWriter(excel_path, engine="openpyxl", mode="w") as writer:
                 df_summary.to_excel(writer, index=False, sheet_name="Summary Table")
                 df_sheeet2.to_excel(writer, index=False, sheet_name="Sources")
                 pd.DataFrame({"Executive Summary": [executive_summary_text]}).to_excel(writer, index=False, sheet_name="Executive Summary")
@@ -219,47 +219,15 @@ df_rolling = df_pivot.rolling(window=7, min_periods=1).mean()
 
 # --- 4. 탭 구성
 tab1, tab2, tab3, tab4 = st.tabs([
-    "📊 빈도수", 
-    "🕸 네트워크", 
-    "🔍 연관어", 
-    "🏆 보고서"
+    "📊 주간요약과 다운로드", 
+    "🕸 동시출현과 연관어", 
+    "🔍 빈도수 추적", 
+    "🏆 Top20과 드릴다운"
 ])
 # --- TAB 1: 빈도수 통계
 with tab1:
     st.subheader("📌 5줄 요약")
     st.markdown(df_exec.iloc[0, 0])
-    st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
-
-    # 드롭다운: 그래프 유형 선택
-    chart_type = st.selectbox("🎨 그래프 유형 선택", ["선그래프", "막대그래프"])
-    
-    # 키워드 선택
-    selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
-    
-    if selected_keywords:
-        df_long = df_rolling[selected_keywords].reset_index().melt(
-            id_vars="Publication Date",
-            var_name="Keyword",
-            value_name="7d_avg"
-        )
-    
-        # 그래프 생성
-        if chart_type == "선그래프":
-            chart = alt.Chart(df_long).mark_line(point=True).encode(
-                x="Publication Date:T",
-                y="7d_avg:Q",
-                color="Keyword:N"
-            )
-        else:  # 막대그래프
-            chart = alt.Chart(df_long).mark_bar().encode(
-                x="Publication Date:T",
-                y="7d_avg:Q",
-                color="Keyword:N",
-                tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
-            )
-    
-        st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
-
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
@@ -313,15 +281,46 @@ with tab2:
     except Exception as e:
         st.error(f"❌ 네트워크 그래프 렌더링 실패: {e}")
 
-
-# --- TAB 3: 연관어
-with tab3:
     st.subheader("연관어 Top 20")
     df_top_assoc = df_assoc.sort_values("count", ascending=False).head(20)
     col1, col2 = st.columns(2)
     for i, row in df_top_assoc.iterrows():
         target_col = col1 if i % 2 == 0 else col2
         target_col.write(f"🔹 {row['term']} ({row['count']}회)")
+
+# --- TAB 3: 연관어
+with tab3:
+    st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
+
+    # 드롭다운: 그래프 유형 선택
+    chart_type = st.selectbox("🎨 그래프 유형 선택", ["막대그래프", "선그래프"])
+    
+    # 키워드 선택
+    selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
+    
+    if selected_keywords:
+        df_long = df_rolling[selected_keywords].reset_index().melt(
+            id_vars="Publication Date",
+            var_name="Keyword",
+            value_name="7d_avg"
+        )
+    
+        # 그래프 생성
+        if chart_type == "선그래프":
+            chart = alt.Chart(df_long).mark_line(point=True).encode(
+                x="Publication Date:T",
+                y="7d_avg:Q",
+                color="Keyword:N"
+            )
+        else:  # 막대그래프
+            chart = alt.Chart(df_long).mark_bar().encode(
+                x="Publication Date:T",
+                y="7d_avg:Q",
+                color="Keyword:N",
+                tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
+            )
+    
+        st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
 
 # --- TAB 4: 보고서
 with tab4:
