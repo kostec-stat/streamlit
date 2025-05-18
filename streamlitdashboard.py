@@ -39,7 +39,7 @@ api_token = st.sidebar.text_input("🔐 Claude API 토큰", type="password", key
 github_token = st.sidebar.text_input("🪪 GitHub Token", type="password", key="expander_git")
 
 if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
-    with st.spinner(f"📡 {st.session_state['current_date']} 기준 수집 중입니다... 최대 3~5분 소요."):
+    with st.spinner(f"📡 {'current_date'} 기준 수집 중입니다... 최대 3~5분 소요."):
         try:
             import os
             import anthropic
