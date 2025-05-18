@@ -39,7 +39,7 @@ api_token = st.sidebar.text_input("🔐 Claude API 토큰", type="password", key
 github_token = st.sidebar.text_input("🪪 GitHub Token", type="password", key="expander_git")
 
 if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
-    with st.spinner(f"📡 {'current_date'} 기준 수집 중입니다... 최대 3~5분 소요."):
+    with st.spinner(f"📡 {current_date} 기준 수집 중입니다... 최대 3~5분 소요."):
         try:
             import os
             import anthropic
@@ -375,13 +375,26 @@ with tab1:
     try:
         with open(download_path, "rb") as f:
             st.download_button(
-                label="📥 선택된 스냅샷 엑셀 다운로드",
+                label=f"📥 {selected_snapshot} 중국 주간동향 엑셀 다운로드",
                 data=f.read(),
                 file_name=f"{selected_snapshot}_trend_summary.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
     except Exception as e:
         st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+	download_path2 = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
+    try:
+        with open(download_path2, "rb") as f:
+            st.download_button(
+                label=f"📥 {selected_snapshot} 글로벌 주간동향 엑셀 다운로드",
+                data=f.read(),
+                file_name=f"{selected_snapshot}_trend_summary_en.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
+    except Exception as e:
+        st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+
+
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
