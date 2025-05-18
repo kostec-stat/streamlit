@@ -426,73 +426,37 @@ with tab5:
     # df_global_summary의 Keyword도 정규화해서 매핑
     df_global_summary["zh_keyword"] = df_global_summary["Keyword"].str.strip().str.lower().map(map_dict)
 
-    st.write(df_global_summary)
     
     matched_zh = set(df_global_summary["zh_keyword"].dropna())
     intersection = zh_set & matched_zh
     only_domestic = zh_set - matched_zh
     only_global = matched_zh - zh_set
 
-    # 🧭 Venn 다이어그램
-    st.markdown("### 🧭 키워드 매핑 비교 (Venn Diagram)")
-    fig, ax = plt.subplots()
-    venn2(
-        subsets=(len(only_domestic), len(only_global), len(intersection)),
-        set_labels=("국내 키워드(중문)", "글로벌 수집 결과(중문 매핑)"),
-        ax=ax
+   # 1. 국내 순위표 생성
+    dom_rank = (
+        df_summary[df_summary["Keyword"].isin(intersection)]
+        .groupby("Keyword")["Keyword Count"].sum()
+        .rank(ascending=False, method="min")
+        .astype(int)
+        .reset_index(name="Rank_Domestic")
     )
-    st.pyplot(fig)
-
-    # 📋 테이블 출력
-    st.markdown("### 📋 글로벌 수집 키워드 ↔ 중국어 매핑")
-    st.dataframe(
-        df_global_summary[["Keyword", "zh_keyword", "Short Summary", "Source URL"]],
-        use_container_width=True
+    
+    # 2. 글로벌 순위표 생성 (en → zh 매핑 기반)
+    glob_rank = (
+        df_global_summary[df_global_summary["zh_keyword"].isin(intersection)]
+        .groupby("zh_keyword")["Keyword Count"].sum()
+        .rank(ascending=False, method="min")
+        .astype(int)
+        .reset_index()
+        .rename(columns={"zh_keyword": "Keyword", "Keyword Count": "Rank_Global"})
     )
+    
+    # 3. 병합 후 순위 차이 계산
+    df_rank_compare = pd.merge(dom_rank, glob_rank, on="Keyword", how="inner")
+    df_rank_compare["Rank_Diff"] = df_rank_compare["Rank_Domestic"] - df_rank_compare["Rank_Global"]
+    
+    # 4. 표시
+    st.markdown("### 📊 공통 키워드 순위 비교 (국내 vs 글로벌)")
+    st.dataframe(df_rank_compare.sort_values("Rank_Diff", key=abs), use_container_width=True)
 
-    # 📈 트렌드 비교 시각화
-    st.markdown("### 📈 공통 키워드 트렌드 비교 (국내 vs 글로벌)")
-
-    # (1) 국내 피벗 → 이동 평균
-    df_merged = df_summary.merge(df_sources[["URL", "Publication Date"]],
-                                 how="left", left_on="Source URL", right_on="URL")
-    df_merged["Publication Date"] = pd.to_datetime(df_merged["Publication Date"])
-    df_daily = df_merged.groupby(["Publication Date", "Keyword"]).size().reset_index(name="count")
-    df_pivot_dom = df_daily.pivot_table(index="Publication Date", columns="Keyword", values="count", fill_value=0).sort_index()
-    df_rolling_dom = df_pivot_dom.rolling(window=7, min_periods=1).mean()
-
-    # (2) 글로벌도 유사하게 처리
-    df_global_merged = df_global_summary.merge(df_global_sources[["URL", "Publication Date"]],
-                                               how="left", left_on="Source URL", right_on="URL")
-    df_global_merged["Publication Date"] = pd.to_datetime(df_global_merged["Publication Date"])
-    df_global_merged["zh_keyword"] = df_global_merged["zh_keyword"].fillna("미매핑")
-    df_daily_global = df_global_merged.groupby(["Publication Date", "zh_keyword"]).size().reset_index(name="count")
-    df_pivot_global = df_daily_global.pivot_table(index="Publication Date", columns="zh_keyword", values="count", fill_value=0).sort_index()
-    df_rolling_global = df_pivot_global.rolling(window=7, min_periods=1).mean()
-
-    # (3) 공통 키워드 선택
-    common_keywords = sorted(intersection)
-    selected_compare_keywords = st.multiselect("🔍 비교할 공통 키워드 선택", common_keywords, default=common_keywords[:3])
-
-    if selected_compare_keywords:
-        df_dom_long = df_rolling_dom[selected_compare_keywords].reset_index().melt(
-            id_vars="Publication Date", var_name="Keyword", value_name="domestic"
-        )
-        df_glob_long = df_rolling_global[selected_compare_keywords].reset_index().melt(
-            id_vars="Publication Date", var_name="Keyword", value_name="global"
-        )
-        df_compare = pd.merge(df_dom_long, df_glob_long, on=["Publication Date", "Keyword"])
-
-        chart = alt.Chart(df_compare).transform_fold(
-            ["domestic", "global"],
-            as_=["source", "count"]
-        ).mark_line(point=True).encode(
-            x="Publication Date:T",
-            y="count:Q",
-            color="source:N",
-            strokeDash="source:N",
-            tooltip=["Publication Date:T", "Keyword:N", "source:N", "count:Q"]
-        ).properties(width=800, height=400)
-
-        st.altair_chart(chart, use_container_width=True)
 
