@@ -117,6 +117,7 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
     
         except Exception as e:
             st.sidebar.error(f"❌ 수집 중 오류 발생: {e}")
+    
         st.sidebar.success(f"✅ {input_date.strftime('%Y-%m-%d')}부터 수집 시작! (토큰 입력 완료: {'예' if api_token else '아니오'})")
         
         from github import Github
@@ -140,9 +141,6 @@ if st.sidebar.button("🛰 주간 동향 수집 시작"):
             st.success(f"✅ {current_date} 기준 주간 동향 수집, 저장 및 GitHub 업로드 완료!")
         except Exception as upload_err:
             st.warning(f"⚠️ 수집은 완료되었으나 GitHub 업로드 실패: {upload_err}")
-        
-            except Exception as e:
-                st.error(f"❌ 수집 중 오류 발생: {e}")
                 
 st.sidebar.markdown("---")
 snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
