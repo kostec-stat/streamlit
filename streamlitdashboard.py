@@ -102,19 +102,37 @@ with tab1:
     st.subheader("키워드 Top 20")
     st.dataframe(df_summary.sort_values("Keyword Count", ascending=False).head(20), use_container_width=True)
     st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
+
+    # 드롭다운: 그래프 유형 선택
+    chart_type = st.selectbox("🎨 그래프 유형 선택", ["선그래프", "막대그래프"])
     
+    # 키워드 선택
     selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
     
     if selected_keywords:
-        df_long = df_rolling[selected_keywords].reset_index().melt(id_vars="Publication Date", var_name="Keyword", value_name="7d_avg")
+        df_long = df_rolling[selected_keywords].reset_index().melt(
+            id_vars="Publication Date",
+            var_name="Keyword",
+            value_name="7d_avg"
+        )
     
-        chart = alt.Chart(df_long).mark_line().encode(
-            x="Publication Date:T",
-            y="7d_avg:Q",
-            color="Keyword:N"
-        ).properties(width=800, height=400)
+        # 그래프 생성
+        if chart_type == "선그래프":
+            chart = alt.Chart(df_long).mark_line(point=True).encode(
+                x="Publication Date:T",
+                y="7d_avg:Q",
+                color="Keyword:N"
+            )
+        else:  # 막대그래프
+            chart = alt.Chart(df_long).mark_bar().encode(
+                x="Publication Date:T",
+                y="7d_avg:Q",
+                color="Keyword:N",
+                tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
+            )
     
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
+
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
