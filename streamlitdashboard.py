@@ -498,14 +498,14 @@ with tab3:
             chart = alt.Chart(df_long).mark_line(point=True).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
-                color="Keyword:N"
+                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="plasma"))
             )
         else:
             # 👉 막대 너비 10배 확장
             chart = alt.Chart(df_long).mark_bar(size=30).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
-                color="Keyword:N",
+                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="plasma")),
                 tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
             )
 
