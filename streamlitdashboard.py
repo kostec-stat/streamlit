@@ -425,13 +425,13 @@ with tab2:
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,
 	    "center": True,
-            "physics": False,
+            "physics": True,
             "hierarchical": False,
         },
         "Hierarchical - LR": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,  
-            "physics": False,
+            "physics": True,
 	    "center": True,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
@@ -440,7 +440,7 @@ with tab2:
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,
 	    "center": True,
-            "physics": False,
+            "physics": True,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
         }
@@ -503,14 +503,14 @@ with tab3:
             chart = alt.Chart(df_long).mark_line(point=True).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
-                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="plasma"))
+                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis"))
             )
         else:
             # 👉 막대 너비 10배 확장
             chart = alt.Chart(df_long).mark_bar(size=40).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
-                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="plasma")),
+                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
                 tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
             )
 
