@@ -20,14 +20,14 @@ import numpy as np
 
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
-col1, col2 = st.columns([1, 8])  # 로고:제목 비율 조정
+col1, col2 = st.columns([2, 8])  # 로고:제목 비율 조정
 
 with col1:
-    st.image("assets/images/logo.svg", width=80)  # 로고 파일 경로와 크기 설정
+    st.image("assets/images/logo.svg", width=100)  # 로고 파일 경로와 크기 설정
 
 with col2:
     st.markdown("""
-        <h1 style='font-size:36px; color:#0E6BA8; padding-top: 10px;'>
+        <h1 style='font-size:24px; color:#0E6BA8; padding-top: 10px;'>
         📡 한중과기협력센터 주간 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
@@ -421,11 +421,13 @@ with tab2:
     "hierarchical": False       # 계층형 비활성화 (기본 중심 정렬)
 }
     layout_options = {
-        "Force-Directed": {
+        "Circular (Random Seed)": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
-            "randomSeed": 42,     
+            "randomSeed": 42,
+	    "center": True,
+            "physics": False,
             "hierarchical": False,
-	    "center": True},
+        }
         "Hierarchical - LR": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,  
@@ -442,13 +444,6 @@ with tab2:
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
         },
-        "Circular (Random Seed)": {
-            "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
-            "randomSeed": 42,
-	    "center": True,
-            "physics": False,
-            "hierarchical": False,
-        }
     }
     # 사용자 선택 드롭다운
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
@@ -512,7 +507,7 @@ with tab3:
             )
         else:
             # 👉 막대 너비 10배 확장
-            chart = alt.Chart(df_long).mark_bar(size=30).encode(
+            chart = alt.Chart(df_long).mark_bar(size=40).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
                 color=alt.Color("Keyword:N", scale=alt.Scale(scheme="plasma")),
@@ -522,7 +517,7 @@ with tab3:
         st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
 
     elif chart_type == "도넛형 그래프":
-        st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
+        st.markdown("### 🍩 최근 키워드 비중 (Top 10)")
 
         import matplotlib.font_manager as fm
         import matplotlib.pyplot as plt
@@ -531,7 +526,7 @@ with tab3:
         plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
 
         latest_date = df_rolling.index.max()
-        latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False).head(5)
+        latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False).head(10)
 
         labels = [f"{kw} ({int(val)}회)" for kw, val in zip(latest_counts.index, latest_counts.values)]
         sizes = latest_counts.values.tolist()
