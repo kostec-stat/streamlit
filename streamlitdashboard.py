@@ -23,7 +23,7 @@ st.set_page_config(page_title="한중과기협력센터 키워드 대시보드",
 col1, col2 = st.columns([1, 8])  # 로고:제목 비율 조정
 
 with col1:
-    st.image("assets/images/kostec_logo.png", width=80)  # 로고 파일 경로와 크기 설정
+    st.image("assets/images/logo.svg", width=80)  # 로고 파일 경로와 크기 설정
 
 with col2:
     st.markdown("""
