@@ -427,7 +427,7 @@ with tab2:
 	    "center": True,
             "physics": False,
             "hierarchical": False,
-        }
+        },
         "Hierarchical - LR": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,  
@@ -443,7 +443,7 @@ with tab2:
             "physics": False,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
-        },
+        }
     }
     # 사용자 선택 드롭다운
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
