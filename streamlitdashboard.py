@@ -23,12 +23,12 @@ st.set_page_config(page_title="한중과기협력센터 키워드 대시보드",
 col1, col2 = st.columns([2, 8])  # 로고:제목 비율 조정
 
 with col1:
-    st.image("assets/images/logo.svg", width=100)  # 로고 파일 경로와 크기 설정
+    st.image("assets/images/logo.svg", width=120)  # 로고 파일 경로와 크기 설정
 
 with col2:
     st.markdown("""
-        <h1 style='font-size:24px; color:#0E6BA8; padding-top: 10px;'>
-        📡 한중과기협력센터 주간 키워드 동향 대시보드
+        <h1 style='font-size:24px; color:blue; padding-top: 10px;'>
+        한중과기협력센터 주간 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
 # --- 2. CSS 적용
