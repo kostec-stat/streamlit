@@ -476,15 +476,13 @@ with tab2:
 
 # --- TAB 3: 연관어
 # --- TAB 3: 연관어
+# --- TAB 3: 연관어
 with tab3:
     st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
 
-    # 그래프 유형에 도넛형 추가
     chart_type = st.selectbox("🎨 그래프 유형 선택", ["막대그래프", "선그래프", "도넛형 그래프"])
-    
-    # 키워드 선택
     selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
-    
+
     if chart_type in ["막대그래프", "선그래프"] and selected_keywords:
         df_long = df_rolling[selected_keywords].reset_index().melt(
             id_vars="Publication Date",
@@ -492,42 +490,60 @@ with tab3:
             value_name="7d_avg"
         )
 
-        # 그래프 생성
         if chart_type == "선그래프":
             chart = alt.Chart(df_long).mark_line(point=True).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
                 color="Keyword:N"
             )
-        else:  # 막대그래프
-            chart = alt.Chart(df_long).mark_bar().encode(
+        else:
+            # 👉 막대 너비 10배 확장
+            chart = alt.Chart(df_long).mark_bar(size=20).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
                 color="Keyword:N",
                 tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
             )
+
         st.altair_chart(chart.properties(width=8000, height=400), use_container_width=True)
 
     elif chart_type == "도넛형 그래프":
-        st.markdown("### 🍩 최근 키워드 비중 (Top 10)")
+        st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
 
-        # 최근 날짜 기준으로 마지막 데이터 가져오기
+        import matplotlib.font_manager as fm
+        import matplotlib.pyplot as plt
+
+        # 한글 폰트 설정 (예: 맑은 고딕)
+        plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
+
         latest_date = df_rolling.index.max()
-        latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False).head(10)
+        latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False).head(5)
 
-        labels = latest_counts.index.tolist()
+        labels = [f"{kw} ({int(val)}회)" for kw, val in zip(latest_counts.index, latest_counts.values)]
         sizes = latest_counts.values.tolist()
 
-        fig, ax = plt.subplots(figsize=(5, 5))
-        wedges, texts, autotexts = ax.pie(
-            sizes, labels=labels, autopct='%1.1f%%', startangle=90,
-            wedgeprops=dict(width=0.4)
+        fig, ax = plt.subplots(figsize=(6, 6))
+        wedges, texts = ax.pie(
+            sizes, startangle=90, wedgeprops=dict(width=0.4), labels=None
         )
+
+        # 바깥쪽에 값+라벨 표시
+        for i, p in enumerate(wedges):
+            ang = (p.theta2 - p.theta1)/2. + p.theta1
+            y = np.sin(np.deg2rad(ang))
+            x = np.cos(np.deg2rad(ang))
+            horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
+            connectionstyle = "angle,angleA=0,angleB={}".format(ang)
+            ax.annotate(labels[i], xy=(x, y), xytext=(1.1*np.sign(x), 1.1*y),
+                        horizontalalignment=horizontalalignment,
+                        verticalalignment="center",
+                        fontsize=10, bbox=dict(boxstyle="round", fc="w"),
+                        arrowprops=dict(arrowstyle="-", connectionstyle=connectionstyle))
+
         ax.axis('equal')
         st.pyplot(fig)
 
-
-# --- TAB 4: 보고서
+# --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
     st.subheader("📌 키워드 Top 20 (상세 보기 포함)")
 
