@@ -20,7 +20,17 @@ import numpy as np
 
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
+col1, col2 = st.columns([1, 8])  # 로고:제목 비율 조정
 
+with col1:
+    st.image("assets/images/kostec_logo.png", width=80)  # 로고 파일 경로와 크기 설정
+
+with col2:
+    st.markdown("""
+        <h1 style='font-size:36px; color:#0E6BA8; padding-top: 10px;'>
+        📡 한중과기협력센터 주간 키워드 동향 대시보드
+        </h1>
+    """, unsafe_allow_html=True)
 # --- 2. CSS 적용
 def local_css(file_name):
     with open(file_name, "r", encoding="utf-8") as f:
