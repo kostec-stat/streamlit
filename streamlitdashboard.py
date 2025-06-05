@@ -419,19 +419,22 @@ with tab2:
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,  
             "physics": False,
+	    "center": True,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
         },
         "Hierarchical - TB": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
-            "randomSeed": 42,  
+            "randomSeed": 42,
+	    "center": True,
             "physics": False,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
         },
         "Circular (Random Seed)": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
-            "randomSeed": 42,  
+            "randomSeed": 42,
+	    "center": True,
             "physics": False,
             "hierarchical": False,
         }
@@ -498,14 +501,14 @@ with tab3:
             )
         else:
             # 👉 막대 너비 10배 확장
-            chart = alt.Chart(df_long).mark_bar(size=20).encode(
+            chart = alt.Chart(df_long).mark_bar(size=30).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
                 color="Keyword:N",
                 tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
             )
 
-        st.altair_chart(chart.properties(width=8000, height=400), use_container_width=True)
+        st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
 
     elif chart_type == "도넛형 그래프":
         st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
