@@ -545,12 +545,12 @@ with tab3:
 	
                     fig, ax = plt.subplots(figsize=(6, 6))
 					wedges, texts, autotexts = ax.pie(
-					    values,
-					    startangle=90,
-					    wedgeprops=dict(width=0.4),
-					    labels=label_texts,
-					    textprops=dict(color="black", fontsize=10),
-					    autopct='%1.1f%%'  # ✅ 이 줄 추가: 값 표시 및 3개 반환 보장
+						values,
+						startangle=90,
+						wedgeprops=dict(width=0.4),
+						labels=label_texts,
+						textprops=dict(color="black", fontsize=10),
+						autopct='%1.1f%%'  
 					)
                     ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
                     ax.axis("equal")
