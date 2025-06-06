@@ -524,40 +524,42 @@ with tab3:
         import matplotlib.font_manager as fm
         import numpy as np
         import platform
+        import os
 
         # ✅ 한자 대응 폰트 설정
+        font_prop = None
         if platform.system() == 'Windows':
-            plt.rcParams['font.family'] = 'Malgun Gothic'
+            font_prop = fm.FontProperties(fname='C:/Windows/Fonts/malgun.ttf')
         elif platform.system() == 'Darwin':
-            plt.rcParams['font.family'] = 'AppleGothic'
+            font_prop = fm.FontProperties(fname='/System/Library/Fonts/AppleGothic.ttf')
         else:
             font_candidates = [
                 '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
+                '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.otf',
                 '/usr/share/fonts/truetype/arphic/uming.ttc',
-                '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc'
+                '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
+                '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
             ]
             for font_path in font_candidates:
                 if os.path.exists(font_path):
-                    font_name = fm.FontProperties(fname=font_path).get_name()
-                    plt.rcParams['font.family'] = font_name
+                    font_prop = fm.FontProperties(fname=font_path)
+                    plt.rcParams['font.family'] = font_prop.get_name()
                     break
 
         try:
-            # ✅ raw count 사용을 위해 df_pivot의 마지막 날짜 기준 값 사용
-            latest_date = df_pivot.index.max()
-            latest_counts = df_pivot.loc[latest_date]
+            # ✅ df_long에서 최신 날짜 기준으로 도넛 구성
+            latest_date = df_long["Publication Date"].max()
+            latest_data = df_long[df_long["Publication Date"] == latest_date]
 
-            valid_keywords = [kw for kw in selected_keywords if kw in latest_counts.index]
-            filtered_counts = latest_counts[valid_keywords].dropna()
+            keyword_totals = latest_data.groupby("Keyword")["7d_avg"].sum()
+            keyword_totals = keyword_totals[keyword_totals > 0]
 
-            top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False)
-
-            if top_counts.empty or top_counts.sum() <= 0:
+            if keyword_totals.empty:
                 st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
             else:
-                labels = top_counts.index.tolist()
-                values = top_counts.values.tolist()
-                label_texts = [f"{kw} ({int(val)}회)" for kw, val in zip(labels, values)]
+                labels = keyword_totals.index.tolist()
+                values = keyword_totals.values.tolist()
+                label_texts = [f"{kw} ({val:.2f})" for kw, val in zip(labels, values)]
 
                 fig, ax = plt.subplots(figsize=(6, 6))
                 wedges, texts, autotexts = ax.pie(
@@ -565,10 +567,10 @@ with tab3:
                     startangle=90,
                     wedgeprops=dict(width=0.4),
                     labels=label_texts,
-                    textprops=dict(color="black", fontsize=10),
+                    textprops=dict(color="black", fontsize=10, fontproperties=font_prop),
                     autopct='%1.1f%%'
                 )
-                ax.set_title("선택 키워드 비중 (최근 날짜 기준)", fontsize=14)
+                ax.set_title("선택 키워드 비중 (최근 날짜 기준)", fontsize=14, fontproperties=font_prop)
                 ax.axis("equal")
                 st.pyplot(fig)
         except Exception as e:
