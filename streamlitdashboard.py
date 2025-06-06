@@ -490,6 +490,9 @@ with tab2:
 with tab3:
     st.markdown("<div class='custom-subheader'>📈 7일 이동 평균 기반 키워드 트렌드</div>", unsafe_allow_html=True)
 
+    chart_type = st.selectbox("🎨 그래프 유형 선택", ["막대그래프", "선그래프", "도넛형 그래프"])
+    selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
+    
     if selected_keywords:
       df_long = df_rolling[selected_keywords].reset_index().melt(
         id_vars="Publication Date",
