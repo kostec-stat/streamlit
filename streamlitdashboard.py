@@ -505,7 +505,7 @@ with tab3:
             x="Publication Date:T",
             y="7d_avg:Q",
             color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis"))
-        )
+        ).properties(width=800)
         st.altair_chart(chart, use_container_width=True)
 
       elif chart_type == "막대그래프":
@@ -544,7 +544,7 @@ with tab3:
                 values = keyword_totals.values.tolist()
                 label_texts = [f"{kw} ({val:.2f})" for kw, val in zip(labels, values)]
 
-                fig, ax = plt.subplots(figsize=(6, 6))
+                fig, ax = plt.subplots(figsize=(8, 6))
                 wedges, texts, autotexts = ax.pie(
                     values,
                     startangle=90,
@@ -553,7 +553,7 @@ with tab3:
                     textprops={'color': "black", 'fontsize': 10, 'fontproperties': font_prop},
                     autopct='%1.1f%%'
                 )
-                ax.set_title("최근 7일 선택 키워드 비중", fontsize=14, fontproperties=font_prop)
+                ax.set_title("최근 7일 선택 키워드 비중", fontsize=12, fontproperties=font_prop)
                 ax.axis('equal')
                 plt.tight_layout()
                 st.pyplot(fig)
