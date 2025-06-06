@@ -519,11 +519,29 @@ with tab3:
     elif chart_type == "도넛형 그래프":
         st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
 
-        import matplotlib.pyplot as plt 
-        import matplotlib.font_manager as fm
-        import numpy as np
-  
-        plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
+        import matplotlib.pyplot as plt
+		import matplotlib.font_manager as fm
+		import numpy as np
+		import platform
+		
+		
+		if platform.system() == 'Windows':
+		    plt.rcParams['font.family'] = 'Malgun Gothic'
+		elif platform.system() == 'Darwin':
+		    plt.rcParams['font.family'] = 'AppleGothic'
+		else:
+		    # Linux 환경에서는 Noto Sans CJK 폰트가 설치되어 있어야 함
+		    font_candidates = [
+		        '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
+		        '/usr/share/fonts/truetype/nanum/NanumGothic.ttf',
+		        '/usr/share/fonts/truetype/arphic/uming.ttc',
+		        '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc'
+		    ]
+		    for font_path in font_candidates:
+		        if os.path.exists(font_path):
+		            font_name = fm.FontProperties(fname=font_path).get_name()
+		            plt.rcParams['font.family'] = font_name
+		            break
         try:
           # 최신 날짜 기준 데이터
             latest_date = df_rolling.index.max()
