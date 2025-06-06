@@ -2,9 +2,9 @@
 
 ## 필수 API 키 설정
 
-- **Claude API Key**: Anthropic의 Claude 3 모델(7B 버전)을 사용하기 위한 인증키 [^1]
-- **GitHub API Token**: `kostec-stat` 조직 내 저장소에 자동 커밋을 위해 필요[^1]
-- 두 키 모두 Streamlit Secrets 관리 또는 환경 변수에 등록해야 하며, `kostec-stat` 조직 구성원만 접근 가능[^1]
+- **Claude API Key**: Anthropic의 Claude 3 모델(7B 버전)을 사용하기 위한 인증키 
+- **GitHub API Token**: `kostec-stat` 조직 내 저장소에 자동 커밋을 위해 필요
+- 두 키 모두 Streamlit Secrets 관리 또는 환경 변수에 등록해야 하며, `kostec-stat` 조직 구성원만 접근 가능
 
 
 ## 주요 기능
