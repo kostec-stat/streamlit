@@ -424,7 +424,7 @@ with tab2:
         "Circular (Random Seed)": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,
-	    "center": True,
+	        "center": True,
             "physics": True,
             "hierarchical": False,
         },
@@ -432,14 +432,14 @@ with tab2:
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,  
             "physics": True,
-	    "center": True,
+	        "center": True,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
         },
         "Hierarchical - TB": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
             "randomSeed": 42,
-	    "center": True,
+	        "center": True,
             "physics": True,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
@@ -483,9 +483,7 @@ with tab2:
         target_col = col1 if i % 2 == 0 else col2
         target_col.write(f"🔹 {row['term']} ({row['count']}회)")
 
-# --- TAB 3: 연관어
-# --- TAB 3: 연관어
-# --- TAB 3: 연관어
+# --- TAB 3: 빈도수 추적
 with tab3:
     st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
 
@@ -506,7 +504,6 @@ with tab3:
                 color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis"))
             )
         else:
-            # 👉 막대 너비 10배 확장
             chart = alt.Chart(df_long).mark_bar(size=45).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
