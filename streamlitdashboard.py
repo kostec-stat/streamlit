@@ -391,22 +391,22 @@ with tab1:
 			st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
 	else:
 		st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
-    
+
 	col1, col2 = st.columns(2)
-    with col1:
-        download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
-        try:
-            with open(download_path, "rb") as f:
-                st.download_button(
-                    label=f"📥 {selected_snapshot} 중국 주간동향 엑셀 다운로드",
-                    data=f.read(),
-                    file_name=f"{selected_snapshot}_trend_summary.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                )
-        except Exception as e:
-            st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
-    with col2:
-        download_path2 = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
+	with col1:
+		download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
+		try:
+			with open(download_path, "rb") as f:
+				st.download_button(
+					label=f"📥 {selected_snapshot} 중국 주간동향 엑셀 다운로드",
+					data=f.read(),
+					file_name=f"{selected_snapshot}_trend_summary.xlsx",
+					mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+				)
+		except Exception as e:
+			st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+	with col2:
+		download_path2 = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
         try:
             with open(download_path2, "rb") as f:
                 st.download_button(
@@ -508,57 +508,54 @@ with tab3:
             )
         else:
             chart = alt.Chart(df_long).mark_bar(size=30).encode(
-			    x=alt.X("Publication Date:T", axis=alt.Axis(labelAngle=-45)),
-			    y="7d_avg:Q",
-			    color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
-			    tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
+                x=alt.X("Publication Date:T", axis=alt.Axis(labelAngle=-45)),
+                y="7d_avg:Q",
+                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
+                tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
 			)
 
-		st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart, use_container_width=True)
 
     elif chart_type == "도넛형 그래프":
-	    st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
+        st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
+
+        import matplotlib.pyplot as plt 
+        import matplotlib.font_manager as fm
+        import numpy as np
 	
-	    import matplotlib.pyplot as plt
-	    import matplotlib.font_manager as fm
-	    import numpy as np
-	
-	    # 한글 폰트 설정
-	    plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
-	
-	    try:
+        plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
+        try:
 	        # 최신 날짜 기준 데이터
-	        latest_date = df_rolling.index.max()
-	        latest_counts = df_rolling.loc[latest_date]
+            latest_date = df_rolling.index.max()
+            latest_counts = df_rolling.loc[latest_date]
+            # 선택된 키워드 중 실제 존재하는 키워드만 필터
+            valid_keywords = [kw for kw in selected_keywords if kw in latest_counts.index]
+            if not valid_keywords:
+                st.warning("📭 선택한 키워드가 데이터에 없습니다. 다시 선택해주세요.")
+            else:
+                filtered_counts = latest_counts[valid_keywords].dropna()
+                top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False).head(5)
 	
-	        # 선택된 키워드 중 실제 존재하는 키워드만 필터
-	        valid_keywords = [kw for kw in selected_keywords if kw in latest_counts.index]
-	        if not valid_keywords:
-	            st.warning("📭 선택한 키워드가 데이터에 없습니다. 다시 선택해주세요.")
-	        else:
-	            filtered_counts = latest_counts[valid_keywords].dropna()
-	            top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False).head(5)
+                if top_counts.empty or top_counts.sum() <= 0:
+                    st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
+                else:
+                    labels = top_counts.index.tolist()
+                    values = top_counts.values.tolist()
+                    label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
 	
-	            if top_counts.empty or top_counts.sum() <= 0:
-	                st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
-	            else:
-	                labels = top_counts.index.tolist()
-	                values = top_counts.values.tolist()
-	                label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
-	
-	                fig, ax = plt.subplots(figsize=(6, 6))
-	                wedges, texts, autotexts = ax.pie(
-	                    values,
-	                    startangle=90,
-	                    wedgeprops=dict(width=0.4),
-	                    labels=label_texts,
-	                    textprops=dict(color="black", fontsize=10)
-	                )
-	                ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
-	                ax.axis("equal")
-	                st.pyplot(fig)
-	    except Exception as e:
-	        st.error(f"❌ 도넛형 그래프 생성 중 오류 발생: {e}")
+                    fig, ax = plt.subplots(figsize=(6, 6))
+                    wedges, texts, autotexts = ax.pie(
+                        values,
+                        startangle=90,
+                        wedgeprops=dict(width=0.4),
+                        labels=label_texts,
+                        textprops=dict(color="black", fontsize=10)
+                    )
+                    ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
+                    ax.axis("equal")
+                    st.pyplot(fig)
+        except Exception as e:
+            st.error(f"❌ 도넛형 그래프 생성 중 오류 발생: {e}")
 
 
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
