@@ -518,15 +518,16 @@ with tab3:
         st.altair_chart(chart, use_container_width=True)
 
       elif chart_type == "도넛형 그래프":
-        st.markdown("### 🍩 선택 키워드 최근 비중")
+        st.markdown("### 🍩 선택 키워드 비중 (최근 7일 기준)")
 
         import matplotlib.pyplot as plt
         import matplotlib.font_manager as fm
         import numpy as np
         import platform
         import os
+        from datetime import timedelta
 
-        # ✅ 한자 대응 폰트 설정
+        # ✅ 폰트 설정 (한자 포함)
         font_prop = None
         if platform.system() == 'Windows':
             font_prop = fm.FontProperties(fname='C:/Windows/Fonts/malgun.ttf')
@@ -547,15 +548,16 @@ with tab3:
                     break
 
         try:
-            # ✅ df_long에서 최신 날짜 기준으로 도넛 구성
+            # ✅ 최근 7일 범위 필터링
             latest_date = df_long["Publication Date"].max()
-            latest_data = df_long[df_long["Publication Date"] == latest_date]
+            start_date = latest_date - timedelta(days=6)
+            recent_data = df_long[df_long["Publication Date"] >= start_date]
 
-            keyword_totals = latest_data.groupby("Keyword")["7d_avg"].sum()
+            keyword_totals = recent_data.groupby("Keyword")["7d_avg"].sum()
             keyword_totals = keyword_totals[keyword_totals > 0]
 
             if keyword_totals.empty:
-                st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
+                st.warning("📭 최근 7일 간 유효한 키워드 데이터가 없습니다.")
             else:
                 labels = keyword_totals.index.tolist()
                 values = keyword_totals.values.tolist()
@@ -570,7 +572,7 @@ with tab3:
                     textprops=dict(color="black", fontsize=10, fontproperties=font_prop),
                     autopct='%1.1f%%'
                 )
-                ax.set_title("선택 키워드 비중 (최근 날짜 기준)", fontsize=14, fontproperties=font_prop)
+                ax.set_title("최근 7일간 선택 키워드 비중", fontsize=14, fontproperties=font_prop)
                 ax.axis("equal")
                 st.pyplot(fig)
         except Exception as e:
