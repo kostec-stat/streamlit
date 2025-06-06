@@ -526,17 +526,14 @@ with tab3:
         from datetime import timedelta
 
         try:
-            # ✅ 1. 사용자 업로드한 한자 대응 폰트 경로 설정
             font_path = "assets/fonts/NotoSansCJK-Regular.ttc"
             font_prop = fm.FontProperties(fname=font_path)
             plt.rcParams['font.family'] = font_prop.get_name()  # 그래프 전체에도 적용
 
-            # ✅ 2. 최근 7일 기준 데이터 집계
             latest_date = df_long["Publication Date"].max()
             start_date = latest_date - timedelta(days=6)
             recent_data = df_long[df_long["Publication Date"] >= start_date]
 
-            # ✅ 3. 키워드별 총합
             keyword_totals = recent_data.groupby("Keyword")["7d_avg"].sum()
             keyword_totals = keyword_totals[keyword_totals > 0]
 
@@ -545,7 +542,7 @@ with tab3:
             else:
                 labels = keyword_totals.index.tolist()
                 values = keyword_totals.values.tolist()
-                label_texts = [f"{kw} ({val:.2f}회)" for kw, val in zip(labels, values)]
+                label_texts = [f"{kw} ({val:.2f})" for kw, val in zip(labels, values)]
 
                 fig, ax = plt.subplots(figsize=(6, 6))
                 wedges, texts, autotexts = ax.pie(
