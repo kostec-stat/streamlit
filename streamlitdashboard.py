@@ -523,36 +523,20 @@ with tab3:
         import matplotlib.pyplot as plt
         import matplotlib.font_manager as fm
         import numpy as np
-        import platform
-        import os
         from datetime import timedelta
 
-        # ✅ 폰트 설정 (한자 포함)
-        font_prop = None
-        if platform.system() == 'Windows':
-            font_prop = fm.FontProperties(fname='C:/Windows/Fonts/malgun.ttf')
-        elif platform.system() == 'Darwin':
-            font_prop = fm.FontProperties(fname='/System/Library/Fonts/AppleGothic.ttf')
-        else:
-            font_candidates = [
-                '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
-                '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.otf',
-                '/usr/share/fonts/truetype/arphic/uming.ttc',
-                '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
-                '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
-            ]
-            for font_path in font_candidates:
-                if os.path.exists(font_path):
-                    font_prop = fm.FontProperties(fname=font_path)
-                    plt.rcParams['font.family'] = font_prop.get_name()
-                    break
-
         try:
-            # ✅ 최근 7일 범위 필터링
+            # ✅ 1. 사용자 업로드한 한자 대응 폰트 경로 설정
+            font_path = "assets/fonts/NotoSansCJK-Regular.ttc"
+            font_prop = fm.FontProperties(fname=font_path)
+            plt.rcParams['font.family'] = font_prop.get_name()  # 그래프 전체에도 적용
+
+            # ✅ 2. 최근 7일 기준 데이터 집계
             latest_date = df_long["Publication Date"].max()
             start_date = latest_date - timedelta(days=6)
             recent_data = df_long[df_long["Publication Date"] >= start_date]
 
+            # ✅ 3. 키워드별 총합
             keyword_totals = recent_data.groupby("Keyword")["7d_avg"].sum()
             keyword_totals = keyword_totals[keyword_totals > 0]
 
@@ -569,15 +553,15 @@ with tab3:
                     startangle=90,
                     wedgeprops=dict(width=0.4),
                     labels=label_texts,
-                    textprops=dict(color="black", fontsize=10, fontproperties=font_prop),
+                    textprops={'color': "black", 'fontsize': 10, 'fontproperties': font_prop},
                     autopct='%1.1f%%'
                 )
-                ax.set_title("최근 7일간 선택 키워드 비중", fontsize=14, fontproperties=font_prop)
+                ax.set_title("최근 7일 선택 키워드 비중", fontsize=14, fontproperties=font_prop)
                 ax.axis("equal")
                 st.pyplot(fig)
+
         except Exception as e:
             st.error(f"❌ 도넛형 그래프 생성 중 오류 발생: {e}")
-
 
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
