@@ -503,21 +503,17 @@ with tab2:
 
     # 🧲 중심 위치 유도용 가짜 노드 추가 (위치 강제 중앙)
     nodes = list(nodes)
-    nodes.append(Node(id="__center__", label="", x=0, y=0, hidden=True))
+    nodes.append(Node(id="__center__", label="", x=175, y=250, hidden=True))
 
     edges = [Edge(source=row.source, target=row.target, label=str(row.count)) for row in df_cooccur.itertuples()]
 
     config = Config(
-        width=350,
+        width=400,
         height=500,
         physics=False,
         staticGraph=True,
         layout={"hierarchical": {"enabled": True, "direction": "UD"}}
     )
-
-    # 노드 좌표 설정 (중앙 기준)
-    nodes.append(Node(id="node1", label="Node1", x=175, y=250))
-    
     try:
         agraph(nodes=nodes, edges=edges, config=config)
     except Exception as e:
