@@ -588,7 +588,7 @@ with tab3:
                 color=alt.Color(field="Keyword", type="viridis"),
                 tooltip=[alt.Tooltip("Keyword"), alt.Tooltip("Value")]
             )
-            donut
+            st.altair_chart(donut, use_container_width=True)
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
     st.markdown("<div class='custom-subheader'>📌 키워드 Top 20 (상세 보기)</div>", unsafe_allow_html=True)
