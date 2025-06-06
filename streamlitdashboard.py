@@ -507,7 +507,7 @@ with tab3:
             )
         else:
             # 👉 막대 너비 10배 확장
-            chart = alt.Chart(df_long).mark_bar(size=40).encode(
+            chart = alt.Chart(df_long).mark_bar(size=45).encode(
                 x="Publication Date:T",
                 y="7d_avg:Q",
                 color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
@@ -517,40 +517,36 @@ with tab3:
         st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
 
     elif chart_type == "도넛형 그래프":
-        st.markdown("### 🍩 최근 키워드 비중 (Top 10)")
-
-        import matplotlib.font_manager as fm
-        import matplotlib.pyplot as plt
-
-        # 한글 폰트 설정 (예: 맑은 고딕)
-        plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
-
-        latest_date = df_rolling.index.max()
-        latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False).head(10)
-
-        labels = [f"{kw} ({int(val)}회)" for kw, val in zip(latest_counts.index, latest_counts.values)]
-        sizes = latest_counts.values.tolist()
-
-        fig, ax = plt.subplots(figsize=(6, 6))
-        wedges, texts = ax.pie(
-            sizes, startangle=90, wedgeprops=dict(width=0.4), labels=None
-        )
-
-        # 바깥쪽에 값+라벨 표시
-        for i, p in enumerate(wedges):
-            ang = (p.theta2 - p.theta1)/2. + p.theta1
-            y = np.sin(np.deg2rad(ang))
-            x = np.cos(np.deg2rad(ang))
-            horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
-            connectionstyle = "angle,angleA=0,angleB={}".format(ang)
-            ax.annotate(labels[i], xy=(x, y), xytext=(1.1*np.sign(x), 1.1*y),
-                        horizontalalignment=horizontalalignment,
-                        verticalalignment="center",
-                        fontsize=10, bbox=dict(boxstyle="round", fc="w"),
-                        arrowprops=dict(arrowstyle="-", connectionstyle=connectionstyle))
-
-        ax.axis('equal')
-        st.pyplot(fig)
+	    st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
+	
+	    import matplotlib.pyplot as plt
+	    import matplotlib.font_manager as fm
+	    import numpy as np
+	
+	    # 한글 폰트 설정
+	    plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
+	
+	    latest_date = df_rolling.index.max()
+	    latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False).head(5)
+	
+	    labels = latest_counts.index.tolist()
+	    values = latest_counts.values.tolist()
+	
+	    # label에 실제 값 포함
+	    label_texts = [f"{kw} ({int(val)}회)" for kw, val in zip(labels, values)]
+	
+	    fig, ax = plt.subplots(figsize=(6, 6))
+	    wedges, texts, autotexts = ax.pie(
+	        values,
+	        startangle=90,
+	        wedgeprops=dict(width=0.4),
+	        labels=label_texts,
+	        textprops=dict(color="black", fontsize=10)
+	    )
+	
+	    ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
+	    ax.axis("equal")
+	    st.pyplot(fig)
 
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
