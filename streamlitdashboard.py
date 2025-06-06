@@ -557,7 +557,8 @@ with tab3:
                 labels = top_counts.index.tolist()
                 values = top_counts.values.tolist()
                 label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
-
+				labels=label_texts
+		
                 fig, ax = plt.subplots(figsize=(6, 6))
                 wedges, texts, autotexts = ax.pie(
                     values,
