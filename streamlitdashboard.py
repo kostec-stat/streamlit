@@ -561,6 +561,7 @@ with tab3:
         import matplotlib.font_manager as fm
         import numpy as np
         from datetime import timedelta
+        import matplotlib.cm as cm
 
         try:
             font_path = "assets/fonts/NotoSansCJK-Regular.ttc"
