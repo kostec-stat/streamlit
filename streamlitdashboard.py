@@ -585,7 +585,7 @@ with tab3:
         
             donut = alt.Chart(keyword_totals_df).mark_arc(innerRadius=50, outerRadius=100).encode(
                 theta=alt.Theta(field="Value", type="quantitative"),
-                color=alt.Color(field="Keyword", type="viridis"),
+                color=alt.Color(field="Keyword", scale=alt.Scale(scheme="viridis")),
                 tooltip=[alt.Tooltip("Keyword"), alt.Tooltip("Value")]
             )
             st.altair_chart(donut, use_container_width=True)
