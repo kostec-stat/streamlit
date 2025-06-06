@@ -518,7 +518,7 @@ with tab3:
         st.altair_chart(chart, use_container_width=True)
 
       elif chart_type == "도넛형 그래프":
-        st.markdown("### 🍩 선택 키워드 최근 비중 (Top 5)")
+        st.markdown("### 🍩 선택 키워드 최근 비중")
 
         import matplotlib.pyplot as plt
         import matplotlib.font_manager as fm
@@ -567,7 +567,7 @@ with tab3:
                     textprops=dict(color="black", fontsize=10),
                     autopct='%1.1f%%'
                 )
-                ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
+                ax.set_title("키워드 비중 (최근 날짜 기준)", fontsize=8)
                 ax.axis("equal")
                 st.pyplot(fig)
         except Exception as e:
