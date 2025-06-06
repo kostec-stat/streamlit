@@ -429,22 +429,56 @@ with tab2:
             "physics": False,
             "hierarchical": False,
             "layout": {"hierarchical": {"enabled": False}},
-            "staticGraph": True  # 고정 배치
+        },
+        "Force-Directed (Spring)": {
+            "improvedLayout": True,
+            "physics": False,
+            "hierarchical": False,
+        },
+        "Random": {
+            "improvedLayout": False,
+            "physics": False,
+            "hierarchical": False,
+            "layout": {"randomSeed": 42},
+        },
+        "Grid": {
+            "improvedLayout": False,
+            "physics": False,
+            "hierarchical": False,
+            "layout": {"grid": {"enabled": True}},
         },
         "Hierarchical - LR": {
             "improvedLayout": True,
             "randomSeed": 42,
             "physics": False,
             "hierarchical": True,
-            "layout": {"hierarchical": {"enabled": True, "direction": "LR"}},
-            "staticGraph": True
+            "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
+        },
+        "Hierarchical - RL": {
+            "improvedLayout": True,
+            "randomSeed": 42,
+            "physics": False,
+            "hierarchical": True,
+            "layout": {"hierarchical": {"enabled": True, "direction": "RL"}}
         },
         "Hierarchical - TB": {
             "improvedLayout": True,
             "randomSeed": 42,
             "physics": False,
             "hierarchical": True,
-            "layout": {"hierarchical": {"enabled": True, "direction": "TB"}},
+            "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
+        },
+        "Hierarchical - BT": {
+            "improvedLayout": True,
+            "randomSeed": 42,
+            "physics": False,
+            "hierarchical": True,
+            "layout": {"hierarchical": {"enabled": True, "direction": "BT"}}
+        },
+        "Static (좌표고정)": {
+            "improvedLayout": False,
+            "physics": False,
+            "hierarchical": False,
             "staticGraph": True
         }
     }
