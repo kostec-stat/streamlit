@@ -583,15 +583,11 @@ with tab3:
                 "LabelText": label_texts
             })
         
-            base = alt.Chart(keyword_totals_df).encode(
+            donut = alt.Chart(keyword_totals_df).mark_arc(innerRadius=50, outerRadius=100).encode(
                 theta=alt.Theta(field="Value", type="quantitative"),
-                color=alt.Color(field="Keyword", type="nominal"),
+                color=alt.Color(field="Keyword", type="viridis"),
                 tooltip=[alt.Tooltip("Keyword"), alt.Tooltip("Value")]
             )
-            pie = base.mark_arc(outerRadius=100)
-            hole = base.mark_arc(innerRadius=50, color='white')
-            donut = pie + hole
-        
             st.altair_chart(donut, use_container_width=True)
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
