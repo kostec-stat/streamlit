@@ -516,37 +516,41 @@ with tab3:
 
         st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
 
-    elif chart_type == "도넛형 그래프":
+	elif chart_type == "도넛형 그래프":
 	    st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
 	
 	    import matplotlib.pyplot as plt
 	    import matplotlib.font_manager as fm
 	    import numpy as np
 	
-	    # 한글 폰트 설정
 	    plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
 	
 	    latest_date = df_rolling.index.max()
-	    latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False).head(5)
+	    latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False)
 	
-	    labels = latest_counts.index.tolist()
-	    values = latest_counts.values.tolist()
+	    # 선택된 키워드만 필터
+	    if selected_keywords:
+	        latest_counts = latest_counts[selected_keywords]
+	    top_counts = latest_counts[latest_counts > 0].sort_values(ascending=False).head(5)
 	
-	    # label에 실제 값 포함
-	    label_texts = [f"{kw} ({int(val)}회)" for kw, val in zip(labels, values)]
+	    if top_counts.sum() == 0 or len(top_counts) == 0:
+	        st.warning("📭 선택한 키워드에 대해 유효한 값이 없습니다. 다른 키워드를 선택해주세요.")
+	    else:
+	        labels = top_counts.index.tolist()
+	        values = top_counts.values.tolist()
+	        label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
 	
-	    fig, ax = plt.subplots(figsize=(6, 6))
-	    wedges, texts, autotexts = ax.pie(
-	        values,
-	        startangle=90,
-	        wedgeprops=dict(width=0.4),
-	        labels=label_texts,
-	        textprops=dict(color="black", fontsize=10)
-	    )
-	
-	    ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
-	    ax.axis("equal")
-	    st.pyplot(fig)
+	        fig, ax = plt.subplots(figsize=(6, 6))
+	        wedges, texts, autotexts = ax.pie(
+	            values,
+	            startangle=90,
+	            wedgeprops=dict(width=0.4),
+	            labels=label_texts,
+	            textprops=dict(color="black", fontsize=10)
+	        )
+	        ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
+	        ax.axis("equal")
+	        st.pyplot(fig)
 
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
