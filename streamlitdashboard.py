@@ -560,52 +560,29 @@ with tab3:
 
       elif chart_type == "도넛형 그래프":
         st.markdown("### 🍩 선택 키워드 비중 (최근 7일 기준)")
+        # 최근 7일 기준 데이터 집계
+        latest_date = df_long["Publication Date"].max()
+        start_date = latest_date - timedelta(days=6)
+        recent_data = df_long[df_long["Publication Date"] >= start_date]
 
-        import matplotlib.pyplot as plt
-        import matplotlib.font_manager as fm
-        import numpy as np
-        from datetime import timedelta
-        import matplotlib.cm as cm
+        # 키워드별 총합
+        keyword_totals = recent_data.groupby("Keyword")["7d_avg"].sum()
+        keyword_totals = keyword_totals[keyword_totals > 0]
 
-        try:
-            font_path = "assets/fonts/NotoSansCJK-Regular.ttc"
-            font_prop = fm.FontProperties(fname=font_path)
-            plt.rcParams['font.family'] = font_prop.get_name()  # 그래프 전체에도 적용
-
-            latest_date = df_long["Publication Date"].max()
-            start_date = latest_date - timedelta(days=6)
-            recent_data = df_long[df_long["Publication Date"] >= start_date]
-
-            keyword_totals = recent_data.groupby("Keyword")["7d_avg"].sum()
-            keyword_totals = keyword_totals[keyword_totals > 0]
-
-            if keyword_totals.empty:
-                st.warning("📭 최근 7일 간 유효한 키워드 데이터가 없습니다.")
-            else:
-                labels = keyword_totals.index.tolist()
-                values = keyword_totals.values.tolist()
-                label_texts = [f"{kw} ({val:.2f})" for kw, val in zip(labels, values)]
-
-                viridis = cm.get_cmap('viridis')
-                colors = [viridis(i / len(values)) for i in range(len(values))]
-                fig, ax = plt.subplots(figsize=(4, 4))
-                wedges, texts, autotexts = ax.pie(
-                    values,
-                    startangle=90,
-                    wedgeprops=dict(width=0.4),
-                    labels=label_texts,
-                    textprops={'color': "black", 'fontsize':8, 'fontproperties': font_prop},
-                    autopct='%1.1f%%'
-                )
-                for autotext in autotexts:
-                    autotext.set_fontsize(8)
-                    autotext.set_fontproperties(font_prop)
-                ax.axis('equal')
-                plt.tight_layout()
-                st.pyplot(fig)
-
-        except Exception as e:
-            st.error(f"❌ 도넛형 그래프 생성 중 오류 발생: {e}")
+        if keyword_totals.empty:
+            st.warning("📭 최근 7일 간 유효한 키워드 데이터가 없습니다.")
+        else:
+            labels = keyword_totals.index.tolist()
+            values = keyword_totals.values.tolist()
+            label_texts = [f"{kw} ({val:.2f})" for kw, val in zip(labels, values)]
+            base = alt.Chart(source).encode(
+                theta=alt.Theta(field="label_texts", type="quantitative"),
+                color=alt.Color(field="values", type="nominal")
+            )
+            pie = base.mark_arc(outerRadius=100)
+            hole = base.mark_arc(innerRadius=50, color='white')
+            donut = pie + hole
+            st.altair_chart(donet, use_container_width=True)
 
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
