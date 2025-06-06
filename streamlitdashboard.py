@@ -416,52 +416,49 @@ with tab1:
 # --- TAB 2: 동시출현 네트워크
 with tab2:
     st.subheader("🕸 동시출현 네트워크")
-    layout_config = {
-    "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
-    "randomSeed": 42,           # 항상 비슷한 위치에서 배치
-    "hierarchical": False       # 계층형 비활성화 (기본 중심 정렬)
-    }
+
     layout_options = {
-        "Circular (Random Seed)": {
-            "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
+        "Circular (Centered)": {
+            "improvedLayout": True,
             "randomSeed": 42,
-	        "center": True,
             "physics": True,
             "hierarchical": False,
+            "layout": {"hierarchical": {"enabled": False}},
         },
         "Hierarchical - LR": {
-            "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
-            "randomSeed": 42,  
+            "improvedLayout": True,
+            "randomSeed": 42,
             "physics": True,
-	        "center": True,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
         },
         "Hierarchical - TB": {
-            "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
+            "improvedLayout": True,
             "randomSeed": 42,
-	        "center": True,
             "physics": True,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
         }
     }
-    # 사용자 선택 드롭다운
+
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
     layout_config = layout_options[selected_layout]
 
-    # 노드/엣지 구성
+    # 노드 구성
     nodes = []
     for _, row in df_cooccur.iterrows():
         nodes.append(Node(id=row["source"], label=row["source"], font={"color": "white"}))
         nodes.append(Node(id=row["target"], label=row["target"], font={"color": "white"}))
-    nodes = {n.id: n for n in nodes}.values()  # 중복 제거
+    nodes = {n.id: n for n in nodes}.values()
+
+    # 🧲 중심 위치 유도용 가짜 노드 추가 (위치 강제 중앙)
+    nodes = list(nodes)
+    nodes.append(Node(id="__center__", label="", x=0, y=0, hidden=True))
 
     edges = [Edge(source=row.source, target=row.target, label=str(row.count)) for row in df_cooccur.itertuples()]
 
-    # 네트워크 config 설정
     config = Config(
-        width=900,
+        width=1400,
         height=700,
         nodeHighlightBehavior=True,
         highlightColor="#FFCC00",
@@ -469,7 +466,7 @@ with tab2:
         node={"color": "#00BFFF"},
         edge={"color": "#AAAAAA"},
         layout=layout_config,
-        physics=True,  # 중요: 그래그래프 물리 기반 재배치 활성화
+        physics=True  # 중력 효과로 중심 정렬
     )
 
     try:
