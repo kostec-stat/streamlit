@@ -30,6 +30,14 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    [data-testid="stVerticalBlock"] > [data-testid="stHorizontalBlock"] {
+        justify-content: center;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 with col1:
     st.image("assets/images/logo.svg", width=120)  # 로고 파일 경로와 크기 설정
 
@@ -500,19 +508,18 @@ with tab2:
     edges = [Edge(source=row.source, target=row.target, label=str(row.count)) for row in df_cooccur.itertuples()]
 
     config = Config(
-        width=1400,
-        height=700,
-        nodeHighlightBehavior=True,
-        highlightColor="#FFCC00",
-        collapsible=True,
-        node={"color": "#00BFFF"},
-        edge={"color": "#AAAAAA"},
-        layout=layout_config,
-        staticGraph=True  # physics 대신 staticGraph로 고정
+        width=350,
+        height=500,
+        physics=False,
+        staticGraph=True,
+        layout={"hierarchical": {"enabled": True, "direction": "UD"}}
     )
 
+    # 노드 좌표 설정 (중앙 기준)
+    nodes.append(Node(id="node1", label="Node1", x=175, y=250))
+    
     try:
-        agraph(nodes=nodes, edges=edges, config=config)
+        agraph(nodes=nodes, edges=edges, config=config, use_container_width=True)
     except Exception as e:
         st.error(f"❌ 네트워크 그래프 렌더링 실패: {e}")
 
