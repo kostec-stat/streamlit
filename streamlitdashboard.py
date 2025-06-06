@@ -455,8 +455,8 @@ with tab2:
     # 노드 구성
     nodes = []
     for _, row in df_cooccur.iterrows():
-        nodes.append(Node(id=row["source"], label=row["source"], font={"color": "white"}))
-        nodes.append(Node(id=row["target"], label=row["target"], font={"color": "white"}))
+        nodes.append(Node(id=row["source"], label=row["source"], font={"color": "darkgray"}))
+        nodes.append(Node(id=row["target"], label=row["target"], font={"color": "darkgray"}))
     nodes = {n.id: n for n in nodes}.values()
 
     # 🧲 중심 위치 유도용 가짜 노드 추가 (위치 강제 중앙)
@@ -474,7 +474,7 @@ with tab2:
         node={"color": "#00BFFF"},
         edge={"color": "#AAAAAA"},
         layout=layout_config,
-        physics=True  # 중력 효과로 중심 정렬
+        staticGraph=True  # physics 대신 staticGraph로 고정
     )
 
     try:
