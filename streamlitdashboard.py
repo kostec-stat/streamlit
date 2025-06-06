@@ -393,7 +393,8 @@ with tab1:
             st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
     else:
         st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
-    col1, col2 = st.columns(2)
+    
+	col1, col2 = st.columns(2)
     with col1:
         download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
         try:
@@ -418,8 +419,6 @@ with tab1:
                 )
         except Exception as e:
             st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
-
-
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
