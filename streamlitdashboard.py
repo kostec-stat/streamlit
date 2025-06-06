@@ -429,7 +429,7 @@ with tab2:
             "physics": False,
             "hierarchical": False,
             "layout": {"hierarchical": {"enabled": False}},
-            "staticGraph"=True  # 고정 배치
+            "staticGraph": True  # 고정 배치
         },
         "Hierarchical - LR": {
             "improvedLayout": True,
@@ -437,7 +437,7 @@ with tab2:
             "physics": False,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "LR"}},
-            "staticGraph"=True
+            "staticGraph": True
         },
         "Hierarchical - TB": {
             "improvedLayout": True,
@@ -445,7 +445,7 @@ with tab2:
             "physics": False,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "TB"}},
-            "staticGraph"=True
+            "staticGraph": True
         }
     }
 
