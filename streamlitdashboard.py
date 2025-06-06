@@ -426,23 +426,26 @@ with tab2:
         "Circular (Centered)": {
             "improvedLayout": True,
             "randomSeed": 42,
-            "physics": True,
+            "physics": False,
             "hierarchical": False,
             "layout": {"hierarchical": {"enabled": False}},
+            "staticGraph"=True  # 고정 배치
         },
         "Hierarchical - LR": {
             "improvedLayout": True,
             "randomSeed": 42,
-            "physics": True,
+            "physics": False,
             "hierarchical": True,
-            "layout": {"hierarchical": {"enabled": True, "direction": "LR"}}
+            "layout": {"hierarchical": {"enabled": True, "direction": "LR"}},
+            "staticGraph"=True
         },
         "Hierarchical - TB": {
             "improvedLayout": True,
             "randomSeed": 42,
-            "physics": True,
+            "physics": False,
             "hierarchical": True,
-            "layout": {"hierarchical": {"enabled": True, "direction": "TB"}}
+            "layout": {"hierarchical": {"enabled": True, "direction": "TB"}},
+            "staticGraph"=True
         }
     }
 
@@ -546,7 +549,7 @@ with tab3:
 
                 viridis = cm.get_cmap('viridis')
                 colors = [viridis(i / len(values)) for i in range(len(values))]
-                fig, ax = plt.subplots(figsize=(8, 6))
+                fig, ax = plt.subplots(figsize=(4, 4))
                 wedges, texts, autotexts = ax.pie(
                     values,
                     startangle=90,
