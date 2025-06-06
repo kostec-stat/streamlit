@@ -521,21 +521,28 @@ with tab3:
         import matplotlib.font_manager as fm
         import numpy as np
 
+        # 한글 폰트 설정 (운영체제에 따라 다르게)
         plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
 
+        # 최신 날짜 기준 데이터 추출
         latest_date = df_rolling.index.max()
         latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False)
 
         # 선택된 키워드만 필터
         if selected_keywords:
             latest_counts = latest_counts[selected_keywords]
+
+        # 0보다 큰 값만 남기고 Top 5 선택
         top_counts = latest_counts[latest_counts > 0].sort_values(ascending=False).head(5)
 
-        if top_counts.sum() == 0 or len(top_counts) == 0:
-            st.warning("📭 선택한 키워드에 대해 유효한 값이 없습니다. 다른 키워드를 선택해주세요.")
+        # 방어 코드: 데이터가 없을 경우 경고
+        if len(top_counts) == 0 or top_counts.sum() <= 0:
+            st.warning("📭 도넛형 그래프를 그릴 수 있는 데이터가 없습니다. 다른 키워드를 선택하거나 데이터를 확인해주세요.")
         else:
             labels = top_counts.index.tolist()
             values = top_counts.values.tolist()
+
+            # 레이블에 값 포함
             label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
 
             fig, ax = plt.subplots(figsize=(6, 6))
