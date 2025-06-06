@@ -533,7 +533,10 @@ with tab3:
         else:
             font_candidates = [
                 '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
-                '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
+		        '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.otf',
+		        '/usr/share/fonts/truetype/arphic/uming.ttc',
+		        '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
+		        '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
             ]
             for font_path in font_candidates:
                 if os.path.exists(font_path):
@@ -546,7 +549,7 @@ with tab3:
             latest_counts = df_rolling.loc[latest_date]
             valid_keywords = [kw for kw in selected_keywords if kw in latest_counts.index]
             filtered_counts = latest_counts[valid_keywords].dropna()
-            top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False).head(5)
+            top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False)
 
             if top_counts.empty or top_counts.sum() <= 0:
                 st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
