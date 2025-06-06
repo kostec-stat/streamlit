@@ -519,7 +519,7 @@ with tab2:
     nodes.append(Node(id="node1", label="Node1", x=175, y=250))
     
     try:
-        agraph(nodes=nodes, edges=edges, config=config, use_container_width=True)
+        agraph(nodes=nodes, edges=edges, config=config)
     except Exception as e:
         st.error(f"❌ 네트워크 그래프 렌더링 실패: {e}")
 
