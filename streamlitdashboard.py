@@ -573,18 +573,26 @@ with tab3:
         if keyword_totals.empty:
             st.warning("📭 최근 7일 간 유효한 키워드 데이터가 없습니다.")
         else:
+            # Altair용 DataFrame 생성
             labels = keyword_totals.index.tolist()
             values = keyword_totals.values.tolist()
             label_texts = [f"{kw} ({val:.2f})" for kw, val in zip(labels, values)]
-            base = alt.Chart(source).encode(
-                theta=alt.Theta(field="label_texts", type="quantitative"),
-                color=alt.Color(field="values", type="nominal")
+            keyword_totals_df = pd.DataFrame({
+                "Keyword": labels,
+                "Value": values,
+                "LabelText": label_texts
+            })
+        
+            base = alt.Chart(keyword_totals_df).encode(
+                theta=alt.Theta(field="Value", type="quantitative"),
+                color=alt.Color(field="Keyword", type="nominal"),
+                tooltip=[alt.Tooltip("Keyword"), alt.Tooltip("Value")]
             )
             pie = base.mark_arc(outerRadius=100)
             hole = base.mark_arc(innerRadius=50, color='white')
             donut = pie + hole
-            st.altair_chart(donet, use_container_width=True)
-
+        
+            st.altair_chart(donut, use_container_width=True)
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
     st.markdown("<div class='custom-subheader'>📌 키워드 Top 20 (상세 보기)</div>", unsafe_allow_html=True)
