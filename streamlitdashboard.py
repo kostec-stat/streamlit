@@ -2,7 +2,7 @@
 # Author : Prof. Dr. Songhee Kang
 # Description : KOSTEC stat visualizer using Excel-based trend summary
 # Date : 2025-04-14
-# Last Update : 2025-05-18
+# Last Update : 2025-06-06
 # License : MIT
 
 # --- 0. 라이브러리 임포트
@@ -31,6 +31,7 @@ with col2:
         한중과기협력센터 주간 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
+
 # --- 2. CSS 적용
 def local_css(file_name):
     with open(file_name, "r", encoding="utf-8") as f:
@@ -419,7 +420,7 @@ with tab2:
     "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
     "randomSeed": 42,           # 항상 비슷한 위치에서 배치
     "hierarchical": False       # 계층형 비활성화 (기본 중심 정렬)
-}
+    }
     layout_options = {
         "Circular (Random Seed)": {
             "improvedLayout": True,     # 네트워크 전체 균형 있게 재배치
@@ -483,71 +484,6 @@ with tab2:
         target_col = col1 if i % 2 == 0 else col2
         target_col.write(f"🔹 {row['term']} ({row['count']}회)")
 
-# --- TAB 3: 빈도수 추적
-with tab3:
-    st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
-
-    chart_type = st.selectbox("🎨 그래프 유형 선택", ["막대그래프", "선그래프", "도넛형 그래프"])
-    selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
-
-    if chart_type in ["막대그래프", "선그래프"] and selected_keywords:
-        df_long = df_rolling[selected_keywords].reset_index().melt(
-            id_vars="Publication Date",
-            var_name="Keyword",
-            value_name="7d_avg"
-        )
-
-        if chart_type == "선그래프":
-            chart = alt.Chart(df_long).mark_line(point=True).encode(
-                x="Publication Date:T",
-                y="7d_avg:Q",
-                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis"))
-            )
-        else:
-            chart = alt.Chart(df_long).mark_bar(size=45).encode(
-                x="Publication Date:T",
-                y="7d_avg:Q",
-                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
-                tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
-            )
-
-        st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
-
-	elif chart_type == "도넛형 그래프":
-		st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
-	
-	    import matplotlib.pyplot as plt
-	    import matplotlib.font_manager as fm
-	    import numpy as np
-	
-	    plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
-	
-	    latest_date = df_rolling.index.max()
-	    latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False)
-	
-	    # 선택된 키워드만 필터
-	    if selected_keywords:
-	        latest_counts = latest_counts[selected_keywords]
-	    top_counts = latest_counts[latest_counts > 0].sort_values(ascending=False).head(5)
-	
-	    if top_counts.sum() == 0 or len(top_counts) == 0:
-	        st.warning("📭 선택한 키워드에 대해 유효한 값이 없습니다. 다른 키워드를 선택해주세요.")
-	    else:
-	        labels = top_counts.index.tolist()
-	        values = top_counts.values.tolist()
-	        label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
-	
-	        fig, ax = plt.subplots(figsize=(6, 6))
-	        wedges, texts, autotexts = ax.pie(
-	            values,
-	            startangle=90,
-	            wedgeprops=dict(width=0.4),
-	            labels=label_texts,
-	            textprops=dict(color="black", fontsize=10)
-	        )
-	        ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
-	        ax.axis("equal")
-	        st.pyplot(fig)# --- TAB 3: 빈도수 추적
 # --- TAB 3: 빈도수 추적
 with tab3:
     st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
