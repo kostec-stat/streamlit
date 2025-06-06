@@ -90,10 +90,10 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
                         #st.write(prompt2)
                             # Claude API 호출
             message = client.messages.create(
-				model="claude-3-7-sonnet-20250219",
-				max_tokens=20000,
-				temperature=1,
-				messages=[
+        model="claude-3-7-sonnet-20250219",
+        max_tokens=20000,
+        temperature=1,
+        messages=[
                     {
                         "role": "user",
                         "content": [
@@ -104,7 +104,7 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
                         ]
                     }
                 ]
-			)
+      )
 
                         #st.write(prompt1)
             st.write("Step 1: RAG 수행 완료.")
@@ -213,10 +213,10 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
                         #st.write(prompt2)
                             # Claude API 호출
             message = client.messages.create(
-				model="claude-3-7-sonnet-20250219",
-				max_tokens=20000,
-				temperature=1,
-				messages=[
+        model="claude-3-7-sonnet-20250219",
+        max_tokens=20000,
+        temperature=1,
+        messages=[
                     {
                         "role": "user",
                         "content": [
@@ -227,7 +227,7 @@ if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
                         ]
                     }
                 ]
-			)
+      )
 
                         #st.write(prompt1)
             st.write("Step 1: RAG 수행 완료.")
@@ -378,46 +378,46 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 # --- TAB 1: 빈도수 통계
 with tab1:
-	st.markdown("<div class='custom-subheader'>📌 5줄 요약</div>", unsafe_allow_html=True)
-	if not df_exec.empty and df_exec.shape[1] > 0:
-		df_exec.columns = [c.strip() for c in df_exec.columns]
-		# 모든 셀을 문자열로 합친 후, '1.' 이후 추출
-		full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
-		start_index = full_text.find("1.")
-		if start_index != -1:
-			cleaned_summary = full_text[start_index:].strip()
-			st.markdown(cleaned_summary)
-		else:
-			st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
-	else:
-		st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
+  st.markdown("<div class='custom-subheader'>📌 5줄 요약</div>", unsafe_allow_html=True)
+  if not df_exec.empty and df_exec.shape[1] > 0:
+    df_exec.columns = [c.strip() for c in df_exec.columns]
+    # 모든 셀을 문자열로 합친 후, '1.' 이후 추출
+    full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
+    start_index = full_text.find("1.")
+    if start_index != -1:
+      cleaned_summary = full_text[start_index:].strip()
+      st.markdown(cleaned_summary)
+    else:
+      st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
+  else:
+    st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
 
-	col1, col2 = st.columns(2)
-	with col1:
-		download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
-		try:
-			with open(download_path, "rb") as f:
-				st.download_button(
-					label=f"📥 {selected_snapshot} 중국 주간동향 엑셀 다운로드",
-					data=f.read(),
-					file_name=f"{selected_snapshot}_trend_summary.xlsx",
-					mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-				)
-		except Exception as e:
-			st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
-	with col2:
-		download_path2 = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
-		try:
-			with open(download_path2, "rb") as f:
-				st.download_button(
-					label=f"📥 {selected_snapshot} 글로벌 주간동향 엑셀 다운로드",
-					data=f.read(),
-					file_name=f"{selected_snapshot}_trend_summary_en.xlsx",
-					mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-		                )
-		except Exception as e:
-			st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
-			
+  col1, col2 = st.columns(2)
+  with col1:
+    download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
+    try:
+      with open(download_path, "rb") as f:
+        st.download_button(
+          label=f"📥 {selected_snapshot} 중국 주간동향 엑셀 다운로드",
+          data=f.read(),
+          file_name=f"{selected_snapshot}_trend_summary.xlsx",
+          mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    except Exception as e:
+      st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+  with col2:
+    download_path2 = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
+    try:
+      with open(download_path2, "rb") as f:
+        st.download_button(
+          label=f"📥 {selected_snapshot} 글로벌 주간동향 엑셀 다운로드",
+          data=f.read(),
+          file_name=f"{selected_snapshot}_trend_summary_en.xlsx",
+          mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+    except Exception as e:
+      st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+      
 # --- TAB 2: 동시출현 네트워크
 with tab2:
     st.markdown("<div class='custom-subheader'>🕸 동시출현 네트워크</div>", unsafe_allow_html=True)
@@ -512,7 +512,7 @@ with tab3:
                 y="7d_avg:Q",
                 color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
                 tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
-			)
+      )
 
         st.altair_chart(chart, use_container_width=True)
 
@@ -522,10 +522,10 @@ with tab3:
         import matplotlib.pyplot as plt 
         import matplotlib.font_manager as fm
         import numpy as np
-	
+  
         plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
         try:
-	        # 최신 날짜 기준 데이터
+          # 최신 날짜 기준 데이터
             latest_date = df_rolling.index.max()
             latest_counts = df_rolling.loc[latest_date]
             # 선택된 키워드 중 실제 존재하는 키워드만 필터
@@ -535,24 +535,24 @@ with tab3:
             else:
                 filtered_counts = latest_counts[valid_keywords].dropna()
                 top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False).head(5)
-	
+  
                 if top_counts.empty or top_counts.sum() <= 0:
                     st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
                 else:
                     labels = top_counts.index.tolist()
                     values = top_counts.values.tolist()
                     label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
-	
+  
                     fig, ax = plt.subplots(figsize=(6, 6))
-					wedges, texts, autotexts = ax.pie(
-						values,
-						startangle=90,
-						wedgeprops=dict(width=0.4),
-						labels=label_texts,
-						textprops=dict(color="black", fontsize=10),
-						autopct='%1.1f%%'
-					)
-					
+                    wedges, texts, autotexts = ax.pie(
+                      values,
+                      startangle=90,
+                      wedgeprops=dict(width=0.4),
+                      labels=label_texts,
+                      textprops=dict(color="black", fontsize=10),
+                      autopct='%1.1f%%'
+                    )
+          
                     ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
                     ax.axis("equal")
                     st.pyplot(fig)
