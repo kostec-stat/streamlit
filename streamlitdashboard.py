@@ -430,6 +430,14 @@ with tab1:
       
 # --- TAB 2: 동시출현 네트워크
 with tab2:
+    if "graph_first_rendered" not in st.session_state:
+        st.session_state.graph_first_rendered = False
+
+    if not st.session_state.graph_first_rendered:
+        # 강제로 레이아웃을 한 번 바꿨다가 원래대로 돌림
+        st.session_state.graph_first_rendered = True
+        st.experimental_rerun()
+        
     st.markdown("<div class='custom-subheader'>🕸 동시출현 네트워크</div>", unsafe_allow_html=True)
 
     layout_options = {
