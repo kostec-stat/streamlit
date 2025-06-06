@@ -432,6 +432,12 @@ with tab2:
     st.markdown("<div class='custom-subheader'>🕸 동시출현 네트워크</div>", unsafe_allow_html=True)
 
     layout_options = {
+        "Static (좌표고정)": {
+            "improvedLayout": False,
+            "physics": False,
+            "hierarchical": False,
+            "staticGraph": True
+        }
         "Circular (Centered)": {
             "improvedLayout": True,
             "randomSeed": 42,
@@ -483,12 +489,6 @@ with tab2:
             "physics": False,
             "hierarchical": True,
             "layout": {"hierarchical": {"enabled": True, "direction": "BT"}}
-        },
-        "Static (좌표고정)": {
-            "improvedLayout": False,
-            "physics": False,
-            "hierarchical": False,
-            "staticGraph": True
         }
     }
 
