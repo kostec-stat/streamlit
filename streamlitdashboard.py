@@ -620,7 +620,7 @@ with tab4:
         # 툴팁 Summary
         short = row["Short Summary"]
         detailed = row["Detailed Summary"]
-        summary_html = f'<span title="{detailed}">{short}</span>'
+        summary_html = f'<span title="{html.escape(detailed)}">{html.escape(short)}</span>'
     
         table_data.append((index, keyword, count, summary_html, link_html))
     
