@@ -21,13 +21,21 @@ import numpy as np
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
 col1, col2 = st.columns([2, 8])  # 로고:제목 비율 조정
-
+st.markdown("""
+    <style>
+    .custom-subheader {
+        font-size: 25px !important;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
 with col1:
     st.image("assets/images/logo.svg", width=120)  # 로고 파일 경로와 크기 설정
 
 with col2:
     st.markdown("""
-        <h1 style='font-size:24px; color:#044B9A; padding-top: 3px;'>
+        <h1 style='font-size:25px; color:#044B9A; padding-top: 2px;'>
         한중과기협력센터 주간 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
@@ -370,7 +378,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 # --- TAB 1: 빈도수 통계
 with tab1:
-    st.subheader("📌 5줄 요약")
+	st.markdown("<div class='custom-subheader'>📌 5줄 요약</div>", unsafe_allow_html=True)
     if not df_exec.empty and df_exec.shape[1] > 0:
         df_exec.columns = [c.strip() for c in df_exec.columns]
 
@@ -415,7 +423,7 @@ with tab1:
 
 # --- TAB 2: 동시출현 네트워크
 with tab2:
-    st.subheader("🕸 동시출현 네트워크")
+    st.markdown("<div class='custom-subheader'>🕸 동시출현 네트워크</div>", unsafe_allow_html=True)
 
     layout_options = {
         "Circular (Centered)": {
@@ -483,7 +491,7 @@ with tab2:
 
 # --- TAB 3: 빈도수 추적
 with tab3:
-    st.subheader("📈 7일 이동 평균 기반 키워드 트렌드")
+    st.markdown("<div class='custom-subheader'>📈 7일 이동 평균 기반 키워드 트렌드</div>", unsafe_allow_html=True)
 
     chart_type = st.selectbox("🎨 그래프 유형 선택", ["막대그래프", "선그래프", "도넛형 그래프"])
     selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
@@ -502,61 +510,63 @@ with tab3:
                 color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis"))
             )
         else:
-            chart = alt.Chart(df_long).mark_bar(size=45).encode(
-                x="Publication Date:T",
-                y="7d_avg:Q",
-                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
-                tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
-            )
+            chart = alt.Chart(df_long).mark_bar(size=30).encode(
+			    x=alt.X("Publication Date:T", axis=alt.Axis(labelAngle=-45)),
+			    y="7d_avg:Q",
+			    color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
+			    tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
+			)
 
-        st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
+		st.altair_chart(chart, use_container_width=True)
 
     elif chart_type == "도넛형 그래프":
-        st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
+	    st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
+	
+	    import matplotlib.pyplot as plt
+	    import matplotlib.font_manager as fm
+	    import numpy as np
+	
+	    # 한글 폰트 설정
+	    plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
+	
+	    try:
+	        # 최신 날짜 기준 데이터
+	        latest_date = df_rolling.index.max()
+	        latest_counts = df_rolling.loc[latest_date]
+	
+	        # 선택된 키워드 중 실제 존재하는 키워드만 필터
+	        valid_keywords = [kw for kw in selected_keywords if kw in latest_counts.index]
+	        if not valid_keywords:
+	            st.warning("📭 선택한 키워드가 데이터에 없습니다. 다시 선택해주세요.")
+	        else:
+	            filtered_counts = latest_counts[valid_keywords].dropna()
+	            top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False).head(5)
+	
+	            if top_counts.empty or top_counts.sum() <= 0:
+	                st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
+	            else:
+	                labels = top_counts.index.tolist()
+	                values = top_counts.values.tolist()
+	                label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
+	
+	                fig, ax = plt.subplots(figsize=(6, 6))
+	                wedges, texts, autotexts = ax.pie(
+	                    values,
+	                    startangle=90,
+	                    wedgeprops=dict(width=0.4),
+	                    labels=label_texts,
+	                    textprops=dict(color="black", fontsize=10)
+	                )
+	                ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
+	                ax.axis("equal")
+	                st.pyplot(fig)
+	    except Exception as e:
+	        st.error(f"❌ 도넛형 그래프 생성 중 오류 발생: {e}")
 
-        import matplotlib.pyplot as plt
-        import matplotlib.font_manager as fm
-        import numpy as np
-
-        # 한글 폰트 설정 (운영체제에 따라 다르게)
-        plt.rcParams['font.family'] = 'Malgun Gothic' if os.name == 'nt' else 'AppleGothic'
-
-        # 최신 날짜 기준 데이터 추출
-        latest_date = df_rolling.index.max()
-        latest_counts = df_rolling.loc[latest_date].sort_values(ascending=False)
-
-        # 선택된 키워드만 필터
-        if selected_keywords:
-            latest_counts = latest_counts[selected_keywords]
-
-        # 0보다 큰 값만 남기고 Top 5 선택
-        top_counts = latest_counts[latest_counts > 0].sort_values(ascending=False).head(5)
-
-        # 방어 코드: 데이터가 없을 경우 경고
-        if len(top_counts) == 0 or top_counts.sum() <= 0:
-            st.warning("📭 도넛형 그래프를 그릴 수 있는 데이터가 없습니다. 다른 키워드를 선택하거나 데이터를 확인해주세요.")
-        else:
-            labels = top_counts.index.tolist()
-            values = top_counts.values.tolist()
-
-            # 레이블에 값 포함
-            label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
-
-            fig, ax = plt.subplots(figsize=(6, 6))
-            wedges, texts, autotexts = ax.pie(
-                values,
-                startangle=90,
-                wedgeprops=dict(width=0.4),
-                labels=label_texts,
-                textprops=dict(color="black", fontsize=10)
-            )
-            ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
-            ax.axis("equal")
-            st.pyplot(fig)
 
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
-    st.subheader("📌 키워드 Top 20 (상세 보기 포함)")
+    st.markdown("<div class='custom-subheader'>📌 키워드 Top 20 (상세 보기)</div>", unsafe_allow_html=True)
 
     top_df = df_summary.sort_values("Keyword Count", ascending=False).head(20).copy()
     top_df = top_df.reset_index(drop=True)
@@ -588,7 +598,7 @@ with tab4:
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
     
 with tab5:
-    st.subheader("🏅 중국 vs 글로벌 키워드 순위 비교")
+    st.markdown("<div class='custom-subheader'>🏅 중국 vs 글로벌 키워드 순위 비교</div>", unsafe_allow_html=True)
 
     # 1. 키워드 매핑 테이블 생성
     with open("assets/input/keywords.txt", "r", encoding="utf-8") as f:
