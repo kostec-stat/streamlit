@@ -379,20 +379,18 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 # --- TAB 1: 빈도수 통계
 with tab1:
 	st.markdown("<div class='custom-subheader'>📌 5줄 요약</div>", unsafe_allow_html=True)
-    if not df_exec.empty and df_exec.shape[1] > 0:
-        df_exec.columns = [c.strip() for c in df_exec.columns]
-
-        # 모든 셀을 문자열로 합친 후, '1.' 이후 추출
-        full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
-        start_index = full_text.find("1.")
-
-        if start_index != -1:
-            cleaned_summary = full_text[start_index:].strip()
-            st.markdown(cleaned_summary)
-        else:
-            st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
-    else:
-        st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
+	if not df_exec.empty and df_exec.shape[1] > 0:
+		df_exec.columns = [c.strip() for c in df_exec.columns]
+		# 모든 셀을 문자열로 합친 후, '1.' 이후 추출
+		full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
+		start_index = full_text.find("1.")
+		if start_index != -1:
+			cleaned_summary = full_text[start_index:].strip()
+			st.markdown(cleaned_summary)
+		else:
+			st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
+	else:
+		st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
     
 	col1, col2 = st.columns(2)
     with col1:
