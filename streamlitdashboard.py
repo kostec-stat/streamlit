@@ -436,7 +436,7 @@ with tab2:
     if not st.session_state.graph_first_rendered:
         # 강제로 레이아웃을 한 번 바꿨다가 원래대로 돌림
         st.session_state.graph_first_rendered = True
-        st.experimental_rerun()
+        st.rerun()
         
     st.markdown("<div class='custom-subheader'>🕸 동시출현 네트워크</div>", unsafe_allow_html=True)
 
