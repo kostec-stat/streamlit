@@ -415,9 +415,9 @@ with tab1:
 					file_name=f"{selected_snapshot}_trend_summary_en.xlsx",
 					mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 		                )
-	        except Exception as e:
-	        	st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
-
+		except Exception as e:
+			st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+			
 # --- TAB 2: 동시출현 네트워크
 with tab2:
     st.markdown("<div class='custom-subheader'>🕸 동시출현 네트워크</div>", unsafe_allow_html=True)
