@@ -512,7 +512,7 @@ with tab2:
         height=500,
         physics=False,
         staticGraph=True,
-        layout={"hierarchical": {"enabled": True, "direction": "UD"}}
+        layout=selected_layout
     )
     try:
         agraph(nodes=nodes, edges=edges, config=config)
