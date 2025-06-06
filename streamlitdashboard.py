@@ -512,7 +512,7 @@ with tab2:
         height=500,
         physics=False,
         staticGraph=True,
-        layout=selected_layout
+        layout=layout_config
     )
     try:
         agraph(nodes=nodes, edges=edges, config=config)
