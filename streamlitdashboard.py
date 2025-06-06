@@ -490,90 +490,80 @@ with tab2:
 with tab3:
     st.markdown("<div class='custom-subheader'>📈 7일 이동 평균 기반 키워드 트렌드</div>", unsafe_allow_html=True)
 
-    chart_type = st.selectbox("🎨 그래프 유형 선택", ["막대그래프", "선그래프", "도넛형 그래프"])
-    selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
+    if selected_keywords:
+    df_long = df_rolling[selected_keywords].reset_index().melt(
+        id_vars="Publication Date",
+        var_name="Keyword",
+        value_name="7d_avg"
+    )
 
-    if chart_type in ["막대그래프", "선그래프"] and selected_keywords:
-        df_long = df_rolling[selected_keywords].reset_index().melt(
-            id_vars="Publication Date",
-            var_name="Keyword",
-            value_name="7d_avg"
+    if chart_type == "선그래프":
+        chart = alt.Chart(df_long).mark_line(point=True).encode(
+            x="Publication Date:T",
+            y="7d_avg:Q",
+            color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis"))
         )
+        st.altair_chart(chart, use_container_width=True)
 
-        if chart_type == "선그래프":
-            chart = alt.Chart(df_long).mark_line(point=True).encode(
-                x="Publication Date:T",
-                y="7d_avg:Q",
-                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis"))
-            )
-        else:
-            chart = alt.Chart(df_long).mark_bar(size=30).encode(
-                x=alt.X("Publication Date:T", axis=alt.Axis(labelAngle=-45)),
-                y="7d_avg:Q",
-                color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
-                tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
-      )
-
+    elif chart_type == "막대그래프":
+        chart = alt.Chart(df_long).mark_bar(size=30).encode(
+            x=alt.X("Publication Date:T", axis=alt.Axis(labelAngle=-45)),
+            y="7d_avg:Q",
+            color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
+            tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
+        )
         st.altair_chart(chart, use_container_width=True)
 
     elif chart_type == "도넛형 그래프":
-        st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
+        st.markdown("### 🍩 선택 키워드 최근 비중 (Top 5)")
 
         import matplotlib.pyplot as plt
         import matplotlib.font_manager as fm
         import numpy as np
         import platform
-    
-    
+
+        # 한글/한자 포함 폰트 설정
         if platform.system() == 'Windows':
             plt.rcParams['font.family'] = 'Malgun Gothic'
         elif platform.system() == 'Darwin':
             plt.rcParams['font.family'] = 'AppleGothic'
         else:
-            # Linux 환경에서는 Noto Sans CJK 폰트가 설치되어 있어야 함
             font_candidates = [
                 '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
-                '/usr/share/fonts/truetype/nanum/NanumGothic.ttf',
-                '/usr/share/fonts/truetype/arphic/uming.ttc',
-                '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc'
+                '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
             ]
             for font_path in font_candidates:
                 if os.path.exists(font_path):
                     font_name = fm.FontProperties(fname=font_path).get_name()
                     plt.rcParams['font.family'] = font_name
                     break
+
         try:
-          # 최신 날짜 기준 데이터
             latest_date = df_rolling.index.max()
             latest_counts = df_rolling.loc[latest_date]
-            # 선택된 키워드 중 실제 존재하는 키워드만 필터
             valid_keywords = [kw for kw in selected_keywords if kw in latest_counts.index]
-            if not valid_keywords:
-                st.warning("📭 선택한 키워드가 데이터에 없습니다. 다시 선택해주세요.")
+            filtered_counts = latest_counts[valid_keywords].dropna()
+            top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False).head(5)
+
+            if top_counts.empty or top_counts.sum() <= 0:
+                st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
             else:
-                filtered_counts = latest_counts[valid_keywords].dropna()
-                top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False).head(5)
-  
-                if top_counts.empty or top_counts.sum() <= 0:
-                    st.warning("📭 도넛형 그래프를 그릴 수 있는 유효한 데이터가 없습니다.")
-                else:
-                    labels = top_counts.index.tolist()
-                    values = top_counts.values.tolist()
-                    label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
-  
-                    fig, ax = plt.subplots(figsize=(6, 6))
-                    wedges, texts, autotexts = ax.pie(
-                      values,
-                      startangle=90,
-                      wedgeprops=dict(width=0.4),
-                      labels=label_texts,
-                      textprops=dict(color="black", fontsize=10),
-                      autopct='%1.1f%%'
-                    )
-          
-                    ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
-                    ax.axis("equal")
-                    st.pyplot(fig)
+                labels = top_counts.index.tolist()
+                values = top_counts.values.tolist()
+                label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
+
+                fig, ax = plt.subplots(figsize=(6, 6))
+                wedges, texts, autotexts = ax.pie(
+                    values,
+                    startangle=90,
+                    wedgeprops=dict(width=0.4),
+                    labels=label_texts,
+                    textprops=dict(color="black", fontsize=10),
+                    autopct='%1.1f%%'
+                )
+                ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
+                ax.axis("equal")
+                st.pyplot(fig)
         except Exception as e:
             st.error(f"❌ 도넛형 그래프 생성 중 오류 발생: {e}")
 
