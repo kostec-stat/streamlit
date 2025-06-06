@@ -590,10 +590,10 @@ with tab3:
                     startangle=90,
                     wedgeprops=dict(width=0.4),
                     labels=label_texts,
-                    textprops={'color': "black", 'fontsize': 10, 'fontproperties': font_prop},
+                    textprops={'color': "black", 'fontsize': 7, 'fontproperties': font_prop},
                     autopct='%1.1f%%'
                 )
-                ax.set_title("최근 7일 선택 키워드 비중", fontsize=12, fontproperties=font_prop)
+                ax.set_title("최근 7일 선택 키워드 비중", fontsize=7, fontproperties=font_prop)
                 ax.axis('equal')
                 plt.tight_layout()
                 st.pyplot(fig)
