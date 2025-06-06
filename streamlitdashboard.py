@@ -437,7 +437,7 @@ with tab2:
             "physics": False,
             "hierarchical": False,
             "staticGraph": True
-        }
+        },
         "Circular (Centered)": {
             "improvedLayout": True,
             "randomSeed": 42,
