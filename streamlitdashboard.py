@@ -491,13 +491,13 @@ with tab3:
     st.markdown("<div class='custom-subheader'>📈 7일 이동 평균 기반 키워드 트렌드</div>", unsafe_allow_html=True)
 
     if selected_keywords:
-    df_long = df_rolling[selected_keywords].reset_index().melt(
+      df_long = df_rolling[selected_keywords].reset_index().melt(
         id_vars="Publication Date",
         var_name="Keyword",
         value_name="7d_avg"
-    )
+      )
 
-    if chart_type == "선그래프":
+      if chart_type == "선그래프":
         chart = alt.Chart(df_long).mark_line(point=True).encode(
             x="Publication Date:T",
             y="7d_avg:Q",
@@ -505,7 +505,7 @@ with tab3:
         )
         st.altair_chart(chart, use_container_width=True)
 
-    elif chart_type == "막대그래프":
+      elif chart_type == "막대그래프":
         chart = alt.Chart(df_long).mark_bar(size=30).encode(
             x=alt.X("Publication Date:T", axis=alt.Axis(labelAngle=-45)),
             y="7d_avg:Q",
@@ -514,7 +514,7 @@ with tab3:
         )
         st.altair_chart(chart, use_container_width=True)
 
-    elif chart_type == "도넛형 그래프":
+      elif chart_type == "도넛형 그래프":
         st.markdown("### 🍩 선택 키워드 최근 비중 (Top 5)")
 
         import matplotlib.pyplot as plt
