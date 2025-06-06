@@ -550,8 +550,9 @@ with tab3:
 						wedgeprops=dict(width=0.4),
 						labels=label_texts,
 						textprops=dict(color="black", fontsize=10),
-						autopct='%1.1f%%'  
+						autopct='%1.1f%%'
 					)
+					
                     ax.set_title("Top 5 키워드 비중 (최근 날짜 기준)", fontsize=14)
                     ax.axis("equal")
                     st.pyplot(fig)
