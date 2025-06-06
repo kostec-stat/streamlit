@@ -517,7 +517,7 @@ with tab3:
         st.altair_chart(chart.properties(width=800, height=400), use_container_width=True)
 
 	elif chart_type == "도넛형 그래프":
-	    st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
+		st.markdown("### 🍩 최근 키워드 비중 (Top 5)")
 	
 	    import matplotlib.pyplot as plt
 	    import matplotlib.font_manager as fm
