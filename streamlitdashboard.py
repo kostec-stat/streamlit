@@ -545,7 +545,7 @@ with tab3:
             else:
                 labels = keyword_totals.index.tolist()
                 values = keyword_totals.values.tolist()
-                label_texts = [f"{kw} ({val:.2f})" for kw, val in zip(labels, values)]
+                label_texts = [f"{kw} ({val:.2f}회)" for kw, val in zip(labels, values)]
 
                 fig, ax = plt.subplots(figsize=(6, 6))
                 wedges, texts, autotexts = ax.pie(
@@ -557,8 +557,9 @@ with tab3:
                     autopct='%1.1f%%'
                 )
                 ax.set_title("최근 7일 선택 키워드 비중", fontsize=14, fontproperties=font_prop)
-                ax.axis("equal")
-                st.pyplot(fig)
+                ax.axis('equal')
+                plt.tight_layout()
+                plt.show()
 
         except Exception as e:
             st.error(f"❌ 도넛형 그래프 생성 중 오류 발생: {e}")
