@@ -533,10 +533,10 @@ with tab3:
         else:
             font_candidates = [
                 '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
-		        '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.otf',
-		        '/usr/share/fonts/truetype/arphic/uming.ttc',
-		        '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
-		        '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
+            '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.otf',
+            '/usr/share/fonts/truetype/arphic/uming.ttc',
+            '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
+            '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
             ]
             for font_path in font_candidates:
                 if os.path.exists(font_path):
@@ -557,8 +557,8 @@ with tab3:
                 labels = top_counts.index.tolist()
                 values = top_counts.values.tolist()
                 label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
-				labels=label_texts
-		
+                labels=label_texts
+    
                 fig, ax = plt.subplots(figsize=(6, 6))
                 wedges, texts, autotexts = ax.pie(
                     values,
