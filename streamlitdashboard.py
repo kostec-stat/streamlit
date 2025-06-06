@@ -19,6 +19,7 @@ from matplotlib_venn import venn2
 import matplotlib.pyplot as plt
 import numpy as np
 from datetime import timedelta
+import html
 
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
