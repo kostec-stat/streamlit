@@ -514,7 +514,7 @@ with tab3:
             y="7d_avg:Q",
             color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
             tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
-        )
+        ).properties(width=800)
         st.altair_chart(chart, use_container_width=True)
 
       elif chart_type == "도넛형 그래프":
@@ -556,7 +556,7 @@ with tab3:
                 ax.set_title("최근 7일 선택 키워드 비중", fontsize=14, fontproperties=font_prop)
                 ax.axis('equal')
                 plt.tight_layout()
-                plt.show()
+                st.pyplot(fig)
 
         except Exception as e:
             st.error(f"❌ 도넛형 그래프 생성 중 오류 발생: {e}")
