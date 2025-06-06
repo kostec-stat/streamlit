@@ -525,7 +525,7 @@ with tab3:
         import numpy as np
         import platform
 
-        # 한글/한자 포함 폰트 설정
+        # ✅ 한자 대응 폰트 설정
         if platform.system() == 'Windows':
             plt.rcParams['font.family'] = 'Malgun Gothic'
         elif platform.system() == 'Darwin':
@@ -533,10 +533,8 @@ with tab3:
         else:
             font_candidates = [
                 '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc',
-            '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.otf',
-            '/usr/share/fonts/truetype/arphic/uming.ttc',
-            '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc',
-            '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
+                '/usr/share/fonts/truetype/arphic/uming.ttc',
+                '/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc'
             ]
             for font_path in font_candidates:
                 if os.path.exists(font_path):
@@ -545,10 +543,13 @@ with tab3:
                     break
 
         try:
-            latest_date = df_rolling.index.max()
-            latest_counts = df_rolling.loc[latest_date]
+            # ✅ raw count 사용을 위해 df_pivot의 마지막 날짜 기준 값 사용
+            latest_date = df_pivot.index.max()
+            latest_counts = df_pivot.loc[latest_date]
+
             valid_keywords = [kw for kw in selected_keywords if kw in latest_counts.index]
             filtered_counts = latest_counts[valid_keywords].dropna()
+
             top_counts = filtered_counts[filtered_counts > 0].sort_values(ascending=False)
 
             if top_counts.empty or top_counts.sum() <= 0:
@@ -556,9 +557,8 @@ with tab3:
             else:
                 labels = top_counts.index.tolist()
                 values = top_counts.values.tolist()
-                label_texts = [f"{kw} ({val:.1f}회)" for kw, val in zip(labels, values)]
-                labels=label_texts
-    
+                label_texts = [f"{kw} ({int(val)}회)" for kw, val in zip(labels, values)]
+
                 fig, ax = plt.subplots(figsize=(6, 6))
                 wedges, texts, autotexts = ax.pie(
                     values,
@@ -568,7 +568,7 @@ with tab3:
                     textprops=dict(color="black", fontsize=10),
                     autopct='%1.1f%%'
                 )
-                ax.set_title("키워드 비중 (최근 날짜 기준)", fontsize=8)
+                ax.set_title("선택 키워드 비중 (최근 날짜 기준)", fontsize=14)
                 ax.axis("equal")
                 st.pyplot(fig)
         except Exception as e:
