@@ -544,6 +544,8 @@ with tab3:
                 values = keyword_totals.values.tolist()
                 label_texts = [f"{kw} ({val:.2f})" for kw, val in zip(labels, values)]
 
+                viridis = cm.get_cmap('viridis')
+                colors = [viridis(i / len(values)) for i in range(len(values))]
                 fig, ax = plt.subplots(figsize=(8, 6))
                 wedges, texts, autotexts = ax.pie(
                     values,
