@@ -646,12 +646,14 @@ with tab2:
         }
     }
 
-    # 📌 고정 회색 스케일 팔레트
-    gray_palette = [
-        "#111111", "#2c2c2c", "#444444", "#666666", "#888888",
-        "#aaaaaa", "#cccccc", "#dddddd", "#eeeeee"
-    ]
-    color_cycle = itertools.cycle(gray_palette)
+    # ✅ Altair 팔레트를 HEX 색상 리스트로 변환
+    try:
+        from altair import schemes
+        color_list = schemes.get(selected_palette)
+    except:
+        color_list = ["#1f77b4", "#ff7f0e", "#2ca02c"]  # fallback
+    
+    color_cycle = itertools.cycle(color_list)
     
     # 1. 레이아웃 구성
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
