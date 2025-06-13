@@ -838,9 +838,9 @@ with tab4:
         
         # 링크 HTML 생성
         link_html = f'<a href="{urls[0]}" target="_blank">🔗 link</a>'
-        table_data.append((index, keyword, count, summary_html, link_html))
+        table_data.append((keyword, count, summary_html, link_html))
         
-    df_display = pd.DataFrame(table_data, columns=["#", "Keyword", "Count", "Summary", "Sources"])
+    df_display = pd.DataFrame(table_data, columns=["Keyword", "Count", "Summary", "Sources"])
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
     
 with tab5:
