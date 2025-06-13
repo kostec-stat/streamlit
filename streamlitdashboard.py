@@ -80,6 +80,10 @@ selected_files = [
     f for f in snapshot_files
     if start_date.strftime("%Y%m%d") <= os.path.basename(f).split("_")[0] <= end_date.strftime("%Y%m%d")
 ]
+selected_files_gloabl = [
+    f for f in snapshot_files_global
+    if start_date.strftime("%Y%m%d") <= os.path.basename(f).split("_")[0] <= end_date.strftime("%Y%m%d")
+]
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🛰 주간 동향 수집")
