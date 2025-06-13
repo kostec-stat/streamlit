@@ -458,7 +458,7 @@ with tab1:
     else:
         st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
 
-    st.markdown("### 📁 다운로드할 스냅샷 선택")
+    st.markdown("<div class='custom-subheader'>📁 다운로드할 스냅샷 선택</div>", unsafe_allow_html=True)
 
     # 사용자가 선택할 수 있는 스냅샷 목록 구성 (기존 snapshot 파일 기준)
     all_snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
