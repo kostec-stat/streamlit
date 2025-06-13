@@ -28,6 +28,9 @@ from sumy.summarizers.text_rank import TextRankSummarizer
 import itertools
 
 # --- 1. 설정
+st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
+col1, col2 = st.columns([2, 8])  # 로고:제목 비율 조정
+
 
 st.markdown("""
     <style>
@@ -93,8 +96,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
-col1, col2 = st.columns([2, 8])  # 로고:제목 비율 조정
+
 with col1:
     st.image("assets/images/logo.svg")  # 로고 파일 경로와 크기 설정
 with col2:
