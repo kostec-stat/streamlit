@@ -104,7 +104,7 @@ with col1:
 with col2:
     st.markdown("""
         <div style='display: flex; align-items: center; height: 100%;'>
-            <h1 style='font-size:36px; color:#044B9A; margin: 20px 0 0 0; line-height: 1.2;'>
+            <h1 style='font-size: clamp(20px, 3vw, 36px); color: #044B9A; margin: 20px 0 0 0; line-height: 1.2;'>
             한중과기협력센터 키워드 동향 대시보드
             </h1>
         </div>
