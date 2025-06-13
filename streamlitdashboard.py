@@ -60,10 +60,51 @@ def local_css(file_name):
 local_css("assets/css/main.css")
 
 # --- 3. 사이드바 
+#snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
+#snapshot_dates = sorted({os.path.basename(f).split("_")[0] for f in snapshot_files}, reverse=True)
+#selected_snapshot = st.sidebar.selectbox("📅 스냅샷 날짜 선택", snapshot_dates)
+#excel_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
+start_date = st.sidebar.date_input("🗓 시작일", value=date.today() - timedelta(days=7), key="start_date")
+end_date = st.sidebar.date_input("⏳ 종료일", value=date.today(), key="end_date")
+
+# 파일 목록 필터링 (중국 버전 기준)
 snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
-snapshot_dates = sorted({os.path.basename(f).split("_")[0] for f in snapshot_files}, reverse=True)
-selected_snapshot = st.sidebar.selectbox("📅 스냅샷 날짜 선택", snapshot_dates)
-excel_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
+snapshot_dates = [os.path.basename(f).split("_")[0] for f in snapshot_files]
+snapshot_dates = [d for d in snapshot_dates if d.isdigit() and len(d) == 8]
+
+# 날짜 필터링
+selected_files = [
+    f for f in snapshot_files
+    if start_date.strftime("%Y%m%d") <= os.path.basename(f).split("_")[0] <= end_date.strftime("%Y%m%d")
+]
+
+# 모든 파일에서 시트 불러오기
+df_summary_all, df_sources_all, df_exec_all, df_cooccur_all, df_assoc_all = [], [], [], [], []
+
+for path in selected_files:
+    try:
+        df_s, df_src, df_exe, df_co, df_as = load_excel_data(path)
+        df_summary_all.append(df_s)
+        df_sources_all.append(df_src)
+        df_exec_all.append(df_exe)
+        df_cooccur_all.append(df_co)
+        df_assoc_all.append(df_as)
+    except Exception as e:
+        st.warning(f"⚠️ 파일 로딩 실패: {path}, 오류: {e}")
+
+# 하나의 DataFrame으로 통합
+if df_summary_all:
+    df_summary = pd.concat(df_summary_all, ignore_index=True)
+    df_sources = pd.concat(df_sources_all, ignore_index=True)
+    df_exec = pd.concat(df_exec_all, ignore_index=True)
+    df_cooccur = pd.concat(df_cooccur_all, ignore_index=True)
+    df_assoc = pd.concat(df_assoc_all, ignore_index=True)
+else:
+    st.error("❌ 선택한 기간에 해당하는 데이터를 찾을 수 없습니다.")
+    st.stop()
+
+# 이후 기존 코드의 df_summary 등 변수 그대로 사용 가능
+# 예: df_summary, df_cooccur, df_exec 등을 탭에서 그대로 활용
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🛰 주간 동향 수집")
