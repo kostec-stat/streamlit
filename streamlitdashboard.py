@@ -2,7 +2,7 @@
 # Author : Prof. Dr. Songhee Kang
 # Description : KOSTEC stat visualizer using Excel-based trend summary
 # Date : 2025-04-14
-# Last Update : 2025-06-06 
+# Last Update : 2025-06-14
 # **** 중간보고(2025-05-30) 후 수정사항: 도넛그래프 추가, 연관검색어 센터링, 막대그래프 두께 조정, KOSTEC 로고 삽입
 # **** 최종보고(2025-06-12) 후 수정사항: 스냅샷 시작과 끝을 지정해 기간별 보고서 리포트
 # License : MIT
