@@ -66,6 +66,13 @@ def local_css(file_name):
 local_css("assets/css/main.css")
 
 # --- 3. 사이드바 
+color_palettes = [
+    "viridis", "plasma", "magma", "inferno", "turbo",
+    "category10", "category20", "accent", "dark2", "set1", "set2", "set3"
+]
+
+# 👉 사이드바에서 팔레트 선택
+selected_palette = st.sidebar.selectbox("🎨 색상 팔레트 선택", color_palettes, index=0)
 start_date = st.sidebar.date_input("🗓 시작일", value=date.today() - timedelta(days=7), key="start_date")
 end_date = st.sidebar.date_input("⏳ 종료일", value=date.today(), key="end_date")
 
@@ -571,16 +578,19 @@ with tab2:
         }
     }
 
-    # 1. 개선된 레이아웃 구성
+    # 1. 레이아웃 구성
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
     layout_config = layout_options[selected_layout]
     
-    # 2. 색상 팔레트 생성
-    color_palette = [
-        "#4E79A7", "#F28E2B", "#E15759", "#76B7B2",
-        "#59A14F", "#EDC948", "#B07AA1", "#FF9DA7",
-        "#9C755F", "#BAB0AC"
-    ]
+    # 2. 선택된 Altair 팔레트를 HEX 리스트로 변환
+    try:
+        color_palette = alt.themes.get()["_scheme"][selected_palette]
+    except Exception:
+        try:
+            color_palette = alt.schemes.get(selected_palette)
+        except Exception:
+            color_palette = ["#1f77b4", "#ff7f0e", "#2ca02c"]  # fallback
+    
     color_cycle = itertools.cycle(color_palette)
     
     # 3. 노드 구성
@@ -588,7 +598,7 @@ with tab2:
     node_color_map = {node: next(color_cycle) for node in unique_nodes}
     
     nodes = [
-        Node(id=node, label=node, color=node_color_map[node], font={"color": "white"})
+        Node(id=node, label=node, color=node_color_map[node], font={"color": "darkgray"})
         for node in unique_nodes
     ]
     
@@ -603,8 +613,8 @@ with tab2:
         width=800,
         height=600,
         layout=layout_config,
-        physics=True,           # 레이아웃 자동 물리 기반
-        staticGraph=False       # 강제 고정 비활성화
+        physics=True,
+        staticGraph=False
     )
     
     # 6. 렌더링
@@ -626,6 +636,7 @@ with tab3:
 
     chart_type = st.selectbox("🎨 그래프 유형 선택", ["막대그래프", "선그래프", "도넛형 그래프"])
     selected_keywords = st.multiselect("📌 키워드 선택", df_rolling.columns.tolist(), default=df_rolling.columns[:5])
+    color_scheme = alt.Scale(scheme=selected_palette)
     
     if selected_keywords:
       df_long = df_rolling[selected_keywords].reset_index().melt(
@@ -638,7 +649,7 @@ with tab3:
         chart = alt.Chart(df_long).mark_line(point=True).encode(
             x="Publication Date:T",
             y="7d_avg:Q",
-            color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis"))
+            color=alt.Color("Keyword:N", scale=color_scheme)
         ).properties(width=800)
         st.altair_chart(chart, use_container_width=True)
 
@@ -646,7 +657,7 @@ with tab3:
         chart = alt.Chart(df_long).mark_bar(size=30).encode(
             x=alt.X("Publication Date:T", axis=alt.Axis(labelAngle=-45)),
             y="7d_avg:Q",
-            color=alt.Color("Keyword:N", scale=alt.Scale(scheme="viridis")),
+            color=alt.Color("Keyword:N", scale=color_scheme),
             tooltip=["Publication Date:T", "Keyword:N", "7d_avg:Q"]
         ).properties(width=800)
         st.altair_chart(chart, use_container_width=True)
@@ -677,7 +688,7 @@ with tab3:
         
             donut = alt.Chart(keyword_totals_df).mark_arc(innerRadius=50, outerRadius=100).encode(
                 theta=alt.Theta(field="Value", type="quantitative"),
-                color=alt.Color(field="Keyword", scale=alt.Scale(scheme="viridis")),
+                color=alt.Color(field="Keyword", scale=color_scheme),
                 tooltip=[alt.Tooltip("Keyword"), alt.Tooltip("Value")]
             )
             st.altair_chart(donut, use_container_width=True)
