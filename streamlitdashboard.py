@@ -674,8 +674,6 @@ with tab2:
     
     # 5. 그래프 구성 옵션
     config = Config(
-        width=800,
-        height=600,
         layout=layout_config,
         physics=True,
         staticGraph=False
