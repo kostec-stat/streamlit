@@ -490,8 +490,8 @@ df_rolling = df_pivot.rolling(window=7, min_periods=1).mean()
 # --- 4. 탭 구성
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 요약과 다운로드", 
-    "🕸 동시출현과 연관어", 
-    "🔍 빈도수 추적", 
+    "🕸 동시출현 네트워크", 
+    "🔍 키워드 빈도수 추적", 
     "🏆 Top20과 드릴다운",
     "🌐 글로벌 비교"
 ])
@@ -684,13 +684,6 @@ with tab2:
         agraph(nodes=nodes, edges=edges, config=config)
     except Exception as e:
         st.error(f"❌ 네트워크 그래프 렌더링 실패: {e}")
-
-    st.subheader("연관어 Top 20")
-    df_top_assoc = df_assoc.sort_values("count", ascending=False).head(20)
-    col1, col2 = st.columns(2)
-    for i, row in df_top_assoc.iterrows():
-        target_col = col1 if i % 2 == 0 else col2
-        target_col.write(f"🔹 {row['term']} ({row['count']}회)")
 
 # --- TAB 3: 빈도수 추적
 with tab3:
