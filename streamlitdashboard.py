@@ -52,7 +52,7 @@ with col1:
 
 with col2:
     st.markdown("""
-        <h1 style='font-size:32px; color:#044B9A; padding-top: 4px;'>
+        <h1 style='font-size:32px; color:#044B9A; padding-top: 6px;'>
         한중과기협력센터 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
