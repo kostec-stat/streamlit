@@ -52,7 +52,7 @@ with col1:
 
 with col2:
     st.markdown("""
-        <h1 style='font-size:32px; color:#044B9A; padding-top: 2px;'>
+        <h1 style='font-size:32px; color:#044B9A; padding-top: 4px;'>
         한중과기협력센터 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
@@ -750,7 +750,7 @@ with tab5:
         st.error("❌ 선택한 기간에 해당하는 데이터를 찾을 수 없습니다.")
         st.stop()
     
-    df_summary_global.columns = [col.strip() for col in df_summary_global.columns]
+    df_global_summary.columns = [col.strip() for col in df_global_summary.columns]
 
     # 4. 글로벌 키워드 매핑 (영문 → 중문)
     map_dict = {
