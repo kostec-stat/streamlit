@@ -78,34 +78,6 @@ selected_files = [
     if start_date.strftime("%Y%m%d") <= os.path.basename(f).split("_")[0] <= end_date.strftime("%Y%m%d")
 ]
 
-# 모든 파일에서 시트 불러오기
-df_summary_all, df_sources_all, df_exec_all, df_cooccur_all, df_assoc_all = [], [], [], [], []
-
-for path in selected_files:
-    try:
-        df_s, df_src, df_exe, df_co, df_as = load_excel_data(path)
-        df_summary_all.append(df_s)
-        df_sources_all.append(df_src)
-        df_exec_all.append(df_exe)
-        df_cooccur_all.append(df_co)
-        df_assoc_all.append(df_as)
-    except Exception as e:
-        st.warning(f"⚠️ 파일 로딩 실패: {path}, 오류: {e}")
-
-# 하나의 DataFrame으로 통합
-if df_summary_all:
-    df_summary = pd.concat(df_summary_all, ignore_index=True)
-    df_sources = pd.concat(df_sources_all, ignore_index=True)
-    df_exec = pd.concat(df_exec_all, ignore_index=True)
-    df_cooccur = pd.concat(df_cooccur_all, ignore_index=True)
-    df_assoc = pd.concat(df_assoc_all, ignore_index=True)
-else:
-    st.error("❌ 선택한 기간에 해당하는 데이터를 찾을 수 없습니다.")
-    st.stop()
-
-# 이후 기존 코드의 df_summary 등 변수 그대로 사용 가능
-# 예: df_summary, df_cooccur, df_exec 등을 탭에서 그대로 활용
-
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🛰 주간 동향 수집")
 
@@ -372,10 +344,29 @@ def load_excel_data(path):
     df_assoc = pd.read_excel(xls, sheet_name="Associations")
     return df_summary, df_sources, df_exec, df_cooccur, df_assoc
 
-try:
-    df_summary, df_sources, df_exec, df_cooccur, df_assoc = load_excel_data(excel_path)
-except Exception as e:
-    st.error(f"분석데이터 로드 실패: {e}")
+# 모든 파일에서 시트 불러오기
+df_summary_all, df_sources_all, df_exec_all, df_cooccur_all, df_assoc_all = [], [], [], [], []
+
+for path in selected_files:
+    try:
+        df_s, df_src, df_exe, df_co, df_as = load_excel_data(path)
+        df_summary_all.append(df_s)
+        df_sources_all.append(df_src)
+        df_exec_all.append(df_exe)
+        df_cooccur_all.append(df_co)
+        df_assoc_all.append(df_as)
+    except Exception as e:
+        st.warning(f"⚠️ 파일 로딩 실패: {path}, 오류: {e}")
+
+# 하나의 DataFrame으로 통합
+if df_summary_all:
+    df_summary = pd.concat(df_summary_all, ignore_index=True)
+    df_sources = pd.concat(df_sources_all, ignore_index=True)
+    df_exec = pd.concat(df_exec_all, ignore_index=True)
+    df_cooccur = pd.concat(df_cooccur_all, ignore_index=True)
+    df_assoc = pd.concat(df_assoc_all, ignore_index=True)
+else:
+    st.error("❌ 선택한 기간에 해당하는 데이터를 찾을 수 없습니다.")
     st.stop()
 
 df_summary.columns = [col.strip() for col in df_summary.columns]
