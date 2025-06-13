@@ -693,34 +693,39 @@ with tab3:
 with tab4:
     st.markdown("<div class='custom-subheader'>📌 키워드 Top 20 (상세 보기)</div>", unsafe_allow_html=True)
 
-    # ✅ 정합성을 위해 tab5의 df_rank_china 기준으로 가져옴
-    df_summary.columns = [c.strip() for c in df_summary.columns]
-    top_keywords = (
+    # 컬럼 정리
+    df_summary.columns = [col.strip() for col in df_summary.columns]
+
+    # ✅ Keyword 기준으로 집계 및 링크 병합
+    grouped = (
         df_summary
-        .groupby("Keyword", as_index=False)["Keyword Count"].sum()
+        .groupby("Keyword")
+        .agg({
+            "Keyword Count": "sum",
+            "Short Summary": "first",  # 대표 요약 1개
+            "Detailed Summary": "first",  # 대표 상세 1개
+            "Source URL": lambda urls: list(set(urls))  # 중복 제거 후 링크 리스트
+        })
+        .reset_index()
         .sort_values("Keyword Count", ascending=False)
-        .head(20)["Keyword"]
-        .tolist()
+        .head(20)
     )
 
-    # ✅ 상위 20개 키워드에 해당하는 상세 row만 추출
-    top_df = df_summary[df_summary["Keyword"].isin(top_keywords)].copy()
-    top_df = top_df.sort_values(by=["Keyword", "Keyword Count"], ascending=[True, False])
-    top_df = top_df.reset_index(drop=True)
-
-    # 🧾 테이블 생성
+    # ✅ 테이블 데이터 구성
     table_data = []
-    for i, row in top_df.iterrows():
+    for i, row in grouped.iterrows():
         index = i + 1
         keyword = row["Keyword"]
         count = row["Keyword Count"]
-        link_html = f'<a href="{row["Source URL"]}" target="_blank">🔗link</a>'
-        short = row["Short Summary"]
-        detailed = row["Detailed Summary"]
-        summary_html = f'<span title="{html.escape(detailed)}">{html.escape(short)}</span>'
-        table_data.append((index, keyword, count, summary_html, link_html))
+        summary_html = f'<span title="{html.escape(row["Detailed Summary"])}">{html.escape(row["Short Summary"])}</span>'
 
-    df_display = pd.DataFrame(table_data, columns=["#", "Keyword", "Count", "Summary", "Source"])
+        # 🔗 여러 링크 처리
+        link_htmls = [f'<a href="{url}" target="_blank">🔗link</a>' for url in row["Source URL"] if isinstance(url, str)]
+        link_html_combined = " ".join(link_htmls)
+
+        table_data.append((index, keyword, count, summary_html, link_html_combined))
+
+    df_display = pd.DataFrame(table_data, columns=["#", "Keyword", "Count", "Summary", "Sources"])
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
     
 with tab5:
