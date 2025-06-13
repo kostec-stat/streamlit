@@ -48,46 +48,47 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown("""
 <style>
-/* 🔵 탭 공통 스타일 */
+/* 🎨 탭 공통 스타일 (글씨 보이게) */
 [data-testid="stTabs"] button {
     font-size: 18px !important;
     font-family: "Noto Sans KR", sans-serif !important;
     padding: 10px 16px !important;
     margin-right: 6px;
     border-radius: 6px;
-    color: white !important;
+    color: black !important;   /* ✅ 글씨 색: 검정으로 변경 */
+    font-weight: 500;
 }
 
-/* 🌈 탭 개별 배경색 (탭 순서대로 지정) */
+/* 🌗 각 탭에 그레이스케일 배경색 적용 */
 [data-testid="stTabs"] button:nth-child(1) {
-    background-color: #1f77b4 !important;  /* tab1: 파랑 */
+    background-color: #f0f0f0 !important;  /* 연회색 */
 }
 [data-testid="stTabs"] button:nth-child(2) {
-    background-color: #ff7f0e !important;  /* tab2: 오렌지 */
+    background-color: #d9d9d9 !important;
 }
 [data-testid="stTabs"] button:nth-child(3) {
-    background-color: #2ca02c !important;  /* tab3: 초록 */
+    background-color: #bfbfbf !important;
 }
 [data-testid="stTabs"] button:nth-child(4) {
-    background-color: #d62728 !important;  /* tab4: 빨강 */
+    background-color: #a6a6a6 !important;
 }
 [data-testid="stTabs"] button:nth-child(5) {
-    background-color: #9467bd !important;  /* tab5: 보라 */
+    background-color: #8c8c8c !important;
 }
 
-/* ✅ 선택된 탭: 진하게 + 마진 아래 */
+/* ✅ 선택된 탭 강조 스타일 */
 [data-testid="stTabs"] button[aria-selected="true"] {
-    border: 3px solid white !important;
+    border: 2px solid #444 !important;
     font-weight: bold !important;
     margin-bottom: 10px !important;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
 }
 
-/* 📦 탭 내부 콘텐츠 폰트 및 패딩 */
+/* 🧾 탭 내부 글자 크기 및 패딩 확대 */
 .block-container {
     font-size: 17px !important;
     font-family: "Noto Sans KR", sans-serif !important;
-    padding: 1rem 1.5rem !important;
+    padding: 1.5rem 2rem !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -97,7 +98,7 @@ with col1:
 
 with col2:
     st.markdown("""
-        <h1 style='font-size:32px; color:#044B9A; padding-top: 6px;'>
+        <h1 style='font-size:35px; color:#044B9A; padding-top: 6px;'>
         한중과기협력센터 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
