@@ -691,7 +691,6 @@ with tab3:
             
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
-ith tab4:
     st.markdown("<div class='custom-subheader'>📌 키워드 Top 20 (상세 보기)</div>", unsafe_allow_html=True)
 
     # ✅ 정합성을 위해 tab5의 df_rank_china 기준으로 가져옴
