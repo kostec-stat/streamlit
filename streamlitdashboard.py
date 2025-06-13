@@ -693,37 +693,37 @@ with tab3:
 with tab4:
     st.markdown("<div class='custom-subheader'>📌 키워드 Top 20 (상세 보기)</div>", unsafe_allow_html=True)
 
-    # 컬럼 정리
     df_summary.columns = [col.strip() for col in df_summary.columns]
 
-    # ✅ Keyword 기준으로 집계 및 링크 병합
+    # ✅ groupby로 Count 집계 + 대표 요약 + 링크 모음
     grouped = (
         df_summary
         .groupby("Keyword")
         .agg({
             "Keyword Count": "sum",
-            "Short Summary": "first",  # 대표 요약 1개
-            "Detailed Summary": "first",  # 대표 상세 1개
-            "Source URL": lambda urls: list(set(urls))  # 중복 제거 후 링크 리스트
+            "Short Summary": lambda x: x.dropna().iloc[0] if not x.dropna().empty else "",
+            "Detailed Summary": lambda x: x.dropna().iloc[0] if not x.dropna().empty else "",
+            "Source URL": lambda urls: list(set(filter(lambda u: isinstance(u, str) and u.startswith("http"), urls)))
         })
         .reset_index()
         .sort_values("Keyword Count", ascending=False)
         .head(20)
     )
 
-    # ✅ 테이블 데이터 구성
     table_data = []
     for i, row in grouped.iterrows():
         index = i + 1
         keyword = row["Keyword"]
         count = row["Keyword Count"]
-        summary_html = f'<span title="{html.escape(row["Detailed Summary"])}">{html.escape(row["Short Summary"])}</span>'
 
-        # 🔗 여러 링크 처리
-        link_htmls = [f'<a href="{url}" target="_blank">🔗link</a>' for url in row["Source URL"] if isinstance(url, str)]
-        link_html_combined = " ".join(link_htmls)
+        summary_html = f'<span title="{html.escape(row["Detailed Summary"])}">{html.escape(row["Short Summary"])}' \
+                       f'</span>'
 
-        table_data.append((index, keyword, count, summary_html, link_html_combined))
+        # 여러 링크 모아서 한 줄에 표시
+        links = row["Source URL"]
+        link_html = " ".join([f'<a href="{url}" target="_blank">🔗link</a>' for url in links])
+
+        table_data.append((index, keyword, count, summary_html, link_html))
 
     df_display = pd.DataFrame(table_data, columns=["#", "Keyword", "Count", "Summary", "Sources"])
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
