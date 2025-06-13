@@ -700,13 +700,13 @@ with tab5:
     zh_set = set(df_summary["Keyword"])
 
     # 3. 글로벌 Summary Table
-    df_summary_all, df_sources_all, df_exec_all, df_cooccur_all, df_assoc_all = [], [], [], [], []
+    df_summary_global_all = []
 
     for path in selected_files_global:
         try:
-            df_s, df_src = load_excel_data(path)
+            xls = pd.ExcelFile(path)
+            df_s = pd.read_excel(xls, sheet_name="Summary Table")
             df_summary_global_all.append(df_s)
-            df_sources_global_all.append(df_src)
         except Exception as e:
             st.warning(f"⚠️ 파일 로딩 실패: {path}, 오류: {e}")
     
