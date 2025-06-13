@@ -703,7 +703,7 @@ with tab4:
             "Keyword Count": "sum",
             "Short Summary": lambda x: x.dropna().iloc[0] if not x.dropna().empty else "",
             "Detailed Summary": lambda x: x.dropna().iloc[0] if not x.dropna().empty else "",
-            "Source URL": lambda urls: list(set(filter(lambda u: isinstance(u, str) and u.startswith("http"), urls)))
+            "Source URL": lambda urls: list(set(filter(lambda u: isinstance(u, str), urls)))
         })
         .reset_index()
         .sort_values("Keyword Count", ascending=False)
@@ -723,13 +723,10 @@ with tab4:
         urls = row["Source URL"]
 
         # 문자열인 경우 (단일 URL), 리스트로 감쌈
-        if isinstance(urls, str) and urls.startswith("http"):
+        if isinstance(urls, str):
             urls = [urls]
         elif not isinstance(urls, list):
             urls = []
-        
-        # 링크만 추출 (http로 시작하는 것만)
-        urls = [url for url in urls if isinstance(url, str) and url.startswith("http")]
         
         # 링크 HTML 생성
         link_html = " ".join([f'<a href="{url}" target="_blank">🔗link</a>' for url in urls])
