@@ -806,8 +806,10 @@ with tab5:
     
     with col1:
         st.markdown("#### 🇨🇳 중국 키워드 순위 (Rank_China)")
-        st.dataframe(df_rank_china.reset_index(drop=True), use_container_width=True)
-    
+        html_china = df_rank_china.reset_index(drop=True).to_html(index=False, escape=False)
+        st.markdown(html_china, unsafe_allow_html=True)
+
     with col2:
         st.markdown("#### 🌍 글로벌 키워드 순위 (Rank_Global)")
-        st.dataframe(df_rank_global.reset_index(drop=True), use_container_width=True)
+        html_global = df_rank_global.reset_index(drop=True).to_html(index=False, escape=False)
+        st.markdown(html_global, unsafe_allow_html=True)
