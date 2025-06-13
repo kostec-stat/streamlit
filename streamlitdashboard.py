@@ -98,7 +98,9 @@ st.markdown("""
 
 
 with col1:
-    st.image("assets/images/logo.svg")  # 로고 파일 경로와 크기 설정
+    st.markdown("<div style='padding-top: 15px;'>", unsafe_allow_html=True)
+    st.image("assets/images/logo.svg", width=100)
+    st.markdown("</div>", unsafe_allow_html=True)
 with col2:
     st.markdown("""
         <div style='display: flex; align-items: center; height: 100%;'>
