@@ -69,8 +69,12 @@ end_date = st.sidebar.date_input("⏳ 종료일", value=date.today(), key="end_d
 
 # 파일 목록 필터링 (중국 버전 기준)
 snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
+snapshot_files_global = glob.glob("assets/data/*_trend_summary_en.xlsx")
 snapshot_dates = [os.path.basename(f).split("_")[0] for f in snapshot_files]
+global_dates = [os.path.basename(f).split("_")[0] for f in snapshot_files_global]
 snapshot_dates = [d for d in snapshot_dates if d.isdigit() and len(d) == 8]
+global_dates = [d for d in global_dates if d.isdigit() and len(d) == 8]
+
 
 # 날짜 필터링
 selected_files = [
@@ -700,15 +704,24 @@ with tab5:
     zh_set = set(df_summary["Keyword"])
 
     # 3. 글로벌 Summary Table
-    excel_path_global = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
-    try:
-        df_global_summary = pd.read_excel(excel_path_global, sheet_name="Summary Table")
-        df_global_summary.columns = [col.strip() for col in df_global_summary.columns]
-        df_global_sources = pd.read_excel(excel_path_global, sheet_name="Sources")
-        df_global_sources.columns = [col.strip() for col in df_global_sources.columns]
-    except FileNotFoundError:
-        st.warning("❗ 글로벌 요약 파일이 존재하지 않습니다.")
+    df_summary_all, df_sources_all, df_exec_all, df_cooccur_all, df_assoc_all = [], [], [], [], []
+
+    for path in selected_files_global:
+        try:
+            df_s, df_src = load_excel_data(path)
+            df_summary_global_all.append(df_s)
+            df_sources_global_all.append(df_src)
+        except Exception as e:
+            st.warning(f"⚠️ 파일 로딩 실패: {path}, 오류: {e}")
+    
+    # 하나의 DataFrame으로 통합
+    if df_summary_global_all:
+        df_global_summary = pd.concat(df_summary_global_all, ignore_index=True)
+    else:
+        st.error("❌ 선택한 기간에 해당하는 데이터를 찾을 수 없습니다.")
         st.stop()
+    
+    df_summary_global.columns = [col.strip() for col in df_summary_global.columns]
 
     # 4. 글로벌 키워드 매핑 (영문 → 중문)
     map_dict = {
