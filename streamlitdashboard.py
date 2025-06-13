@@ -51,8 +51,8 @@ st.markdown("""
 /* 탭 제목 영역 전체 스타일 */
 [data-testid="stTabs"] button {
     font-size: 30px !important;     /* 글자 크기 */
-    color: #ffffff !important;      /* 글자 색상 */
-    background-color: black !important;  /* 기본 배경색 */
+    color: black !important;      /* 글자 색상 */
+    background-color: white !important;  /* 기본 배경색 */
     border-radius: 1px !important;
     margin-right: 10px;
 }
