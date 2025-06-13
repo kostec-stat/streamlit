@@ -60,10 +60,6 @@ def local_css(file_name):
 local_css("assets/css/main.css")
 
 # --- 3. 사이드바 
-#snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
-#snapshot_dates = sorted({os.path.basename(f).split("_")[0] for f in snapshot_files}, reverse=True)
-#selected_snapshot = st.sidebar.selectbox("📅 스냅샷 날짜 선택", snapshot_dates)
-#excel_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
 start_date = st.sidebar.date_input("🗓 시작일", value=date.today() - timedelta(days=7), key="start_date")
 end_date = st.sidebar.date_input("⏳ 종료일", value=date.today(), key="end_date")
 
