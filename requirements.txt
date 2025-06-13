@@ -9,3 +9,4 @@ PyGithub
 datetime
 matplotlib
 matplotlib-venn
+sumy
