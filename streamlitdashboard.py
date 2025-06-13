@@ -501,10 +501,19 @@ with tab1:
     if not df_exec.empty and df_exec.shape[1] > 0:
         df_exec.columns = [c.strip() for c in df_exec.columns]
     # 모든 셀을 문자열로 합친 후, '1.' 이후 추출
+        # 전체 요약 텍스트 취합
         full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
-        start_index = full_text.find("1.")
+        
+        # 줄 단위로 나눈 후 '1.'으로 시작하는 줄의 인덱스 탐색
+        lines = full_text.splitlines()
+        start_index = next((i for i, line in enumerate(lines) if line.strip().startswith("1.")), -1)
+        
         if start_index != -1:
-            cleaned_summary = full_text[start_index:].strip()
+            cleaned_summary = "\n".join(lines[start_index:]).strip()
+            st.markdown(cleaned_summary)
+        else:
+            st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
+        
             #try:
             #    parser = PlaintextParser.from_string(full_text, Tokenizer("chinese"))
             #    summarizer = TextRankSummarizer()
@@ -517,9 +526,7 @@ with tab1:
             #        st.info("ℹ️ 요약할 내용이 충분하지 않습니다.")
             #except Exception as e:
             #    st.error(f"❌ 요약 처리 중 오류 발생: {e}")
-            st.markdown(cleaned_summary)
-        else:
-            st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
+            
     else:
         st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
 
