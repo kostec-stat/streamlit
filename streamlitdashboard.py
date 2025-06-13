@@ -654,16 +654,16 @@ with tab3:
       elif chart_type == "도넛형 그래프":
         st.markdown("### 🍩 선택 키워드 비중")
         # 최근 7일 기준 데이터 집계
-        latest_date = df_long["Publication Date"].max()
+        #latest_date = df_long["Publication Date"].max()
         #start_date = latest_date - timedelta(days=6)
-        recent_data = df_long[df_long["Publication Date"] >= start_date]
+        #recent_data = df_long[df_long["Publication Date"] >= start_date]
 
         # 키워드별 총합
-        keyword_totals = recent_data.groupby("Keyword")["7d_avg"].sum()
+        keyword_totals = df_long.groupby("Keyword")["7d_avg"].sum()
         keyword_totals = keyword_totals[keyword_totals > 0]
 
         if keyword_totals.empty:
-            st.warning("📭 최근 7일 간 유효한 키워드 데이터가 없습니다.")
+            st.warning("📭 유효한 키워드 데이터가 없습니다.")
         else:
             # Altair용 DataFrame 생성
             labels = keyword_totals.index.tolist()
@@ -681,6 +681,7 @@ with tab3:
                 tooltip=[alt.Tooltip("Keyword"), alt.Tooltip("Value")]
             )
             st.altair_chart(donut, use_container_width=True)
+            
 # --- TAB 4: 키워드 Top 20 상세 보기 포함
 with tab4:
     st.markdown("<div class='custom-subheader'>📌 키워드 Top 20 (상세 보기)</div>", unsafe_allow_html=True)
