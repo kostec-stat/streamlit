@@ -48,21 +48,46 @@ st.markdown("""
 """, unsafe_allow_html=True)
 st.markdown("""
 <style>
-/* 탭 제목 영역 전체 스타일 */
+/* 🔵 탭 공통 스타일 */
 [data-testid="stTabs"] button {
-    font-size: 30px !important;     /* 글자 크기 */
-    color: black !important;      /* 글자 색상 */
-    background-color: white !important;  /* 기본 배경색 */
-    border-radius: 1px !important;
-    margin-right: 10px;
+    font-size: 18px !important;
+    font-family: "Noto Sans KR", sans-serif !important;
+    padding: 10px 16px !important;
+    margin-right: 6px;
+    border-radius: 6px;
+    color: white !important;
 }
 
-/* 선택된 탭에 대한 강조 색 */
+/* 🌈 탭 개별 배경색 (탭 순서대로 지정) */
+[data-testid="stTabs"] button:nth-child(1) {
+    background-color: #1f77b4 !important;  /* tab1: 파랑 */
+}
+[data-testid="stTabs"] button:nth-child(2) {
+    background-color: #ff7f0e !important;  /* tab2: 오렌지 */
+}
+[data-testid="stTabs"] button:nth-child(3) {
+    background-color: #2ca02c !important;  /* tab3: 초록 */
+}
+[data-testid="stTabs"] button:nth-child(4) {
+    background-color: #d62728 !important;  /* tab4: 빨강 */
+}
+[data-testid="stTabs"] button:nth-child(5) {
+    background-color: #9467bd !important;  /* tab5: 보라 */
+}
+
+/* ✅ 선택된 탭: 진하게 + 마진 아래 */
 [data-testid="stTabs"] button[aria-selected="true"] {
-    background-color: #1f77b4 !important;
-    color: #ffffff !important;
+    border: 3px solid white !important;
     font-weight: bold !important;
-    border: 2px solid #1f77b4 !important;
+    margin-bottom: 10px !important;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+}
+
+/* 📦 탭 내부 콘텐츠 폰트 및 패딩 */
+.block-container {
+    font-size: 17px !important;
+    font-family: "Noto Sans KR", sans-serif !important;
+    padding: 1rem 1.5rem !important;
 }
 </style>
 """, unsafe_allow_html=True)
