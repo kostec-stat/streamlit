@@ -98,7 +98,7 @@ st.markdown("""
 
 
 with col1:
-    st.markdown("<div style='padding-top: 15px;'>", unsafe_allow_html=True)
+    st.markdown("<div style='padding-top: 25px;'>", unsafe_allow_html=True)
     st.image("assets/images/logo.svg")
     st.markdown("</div>", unsafe_allow_html=True)
 with col2:
