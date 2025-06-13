@@ -50,11 +50,11 @@ st.markdown("""
 <style>
 /* 탭 제목 영역 전체 스타일 */
 [data-testid="stTabs"] button {
-    font-size: 25px !important;     /* 글자 크기 */
+    font-size: 30px !important;     /* 글자 크기 */
     color: #ffffff !important;      /* 글자 색상 */
     background-color: black !important;  /* 기본 배경색 */
-    border-radius: 5px !important;
-    margin-right: 4px;
+    border-radius: 1px !important;
+    margin-right: 10px;
 }
 
 /* 선택된 탭에 대한 강조 색 */
