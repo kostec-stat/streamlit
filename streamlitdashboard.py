@@ -720,11 +720,21 @@ with tab4:
                        f'</span>'
 
         # 여러 링크 모아서 한 줄에 표시
-        links = row["Source URL"]
-        link_html = " ".join([f'<a href="{url}" target="_blank">🔗link</a>' for url in links])
+        urls = row["Source URL"]
 
+        # 문자열인 경우 (단일 URL), 리스트로 감쌈
+        if isinstance(urls, str) and urls.startswith("http"):
+            urls = [urls]
+        elif not isinstance(urls, list):
+            urls = []
+        
+        # 링크만 추출 (http로 시작하는 것만)
+        urls = [url for url in urls if isinstance(url, str) and url.startswith("http")]
+        
+        # 링크 HTML 생성
+        link_html = " ".join([f'<a href="{url}" target="_blank">🔗link</a>' for url in urls])
         table_data.append((index, keyword, count, summary_html, link_html))
-
+        
     df_display = pd.DataFrame(table_data, columns=["#", "Keyword", "Count", "Summary", "Sources"])
     st.markdown(df_display.to_html(escape=False, index=False), unsafe_allow_html=True)
     
