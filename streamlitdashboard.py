@@ -444,27 +444,27 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 # --- TAB 1: 빈도수 통계
 with tab1:
-    st.markdown("<div class='custom-subheader'>📌 5줄 요약</div>", unsafe_allow_html=True)
+    st.markdown("<div class='custom-subheader'>📌 주요 요약 </div>", unsafe_allow_html=True)
     if not df_exec.empty and df_exec.shape[1] > 0:
         df_exec.columns = [c.strip() for c in df_exec.columns]
     # 모든 셀을 문자열로 합친 후, '1.' 이후 추출
         full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
         start_index = full_text.find("1.")
         if start_index != -1:
-            #cleaned_summary = full_text[start_index:].strip()
-            try:
-                parser = PlaintextParser.from_string(full_text, Tokenizer("chinese"))
-                summarizer = TextRankSummarizer()
-                summary_sentences = summarizer(parser.document, 5)  # 최대 5문장
+            cleaned_summary = full_text[start_index:].strip()
+            #try:
+            #    parser = PlaintextParser.from_string(full_text, Tokenizer("chinese"))
+            #    summarizer = TextRankSummarizer()
+            #    summary_sentences = summarizer(parser.document, 5)  # 최대 5문장
                 
-                if summary_sentences:
-                    for i, sentence in enumerate(summary_sentences, 1):
-                        st.markdown(f"**{i}.** {sentence}")
-                else:
-                    st.info("ℹ️ 요약할 내용이 충분하지 않습니다.")
-            except Exception as e:
-                st.error(f"❌ 요약 처리 중 오류 발생: {e}")
-            #st.markdown(cleaned_summary)
+            #    if summary_sentences:
+            #        for i, sentence in enumerate(summary_sentences, 1):
+            #            st.markdown(f"**{i}.** {sentence}")
+            #   else:
+            #        st.info("ℹ️ 요약할 내용이 충분하지 않습니다.")
+            #except Exception as e:
+            #    st.error(f"❌ 요약 처리 중 오류 발생: {e}")
+            st.markdown(cleaned_summary)
         else:
             st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
     else:
