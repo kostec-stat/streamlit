@@ -10,3 +10,4 @@ datetime
 matplotlib
 matplotlib-venn
 sumy
+jieba
