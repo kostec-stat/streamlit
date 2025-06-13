@@ -578,22 +578,18 @@ with tab2:
         }
     }
 
+    # 📌 고정 회색 스케일 팔레트
+    gray_palette = [
+        "#111111", "#2c2c2c", "#444444", "#666666", "#888888",
+        "#aaaaaa", "#cccccc", "#dddddd", "#eeeeee"
+    ]
+    color_cycle = itertools.cycle(gray_palette)
+    
     # 1. 레이아웃 구성
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
     layout_config = layout_options[selected_layout]
     
-    # 2. 선택된 Altair 팔레트를 HEX 리스트로 변환
-    try:
-        color_palette = alt.themes.get()["_scheme"][selected_palette]
-    except Exception:
-        try:
-            color_palette = alt.schemes.get(selected_palette)
-        except Exception:
-            color_palette = ["#1f77b4", "#ff7f0e", "#2ca02c"]  # fallback
-    
-    color_cycle = itertools.cycle(color_palette)
-    
-    # 3. 노드 구성
+    # 2. 노드 구성
     unique_nodes = set(df_cooccur["source"]).union(set(df_cooccur["target"]))
     node_color_map = {node: next(color_cycle) for node in unique_nodes}
     
