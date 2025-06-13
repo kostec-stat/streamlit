@@ -21,6 +21,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import timedelta
 import html
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.text_rank import TextRankSummarizer
+import itertools
 
 # --- 1. 설정
 st.set_page_config(page_title="한중과기협력센터 키워드 대시보드", layout="wide")
@@ -70,8 +74,6 @@ snapshot_files_global = glob.glob("assets/data/*_trend_summary_en.xlsx")
 snapshot_dates = [os.path.basename(f).split("_")[0] for f in snapshot_files]
 snapshot_dates = [d for d in snapshot_dates if d.isdigit() and len(d) == 8]
 
-
-
 # 날짜 필터링
 selected_files = [
     f for f in snapshot_files
@@ -86,7 +88,7 @@ current_date = input_date.strftime("%Y%m%d")
 api_token = st.sidebar.text_input("🔐 Claude API 토큰", type="password", key="expander_api")
 github_token = st.sidebar.text_input("🪪 GitHub Token", type="password", key="expander_git")
 
-if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
+if st.sidebar.button("수집 시작(중국) 🚀 ", key="expander_run1"):
     with st.spinner(f"📡 {current_date} 기준 수집 중입니다... 최대 3~5분 소요."):
         try:
             import os
@@ -213,7 +215,7 @@ if st.sidebar.button("🚀 수집 시작(중국)", key="expander_run1"):
         except Exception as upload_err:
             st.warning(f"⚠️ 수집은 완료되었으나 GitHub 업로드 실패: {upload_err}")
 
-if st.sidebar.button("🚀 수집 시작(글로벌)", key="expander_run2"):
+if st.sidebar.button("수집 시작(글로벌) 🚀 ", key="expander_run2"):
     with st.spinner("⏳ 수집 중입니다. 최대 3~5분 소요..."):
         try:
             import os
@@ -437,8 +439,20 @@ with tab1:
         full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
         start_index = full_text.find("1.")
         if start_index != -1:
-            cleaned_summary = full_text[start_index:].strip()
-            st.markdown(cleaned_summary)
+            #cleaned_summary = full_text[start_index:].strip()
+            try:
+                parser = PlaintextParser.from_string(full_text, Tokenizer("chinese"))
+                summarizer = TextRankSummarizer()
+                summary_sentences = summarizer(parser.document, 5)  # 최대 5문장
+                
+                if summary_sentences:
+                    for i, sentence in enumerate(summary_sentences, 1):
+                        st.markdown(f"**{i}.** {sentence}")
+                else:
+                    st.info("ℹ️ 요약할 내용이 충분하지 않습니다.")
+            except Exception as e:
+                st.error(f"❌ 요약 처리 중 오류 발생: {e}")
+            #st.markdown(cleaned_summary)
         else:
             st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
     else:
@@ -552,29 +566,43 @@ with tab2:
         }
     }
 
+    # 1. 개선된 레이아웃 구성
     selected_layout = st.selectbox("📐 네트워크 레이아웃 선택", list(layout_options.keys()))
     layout_config = layout_options[selected_layout]
-
-    # 노드 구성
-    nodes = []
-    for _, row in df_cooccur.iterrows():
-        nodes.append(Node(id=row["source"], label=row["source"], font={"color": "darkgray"}))
-        nodes.append(Node(id=row["target"], label=row["target"], font={"color": "darkgray"}))
-    nodes = {n.id: n for n in nodes}.values()
-
-    # 🧲 중심 위치 유도용 가짜 노드 추가 (위치 강제 중앙)
-    nodes = list(nodes)
-    nodes.append(Node(id="__center__", label="", x=175, y=250, hidden=True))
-
-    edges = [Edge(source=row.source, target=row.target, label=str(row.count)) for row in df_cooccur.itertuples()]
-
+    
+    # 2. 색상 팔레트 생성
+    color_palette = [
+        "#4E79A7", "#F28E2B", "#E15759", "#76B7B2",
+        "#59A14F", "#EDC948", "#B07AA1", "#FF9DA7",
+        "#9C755F", "#BAB0AC"
+    ]
+    color_cycle = itertools.cycle(color_palette)
+    
+    # 3. 노드 구성
+    unique_nodes = set(df_cooccur["source"]).union(set(df_cooccur["target"]))
+    node_color_map = {node: next(color_cycle) for node in unique_nodes}
+    
+    nodes = [
+        Node(id=node, label=node, color=node_color_map[node], font={"color": "white"})
+        for node in unique_nodes
+    ]
+    
+    # 4. 엣지 구성
+    edges = [
+        Edge(source=row.source, target=row.target, label=str(row.count))
+        for row in df_cooccur.itertuples()
+    ]
+    
+    # 5. 그래프 구성 옵션
     config = Config(
-        width=400,
-        height=500,
-        physics=False,
-        staticGraph=True,
-        layout=layout_config
+        width=800,
+        height=600,
+        layout=layout_config,
+        physics=True,           # 레이아웃 자동 물리 기반
+        staticGraph=False       # 강제 고정 비활성화
     )
+    
+    # 6. 렌더링
     try:
         agraph(nodes=nodes, edges=edges, config=config)
     except Exception as e:
