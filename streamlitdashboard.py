@@ -47,7 +47,7 @@ with col1:
 with col2:
     st.markdown("""
         <h1 style='font-size:25px; color:#044B9A; padding-top: 2px;'>
-        한중과기협력센터 주간 키워드 동향 대시보드
+        한중과기협력센터 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
 
@@ -67,9 +67,8 @@ end_date = st.sidebar.date_input("⏳ 종료일", value=date.today(), key="end_d
 snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
 snapshot_files_global = glob.glob("assets/data/*_trend_summary_en.xlsx")
 snapshot_dates = [os.path.basename(f).split("_")[0] for f in snapshot_files]
-global_dates = [os.path.basename(f).split("_")[0] for f in snapshot_files_global]
 snapshot_dates = [d for d in snapshot_dates if d.isdigit() and len(d) == 8]
-global_dates = [d for d in global_dates if d.isdigit() and len(d) == 8]
+
 
 
 # 날짜 필터링
