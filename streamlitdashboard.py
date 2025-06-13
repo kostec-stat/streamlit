@@ -98,9 +98,11 @@ with col1:
 
 with col2:
     st.markdown("""
-        <h1 style='font-size:35px; color:#044B9A; padding-top: 6px;'>
-        한중과기협력센터 키워드 동향 대시보드
-        </h1>
+        <div style='display: flex; align-items: center; height: 100%;'>
+            <h1 style='font-size:35px; color:#044B9A; margin: 10px 0 0 0; line-height: 1.2;'>
+            한중과기협력센터 키워드 동향 대시보드
+            </h1>
+        </div>
     """, unsafe_allow_html=True)
 
 # --- 2. CSS 적용
