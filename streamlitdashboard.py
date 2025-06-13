@@ -371,7 +371,24 @@ else:
 
 df_summary.columns = [col.strip() for col in df_summary.columns]
 df_cooccur.columns = [col.strip() for col in df_cooccur.columns]
+df_sources.columns = [col.strip() for col in df_sources.columns]
 
+# 2. 존재 여부 확인
+required_cols = {"URL", "Publication Date"}
+missing_cols = required_cols - set(df_sources.columns)
+
+if missing_cols:
+    st.error(f"❌ df_sources에 다음 컬럼이 없습니다: {missing_cols}")
+    st.write("📌 현재 컬럼 목록:", df_sources.columns.tolist())
+    st.stop()
+else:
+    df_merged = df_summary.merge(
+        df_sources[["URL", "Publication Date"]],
+        how="left",
+        left_on="Source URL",
+        right_on="URL"
+    )
+    
 if "count" not in df_cooccur.columns:
     st.error("❌ 'count' 컬럼이 존재하지 않습니다.")
     st.write("📌 현재 컬럼:", df_cooccur.columns.tolist())
