@@ -646,8 +646,7 @@ with tab2:
         }
     }
 
-   altair_palettes = {
-    "viridis": ['#440154', '#482777', '#3E4989', '#31688E', '#26828E', '#1F9E89', '#35B779', '#6DCD59', '#B4DD2C', '#FDE725'],
+   altair_palettes = {"viridis": ['#440154', '#482777', '#3E4989', '#31688E', '#26828E', '#1F9E89', '#35B779', '#6DCD59', '#B4DD2C', '#FDE725'],
     "plasma": ['#0d0887', '#6a00a8', '#b12a90', '#e16462', '#fca636', '#f0f921'],
     "magma": ['#000004', '#1b0c41', '#4f0c6b', '#781c6d', '#a52c60', '#cf4446', '#ed6925', '#fb9b06', '#f7d13d', '#fcfdbf'],
     "inferno": ['#000004', '#1e0c48', '#57106e', '#87216b', '#ac375a', '#cb504a', '#e97139', '#f89441', '#fdc328', '#fcffa4'],
@@ -655,8 +654,7 @@ with tab2:
     "category10": ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'],
     "set2": ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3', '#a6d854', '#ffd92f', '#e5c494', '#b3b3b3'],
     "set3": ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5'],
-    "dark2": ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02', '#a6761d', '#666666'] 
-   }
+    "dark2": ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02', '#a6761d', '#666666']}
     
     color_list = altair_palettes.get(selected_palette, ["#1f77b4", "#ff7f0e", "#2ca02c"])
     color_cycle = itertools.cycle(color_list)
