@@ -382,14 +382,6 @@ if "Keyword Count" not in df_summary.columns:
     st.error("❌ 'Keyword Count' 컬럼을 찾을 수 없습니다.")
     st.write("🔎 현재 컬럼 목록:", df_summary.columns.tolist())
     st.stop()
-# 엑셀에서 시트 불러오기
-xls = pd.ExcelFile(excel_path)
-df_summary = pd.read_excel(xls, sheet_name="Summary Table")
-df_sources = pd.read_excel(xls, sheet_name="Sources")
-
-# 컬럼명 정리
-df_summary.columns = [c.strip() for c in df_summary.columns]
-df_sources.columns = [c.strip() for c in df_sources.columns]
 
 # URL 기준으로 날짜 매핑
 df_merged = df_summary.merge(
