@@ -47,11 +47,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 with col1:
-    st.image("assets/images/logo.svg", width=120)  # 로고 파일 경로와 크기 설정
+    st.image("assets/images/logo.svg")  # 로고 파일 경로와 크기 설정
 
 with col2:
     st.markdown("""
-        <h1 style='font-size:25px; color:#044B9A; padding-top: 2px;'>
+        <h1 style='font-size:32px; color:#044B9A; padding-top: 2px;'>
         한중과기협력센터 키워드 동향 대시보드
         </h1>
     """, unsafe_allow_html=True)
