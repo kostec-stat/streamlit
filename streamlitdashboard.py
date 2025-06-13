@@ -503,17 +503,25 @@ with tab1:
     # 모든 셀을 문자열로 합친 후, '1.' 이후 추출
         # 전체 요약 텍스트 취합
         full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
-        
-        # 줄 단위로 나눈 후 '1.'으로 시작하는 줄의 인덱스 탐색
+
+        # '1.'으로 시작하는 줄부터 추출
         lines = full_text.splitlines()
         start_index = next((i for i, line in enumerate(lines) if line.strip().startswith("1.")), -1)
         
         if start_index != -1:
-            cleaned_summary = "\n".join(lines[start_index:]).strip()
+            # '1.' 이후 줄부터 요약 시작
+            summary_lines = lines[start_index:]
+        
+            # 조건에 맞는 줄 제거: 'Five Most ... Summaries:' 라인
+            summary_lines = [
+                line for line in summary_lines
+                if not (line.strip().startswith("Five Most") and line.strip().endswith("Summaries:"))
+            ]
+        
+            cleaned_summary = "\n".join(summary_lines).strip()
             st.markdown(cleaned_summary)
         else:
             st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
-        
             #try:
             #    parser = PlaintextParser.from_string(full_text, Tokenizer("chinese"))
             #    summarizer = TextRankSummarizer()
