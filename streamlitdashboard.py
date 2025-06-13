@@ -707,7 +707,7 @@ with tab4:
         keyword = row["Keyword"]
         count = row["Keyword Count"]
         # 링크 열기 (새 탭)
-        link_html = f'<a href="{row["Source URL"]}" target="_blank">🔗 링크</a>'
+        link_html = f'<a href="{row["Source URL"]}" target="_blank">🔗link</a>'
     
         # 툴팁 Summary
         short = row["Short Summary"]
