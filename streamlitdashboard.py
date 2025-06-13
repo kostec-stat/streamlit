@@ -652,10 +652,10 @@ with tab3:
         st.altair_chart(chart, use_container_width=True)
 
       elif chart_type == "도넛형 그래프":
-        st.markdown("### 🍩 선택 키워드 비중 (최근 7일 기준)")
+        st.markdown("### 🍩 선택 키워드 비중")
         # 최근 7일 기준 데이터 집계
         latest_date = df_long["Publication Date"].max()
-        start_date = latest_date - timedelta(days=6)
+        #start_date = latest_date - timedelta(days=6)
         recent_data = df_long[df_long["Publication Date"] >= start_date]
 
         # 키워드별 총합
