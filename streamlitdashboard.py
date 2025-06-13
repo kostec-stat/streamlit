@@ -729,7 +729,7 @@ with tab4:
             urls = []
         
         # 링크 HTML 생성
-        link_html = " ".join([f'<a href="{url}" target="_blank">🔗link</a>' for url in urls])
+        link_html = " ".join([f'<a href="{url}" target="_blank">🔗{i+1}</a>' for i, url in enumerate(urls)])
         table_data.append((index, keyword, count, summary_html, link_html))
         
     df_display = pd.DataFrame(table_data, columns=["#", "Keyword", "Count", "Summary", "Sources"])
