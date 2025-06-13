@@ -46,6 +46,26 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+/* 탭 제목 영역 전체 스타일 */
+[data-testid="stTabs"] button {
+    font-size: 24px !important;     /* 글자 크기 */
+    color: #ffffff !important;      /* 글자 색상 */
+    background-color: #0e4c92 !important;  /* 기본 배경색 */
+    border-radius: 5px !important;
+    margin-right: 4px;
+}
+
+/* 선택된 탭에 대한 강조 색 */
+[data-testid="stTabs"] button[aria-selected="true"] {
+    background-color: #1f77b4 !important;
+    color: #ffffff !important;
+    font-weight: bold !important;
+    border: 2px solid #1f77b4 !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 with col1:
     st.image("assets/images/logo.svg")  # 로고 파일 경로와 크기 설정
