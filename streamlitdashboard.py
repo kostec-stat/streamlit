@@ -430,45 +430,54 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
 ])
 # --- TAB 1: 빈도수 통계
 with tab1:
-  st.markdown("<div class='custom-subheader'>📌 5줄 요약</div>", unsafe_allow_html=True)
-  if not df_exec.empty and df_exec.shape[1] > 0:
-    df_exec.columns = [c.strip() for c in df_exec.columns]
+    st.markdown("<div class='custom-subheader'>📌 5줄 요약</div>", unsafe_allow_html=True)
+    if not df_exec.empty and df_exec.shape[1] > 0:
+        df_exec.columns = [c.strip() for c in df_exec.columns]
     # 모든 셀을 문자열로 합친 후, '1.' 이후 추출
-    full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
-    start_index = full_text.find("1.")
-    if start_index != -1:
-      cleaned_summary = full_text[start_index:].strip()
-      st.markdown(cleaned_summary)
+        full_text = "\n".join(df_exec.iloc[:, 0].astype(str).tolist())
+        start_index = full_text.find("1.")
+        if start_index != -1:
+            cleaned_summary = full_text[start_index:].strip()
+            st.markdown(cleaned_summary)
+        else:
+            st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
     else:
-      st.warning("⚠️ '1.'로 시작하는 본문 내용을 찾을 수 없습니다.")
-  else:
-    st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
+        st.warning("⚠️ Executive Summary 시트가 비어 있거나 형식이 올바르지 않습니다.")
 
-  col1, col2 = st.columns(2)
-  with col1:
-    download_path = f"assets/data/{selected_snapshot}_trend_summary.xlsx"
-    try:
-      with open(download_path, "rb") as f:
-        st.download_button(
-          label=f"📥 {selected_snapshot} 중국 주간동향 엑셀 다운로드",
-          data=f.read(),
-          file_name=f"{selected_snapshot}_trend_summary.xlsx",
-          mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-    except Exception as e:
-      st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
-  with col2:
-    download_path2 = f"assets/data/{selected_snapshot}_trend_summary_en.xlsx"
-    try:
-      with open(download_path2, "rb") as f:
-        st.download_button(
-          label=f"📥 {selected_snapshot} 글로벌 주간동향 엑셀 다운로드",
-          data=f.read(),
-          file_name=f"{selected_snapshot}_trend_summary_en.xlsx",
-          mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
-    except Exception as e:
-      st.warning(f"⚠️ 다운로드 파일을 열 수 없습니다: {e}")
+    st.markdown("### 📁 다운로드할 스냅샷 선택")
+
+    # 사용자가 선택할 수 있는 스냅샷 목록 구성 (기존 snapshot 파일 기준)
+    all_snapshot_files = glob.glob("assets/data/*_trend_summary.xlsx")
+    snapshot_options = sorted({os.path.basename(f).split("_trend_summary")[0] for f in all_snapshot_files}, reverse=True)
+    
+    selected_download_snapshot = st.selectbox("📅 다운로드할 날짜 선택", snapshot_options)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        china_file = f"assets/data/{selected_download_snapshot}_trend_summary.xlsx"
+        try:
+            with open(china_file, "rb") as f:
+                st.download_button(
+                    label=f"📥 {selected_download_snapshot} 중국 주간동향 엑셀 다운로드",
+                    data=f.read(),
+                    file_name=f"{selected_download_snapshot}_trend_summary.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        except Exception as e:
+            st.warning(f"⚠️ 중국 스냅샷 파일을 열 수 없습니다: {e}")
+    
+    with col2:
+        global_file = f"assets/data/{selected_download_snapshot}_trend_summary_en.xlsx"
+        try:
+            with open(global_file, "rb") as f:
+                st.download_button(
+                    label=f"📥 {selected_download_snapshot} 글로벌 주간동향 엑셀 다운로드",
+                    data=f.read(),
+                    file_name=f"{selected_download_snapshot}_trend_summary_en.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        except Exception as e:
+            st.warning(f"⚠️ 글로벌 스냅샷 파일을 열 수 없습니다: {e}")
       
 # --- TAB 2: 동시출현 네트워크
 with tab2:
