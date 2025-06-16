@@ -146,7 +146,7 @@ selected_files_global = [
 ]
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🛰 주간 동향 수집")
+st.sidebar.markdown("### 👉 주간 동향 수집")
 
 input_date = st.sidebar.date_input("📆 수집 시작 날짜", value=date.today(), key="expander_date")
 current_date = input_date.strftime("%Y%m%d")
