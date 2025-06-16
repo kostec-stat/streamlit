@@ -123,7 +123,7 @@ color_palettes = [
     "viridis", "plasma", "magma", "inferno", "turbo",
     "category10", "category20", "accent", "dark2", "set1", "set2", "set3"
 ]
-
+st.sidebar.markdown("### 👉 스타일 및 기간 설정")
 # 👉 사이드바에서 팔레트 선택
 selected_palette = st.sidebar.selectbox("🎨 색상 팔레트 선택", color_palettes, index=0)
 start_date = st.sidebar.date_input("🗓 시작일", value=date.today() - timedelta(days=7), key="start_date")
